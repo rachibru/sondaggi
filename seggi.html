@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulatore Seggi & Coalizioni - Elezioni Politiche</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    :root {
+      --bg-color: #0b1320;
+      --card-bg: #142238;
+      --panel-bg: #1e2d4a;
+      --border-color: rgba(255, 255, 255, 0.15);
+      --text-color: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Titillium Web', sans-serif;
+    }
+
+    body {
+      background-color: #080d16;
+      margin: 0;
+      padding: 20px;
+      color: #f8fafc;
+    }
+
+    .container {
+      max-width: 1550px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 460px 1fr;
+      gap: 25px;
+    }
+
+    @media (max-width: 1250px) {
+      .container { grid-template-columns: 1fr; }
+    }
+
+    /* FORM STYLES */
+    .form-card {
+      background: var(--card-bg);
+      padding: 22px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      max-height: 92vh;
+      overflow-y: auto;
+    }
+
+    .form-card h2 { margin-top: 0; color: #38bdf8; font-size: 20px; border-bottom: 2px solid #38bdf8; padding-bottom: 8px; }
+    .form-card h3 { color: #94a3b8; font-size: 15px; margin-top: 18px; margin-bottom: 8px; }
+
+    .form-group {
+      margin-bottom: 10px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 4px;
+      font-size: 12px;
+      color: #cbd5e1;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 7px 10px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 13px;
+    }
+
+    .party-input-row {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 6px;
+      align-items: center;
+      background: var(--panel-bg);
+      padding: 6px 8px;
+      border-radius: 6px;
+    }
+
+    .party-input-row select, .party-input-row input {
+      padding: 5px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 12px;
+    }
+
+    .btn {
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+      width: 100%;
+      margin-top: 15px;
+      font-size: 15px;
+      transition: background 0.2s;
+    }
+
+    .btn:hover { background: #059669; }
+
+    .btn-download {
+      background: #0284c7;
+      margin-top: 20px;
+      width: 1000px;
+    }
+
+    .btn-download:hover { background: #0369a1; }
+
+    /* GRAPHIC CANVAS */
+    .preview-card {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      overflow-x: auto;
+    }
+
+    .graphic-box {
+      width: 1000px;
+      background-color: #ffffff;
+      color: #0f172a;
+      padding: 30px 40px;
+      position: relative;
+      flex-shrink: 0;
+      box-sizing: border-box;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    /* HEADER GRAFICA */
+    .header-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 3px solid #0f172a;
+      padding-bottom: 15px;
+      margin-bottom: 25px;
+    }
+
+    .title-section h1 {
+      margin: 0;
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
+      color: #0f172a;
+      line-height: 1.1;
+    }
+
+    .title-section .subtitle {
+      font-size: 15px;
+      font-weight: 600;
+      color: #64748b;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .site-logo-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #0f172a;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+    }
+
+    .site-logo-badge img {
+      height: 35px;
+      width: auto;
+    }
+
+    .site-logo-badge .badge-text {
+      font-weight: 800;
+      font-size: 14px;
+      line-height: 1.1;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    /* EMICICLO PARLAMENTO SVG */
+    .hemicycle-section {
+      text-align: center;
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .hemicycle-title {
+      font-size: 22px;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      color: #0f172a;
+    }
+
+    .majority-line-label {
+      position: absolute;
+      top: 45%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .majority-badge {
+      background: #0f172a;
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    /* LEGENDA E COALIZIONI SEGI */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+      margin-top: 25px;
+      border-top: 2px solid #e2e8f0;
+      padding-top: 20px;
+    }
+
+    .section-box-title {
+      font-size: 16px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: #0f172a;
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 6px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .coalition-card {
+      background: #f8fafc;
+      border-left: 5px solid #cbd5e1;
+      padding: 10px 14px;
+      margin-bottom: 10px;
+      border-radius: 0 6px 6px 0;
+    }
+
+    .coalition-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 800;
+      font-size: 16px;
+    }
+
+    .coalition-parties {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    .party-breakdown-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .party-breakdown-table td {
+      padding: 5px 0;
+      border-bottom: 1px dashed #e2e8f0;
+    }
+
+    .party-color-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 8px;
+    }
+
+    .party-name-td {
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .party-seats-td {
+      text-align: right;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    /* BARRA RIPARTIZIONE COLLEGHI UNINOMINALI / MAGGIORITARIO */
+    .bar-section {
+      margin-top: 20px;
+      background: #f1f5f9;
+      padding: 15px 20px;
+      border-radius: 8px;
+    }
+
+    .stacked-bar-container {
+      height: 28px;
+      width: 100%;
+      background: #cbd5e1;
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      margin-top: 10px;
+    }
+
+    .stacked-segment {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 11px;
+      font-weight: 800;
+      transition: width 0.3s;
+    }
+
+    .footer-notes {
+      margin-top: 20px;
+      font-size: 10.5px;
+      color: #64748b;
+      line-height: 1.3;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- FORM INPUT -->
+  <div class="form-card">
+    <h2>Proiezione Seggi 2027</h2>
+    
+    <div class="form-group">
+      <label>Ramo del Parlamento</label>
+      <select id="input-house" onchange="calculateAndDraw()">
+        <option value="camera" selected>Camera dei Deputati (400 Seggi | Maggioranza 201)</option>
+        <option value="senato">Senato della Repubblica (200 Seggi | Maggioranza 101)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Data Sondaggio / Titolo</label>
+      <input type="text" id="input-date" value="SUPERMEDIA SONDAGGI - MAGGIO 2026">
+    </div>
+
+    <h3>Percentuali Partiti e Coalizione</h3>
+    <div id="parties-inputs"></div>
+
+    <button class="btn" onclick="calculateAndDraw()">Calcola Proiezione Seggi</button>
+  </div>
+
+  <!-- GRAPHIC CANVAS -->
+  <div class="preview-card">
+    <div id="capture-area" class="graphic-box">
+      
+      <!-- HEADER -->
+      <div class="header-box">
+        <div class="title-section">
+          <h1>STIMA SEGI PARLAMENTO</h1>
+          <div class="subtitle" id="display-subtitle">CAMERA DEI DEPUTATI • SIMULAZIONE ELEZIONI POLITICHE</div>
+        </div>
+        <div class="site-logo-badge">
+          <img src="img/logo.png" onerror="this.style.display='none'" alt="">
+          <div class="badge-text">BRUNO<br>RACHIELE</div>
+        </div>
+      </div>
+
+      <!-- PARLIAMENT ARCH / EMICICLO -->
+      <div class="hemicycle-section">
+        <div class="hemicycle-title">Gli Equilibri in Aula</div>
+        
+        <!-- SVG ARC -->
+        <svg id="hemicycle-svg" width="900" height="320" viewBox="0 0 900 320" style="max-width: 100%;"></svg>
+
+        <div class="majority-line-label">
+          <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #64748b; margin-bottom: 3px;">Soglia Maggioranza</div>
+          <div class="majority-badge" id="majority-badge-text">201 SEGI</div>
+        </div>
+      </div>
+
+      <!-- SEGI E COALIZIONI SUMMARY -->
+      <div class="summary-grid">
+        <!-- COALIZIONI -->
+        <div>
+          <div class="section-box-title">
+            <span>Stima Seggi Coalizioni</span>
+            <span>Totale Seggi</span>
+          </div>
+          <div id="coalitions-list"></div>
+        </div>
+
+        <!-- DETTAGLIO PARTITI -->
+        <div>
+          <div class="section-box-title">
+            <span>Dettaglio Singoli Partiti</span>
+            <span>Seggi Stimate</span>
+          </div>
+          <table class="party-breakdown-table">
+            <tbody id="party-breakdown-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- BARRA RIPARTIZIONE COLLEGHI UNINOMINALI / MAGGIORITARIO -->
+      <div class="bar-section">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size: 13px; font-weight: 800; text-transform: uppercase; color: #0f172a;">Ripartizione Totale Seggi (% Aula)</span>
+          <span style="font-size: 12px; font-weight: 700; color: #475569;" id="bar-summary-text"></span>
+        </div>
+        <div class="stacked-bar-container" id="stacked-bar"></div>
+      </div>
+
+      <!-- FOOTER / NOTE TECNICHE -->
+      <div class="footer-notes">
+        *Stima dell'assegnazione dei seggi calcolata sulla base della legge elettorale vigente (37% maggioritario uninominale, 61% proporzionale plurinominale). Le proiezioni nei collegi uninominali sono elaborate aggregando le percentuali delle coalizioni su scala nazionale. Data aggiornamento: <span id="footer-date-text">09 Maggio 2026</span>.
+      </div>
+
+    </div>
+
+    <button class="btn btn-download" onclick="downloadImage()">Scarica Grafica Proiezione PNG</button>
+  </div>
+</div>
+
+<script>
+  // Configurazione Partiti e Colori Predefiniti
+  const partyConfig = [
+    { id: "fdi", name: "Fratelli d'Italia", color: "#0a3a60", coalition: "cdx", defaultPct: 28.0 },
+    { id: "pd", name: "Partito Democratico", color: "#d9383a", coalition: "csx", defaultPct: 21.9 },
+    { id: "m5s", name: "Movimento 5 Stelle", color: "#f3b200", coalition: "m5s", defaultPct: 12.5 },
+    { id: "fi", name: "Forza Italia", color: "#0072bc", coalition: "cdx", defaultPct: 8.1 },
+    { id: "lega", name: "Lega", color: "#2a823d", coalition: "cdx", defaultPct: 7.4 },
+    { id: "avs", name: "Alleanza Verdi-Sinistra", color: "#2196f3", coalition: "csx", defaultPct: 6.6 },
+    { id: "fn", name: "Futuro Nazionale", color: "#00bcd4", coalition: "cdx", defaultPct: 3.4 },
+    { id: "azione", name: "Azione", color: "#e91e63", coalition: "terzo", defaultPct: 3.1 },
+    { id: "iv", name: "Italia Viva", color: "#9c27b0", coalition: "terzo", defaultPct: 2.6 },
+    { id: "europa", name: "+Europa", color: "#ff9800", coalition: "csx", defaultPct: 1.6 },
+    { id: "nm", name: "Noi Moderati", color: "#4caf50", coalition: "cdx", defaultPct: 1.2 },
+    { id: "altri", name: "Altri / Civiche", color: "#78909c", coalition: "altri", defaultPct: 3.6 }
+  ];
+
+  const coalitionNames = {
+    cdx: { name: "Centrodestra", color: "#0a3a60" },
+    csx: { name: "Centrosinistra", color: "#d9383a" },
+    m5s: { name: "M5S Solitario", color: "#f3b200" },
+    terzo: { name: "Centro / Terzo Polo", color: "#e91e63" },
+    altri: { name: "Altri / Non Coalizzati", color: "#78909c" }
+  };
+
+  function renderInputs() {
+    const container = document.getElementById('parties-inputs');
+    container.innerHTML = '';
+    partyConfig.forEach((p) => {
+      container.innerHTML += `
+        <div class="party-input-row">
+          <strong style="font-size:12px; color:#f8fafc;">${p.name}</strong>
+          <input type="number" step="0.1" value="${p.defaultPct}" id="pct-${p.id}" placeholder="% Voto">
+          <select id="coal-${p.id}">
+            <option value="cdx" ${p.coalition==='cdx'?'selected':''}>Centrodestra</option>
+            <option value="csx" ${p.coalition==='csx'?'selected':''}>Centrosinistra</option>
+            <option value="m5s" ${p.coalition==='m5s'?'selected':''}>M5S</option>
+            <option value="terzo" ${p.coalition==='terzo'?'selected':''}>Centro / III Polo</option>
+            <option value="altri" ${p.coalition==='altri'?'selected':''}>Altri</option>
+          </select>
+        </div>
+      `;
+    });
+  }
+
+  function calculateAndDraw() {
+    const house = document.getElementById('input-house').value;
+    const totalSeats = house === 'camera' ? 400 : 200;
+    const majorityThreshold = house === 'camera' ? 201 : 101;
+    const uninominalSeats = Math.round(totalSeats * 0.375); 
+    const proportionalSeats = totalSeats - uninominalSeats;
+
+    document.getElementById('display-subtitle').innerText = `${house === 'camera' ? 'CAMERA DEI DEPUTATI (400 SEGI)' : 'SENATO DELLA REPUBBLICA (200 SEGI)'} • ${document.getElementById('input-date').value}`;
+    document.getElementById('majority-badge-text').innerText = `${majorityThreshold} SEGI MAGGIORANZA`;
+    document.getElementById('footer-date-text').innerText = document.getElementById('input-date').value;
+
+    let currentData = [];
+    let coalitionVotes = { cdx: 0, csx: 0, m5s: 0, terzo: 0, altri: 0 };
+
+    partyConfig.forEach(p => {
+      const pct = parseFloat(document.getElementById(`pct-${p.id}`).value) || 0;
+      const coal = document.getElementById(`coal-${p.id}`).value;
+      currentData.push({ ...p, pct: pct, coalition: coal });
+      coalitionVotes[coal] += pct;
+    });
+
+    let validPropVotes = 0;
+    currentData.forEach(p => {
+      if (p.pct >= 3.0 || (p.pct >= 1.0 && (p.coalition === 'csx' || p.coalition === 'cdx'))) { 
+        validPropVotes += p.pct; 
+      }
+    });
+
+    let totalAssigned = 0;
+    let winnerCoalition = 'cdx';
+    let maxVote = 0;
+
+    Object.keys(coalitionVotes).forEach(cKey => {
+      if (coalitionVotes[cKey] > maxVote) {
+        maxVote = coalitionVotes[cKey];
+        winnerCoalition = cKey;
+      }
+    });
+
+    currentData.forEach(p => {
+      let propAssigned = 0;
+      if (p.pct >= 3.0 || (p.pct >= 1.0 && (p.coalition === 'cdx' || p.coalition === 'csx'))) {
+        propAssigned = Math.round((p.pct / validPropVotes) * proportionalSeats);
+      }
+      p.propSeats = propAssigned;
+
+      let uninomAssigned = 0;
+      if (p.coalition === winnerCoalition) {
+        uninomAssigned = Math.round((p.pct / coalitionVotes[winnerCoalition]) * (uninominalSeats * 0.82));
+      } else {
+        uninomAssigned = Math.round((p.pct / 100) * (uninominalSeats * 0.18));
+      }
+      p.uniSeats = uninomAssigned;
+      p.totalSeats = p.propSeats + p.uniSeats;
+      totalAssigned += p.totalSeats;
+    });
+
+    let diff = totalSeats - totalAssigned;
+    if (diff !== 0 && currentData.length > 0) {
+      currentData[0].totalSeats += diff;
+    }
+
+    const leftToRightOrder = ["avs", "europa", "pd", "m5s", "iv", "azione", "altri", "nm", "fi", "fn", "lega", "fdi"];
+    currentData.sort((a, b) => leftToRightOrder.indexOf(a.id) - leftToRightOrder.indexOf(b.id));
+
+    drawSvgHemicycle(currentData, totalSeats);
+    renderSummaries(currentData, coalitionVotes, totalSeats, majorityThreshold);
+  }
+
+  function drawSvgHemicycle(data, totalSeats) {
+    const svg = document.getElementById('hemicycle-svg');
+    svg.innerHTML = '';
+
+    const centerX = 450;
+    const centerY = 300;
+    const innerRadius = 135;
+    const outerRadius = 270;
+    const numRows = 5;
+
+    let dotsList = [];
+
+    for (let row = 0; row < numRows; row++) {
+      const r = innerRadius + (row * (outerRadius - innerRadius) / (numRows - 1));
+      const dotsInRow = Math.round(r * 0.085);
+      
+      for (let i = 0; i < dotsInRow; i++) {
+        const angle = Math.PI - (i * Math.PI / (dotsInRow - 1));
+        const x = centerX + r * Math.cos(angle);
+        const y = centerY - r * Math.sin(angle);
+        dotsList.push({ x: x, y: y, angle: angle });
+      }
+    }
+
+    dotsList.sort((a, b) => b.angle - a.angle);
+
+    let currentDotIndex = 0;
+    data.forEach(p => {
+      const dotsForParty = Math.round((p.totalSeats / totalSeats) * dotsList.length);
+      
+      for (let k = 0; k < dotsForParty && currentDotIndex < dotsList.length; k++) {
+        const dot = dotsList[currentDotIndex];
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", dot.x);
+        circle.setAttribute("cy", dot.y);
+        circle.setAttribute("r", "7.5");
+        circle.setAttribute("fill", p.color);
+        circle.setAttribute("stroke", "#ffffff");
+        circle.setAttribute("stroke-width", "1");
+        svg.appendChild(circle);
+        currentDotIndex++;
+      }
+    });
+
+    while (currentDotIndex < dotsList.length) {
+      const dot = dotsList[currentDotIndex];
+      const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      circle.setAttribute("cx", dot.x);
+      circle.setAttribute("cy", dot.y);
+      circle.setAttribute("r", "7.5");
+      circle.setAttribute("fill", "#cbd5e1");
+      svg.appendChild(circle);
+      currentDotIndex++;
+    }
+
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    line.setAttribute("x1", centerX);
+    line.setAttribute("y1", centerY - innerRadius + 15);
+    line.setAttribute("x2", centerX);
+    line.setAttribute("y2", centerY - outerRadius - 15);
+    line.setAttribute("stroke", "#0f172a");
+    line.setAttribute("stroke-width", "3");
+    line.setAttribute("stroke-dasharray", "6,4");
+    svg.appendChild(line);
+  }
+
+  function renderSummaries(data, coalitionVotes, totalSeats, majorityThreshold) {
+    let coalitionSeats = { cdx: 0, csx: 0, m5s: 0, terzo: 0, altri: 0 };
+    let coalitionPartiesList = { cdx: [], csx: [], m5s: [], terzo: [], altri: [] };
+
+    data.forEach(p => {
+      coalitionSeats[p.coalition] += p.totalSeats;
+      if (p.totalSeats > 0) {
+        coalitionPartiesList[p.coalition].push(p.name);
+      }
+    });
+
+    const coalContainer = document.getElementById('coalitions-list');
+    coalContainer.innerHTML = '';
+
+    const sortedCoalitions = Object.keys(coalitionSeats).sort((a,b) => coalitionSeats[b] - coalitionSeats[a]);
+
+    sortedCoalitions.forEach(cKey => {
+      const seats = coalitionSeats[cKey];
+      if (seats === 0) return;
+
+      const isMajority = seats >= majorityThreshold;
+      const borderCol = coalitionNames[cKey].color;
+      
+      coalContainer.innerHTML += `
+        <div class="coalition-card" style="border-left-color: ${borderCol};">
+          <div class="coalition-header">
+            <span>${coalitionNames[cKey].name} ${isMajority ? '<span style="background:#10b981; color:white; font-size:10px; padding:2px 6px; border-radius:4px; vertical-align:middle; margin-left:5px;">MAGGIORANZA</span>' : ''}</span>
+            <span style="font-size:18px; color:#0f172a;">${seats} <span style="font-size:12px; color:#64748b;">seggi (${((seats/totalSeats)*100).toFixed(1)}%)</span></span>
+          </div>
+          <div class="coalition-parties">${coalitionPartiesList[cKey].join(' • ')}</div>
+        </div>
+      `;
+    });
+
+    const breakdownBody = document.getElementById('party-breakdown-body');
+    breakdownBody.innerHTML = '';
+    
+    const sortedParties = [...data].sort((a,b) => b.totalSeats - a.totalSeats);
+
+    sortedParties.forEach(p => {
+      if (p.totalSeats === 0) return;
+      breakdownBody.innerHTML += `
+        <tr>
+          <td>
+            <span class="party-color-dot" style="background-color: ${p.color};"></span>
+            <span class="party-name-td">${p.name}</span>
+          </td>
+          <td style="text-align:center; color:#64748b; font-size:11px;">${p.pct.toFixed(1)}% Voto</td>
+          <td class="party-seats-td">${p.totalSeats} <span style="font-size:11px; font-weight:400; color:#64748b;">seggi</span></td>
+        </tr>
+      `;
+    });
+
+    const stackedBar = document.getElementById('stacked-bar');
+    stackedBar.innerHTML = '';
+    
+    sortedCoalitions.forEach(cKey => {
+      const seats = coalitionSeats[cKey];
+      if (seats === 0) return;
+      const pctWidth = (seats / totalSeats) * 100;
+
+      stackedBar.innerHTML += `
+        <div class="stacked-segment" style="width: ${pctWidth}%; background-color: ${coalitionNames[cKey].color};" title="${coalitionNames[cKey].name}: ${seats} seggi">
+          ${pctWidth > 8 ? seats + ' (' + pctWidth.toFixed(0) + '%)' : ''}
+        </div>
+      `;
+    });
+
+    document.getElementById('bar-summary-text').innerText = `Maggioranza: ${majorityThreshold} seggi su ${totalSeats}`;
+  }
+
+  function downloadImage() {
+    const area = document.getElementById('capture-area');
+    html2canvas(area, { 
+      scale: 2,
+      useCORS: true
+    }).then(canvas => {
+      const link = document.createElement('a');
+      link.download = `proiezione-seggi-2027-${document.getElementById('input-date').value.replace(/\s+/g, '_')}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  }
+
+  renderInputs();
+  calculateAndDraw();
+</script>
+
+</body>
+</html>
