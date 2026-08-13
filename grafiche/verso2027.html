@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stima Seggi Parlamento - Maggio 2026</title>
+    <title>Stima Seggi Parlamento</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -12,13 +12,6 @@
             --text-dark: #0f172a;
             --text-muted: #64748b;
             --border-color: #e2e8f0;
-            
-            /* Colori Partiti/Coalizioni */
-            --cdx-color: #0b3c5d;
-            --csx-color: #e63946;
-            --m5s-color: #ffb703;
-            --altri-color: #708090;
-            --centro-color: #9d4edd;
         }
 
         * {
@@ -79,10 +72,9 @@
             font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            text-align: right;
         }
 
-        /* Griglia Principale */
+        /* Layout */
         .grid-layout {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -102,7 +94,7 @@
             justify-content: space-between;
         }
 
-        /* Card Coalizioni */
+        /* Coalizioni */
         .coalition-card {
             display: flex;
             justify-content: space-between;
@@ -111,14 +103,8 @@
             padding: 12px 16px;
             border-radius: 8px;
             margin-bottom: 10px;
-            border-left: 5px solid transparent;
+            border-left: 5px solid #ccc;
         }
-
-        .coalition-card.cdx { border-left-color: var(--cdx-color); }
-        .coalition-card.csx { border-left-color: var(--csx-color); }
-        .coalition-card.altri { border-left-color: var(--altri-color); }
-        .coalition-card.m5s { border-left-color: var(--m5s-color); }
-        .coalition-card.centro { border-left-color: var(--centro-color); }
 
         .coalition-info h3 {
             font-size: 15px;
@@ -159,7 +145,7 @@
             font-weight: 600;
         }
 
-        /* Lista Partiti */
+        /* Partiti */
         .party-list {
             display: flex;
             flex-direction: column;
@@ -236,10 +222,10 @@
             color: #fff;
             font-size: 11px;
             font-weight: 800;
-            transition: width 0.3s ease;
+            white-space: nowrap;
+            overflow: hidden;
         }
 
-        /* Footer */
         .footer-note {
             margin-top: 20px;
             font-size: 10px;
@@ -247,214 +233,183 @@
             line-height: 1.4;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
-            .grid-layout {
-                grid-template-columns: 1fr;
-            }
-            .header {
-                flex-direction: column;
-                gap: 10px;
-            }
+            .grid-layout { grid-template-columns: 1fr; }
+            .header { flex-direction: column; gap: 10px; }
         }
     </style>
 </head>
 <body>
 
 <div class="dashboard-container">
-    <!-- Intestazione -->
     <div class="header">
         <div>
-            <h1>Stima Seggi Parlamento</h1>
-            <p>Camera dei Deputati (400 Segi) • Supermedia Sondaggi - Maggio 2026</p>
+            <h1 id="title-text">Stima Seggi Parlamento</h1>
+            <p id="subtitle-text">Camera dei Deputati (400 Segi) • Supermedia Sondaggi - Maggio 2026</p>
         </div>
-        <div class="author-tag">
+        <div class="author-tag" id="author-text">
             Bruno Rachiele
         </div>
     </div>
 
-    <!-- Griglia Dati: Coalizioni e Partiti -->
     <div class="grid-layout">
-        
-        <!-- Colonna Sinistra: Coalizioni -->
         <div>
             <div class="section-title">
                 <span>Stima Seggi Coalizioni</span>
                 <span>Totale Seggi</span>
             </div>
-
-            <div class="coalition-card cdx">
-                <div class="coalition-info">
-                    <h3>Centrodestra <span class="badge-maggioranza">Maggioranza</span></h3>
-                    <p>Noi Moderati • Lega • Fratelli d'Italia • Forza Italia</p>
-                </div>
-                <div class="coalition-seats">
-                    <div class="num">227</div>
-                    <div class="pct">(56.8%)</div>
-                </div>
-            </div>
-
-            <div class="coalition-card csx">
-                <div class="coalition-info">
-                    <h3>Centrosinistra</h3>
-                    <p>Alleanza Verdi-Sinistra • +Europa • Partito Democratico</p>
-                </div>
-                <div class="coalition-seats">
-                    <div class="num">85</div>
-                    <div class="pct">(21.3%)</div>
-                </div>
-            </div>
-
-            <div class="coalition-card altri">
-                <div class="coalition-info">
-                    <h3>Altri / Non Coalizzati</h3>
-                    <p>Civiche • Futuro Nazionale • Altri</p>
-                </div>
-                <div class="coalition-seats">
-                    <div class="num">43</div>
-                    <div class="pct">(10.8%)</div>
-                </div>
-            </div>
-
-            <div class="coalition-card m5s">
-                <div class="coalition-info">
-                    <h3>M5S Solitario</h3>
-                    <p>Movimento 5 Stelle</p>
-                </div>
-                <div class="coalition-seats">
-                    <div class="num">35</div>
-                    <div class="pct">(8.8%)</div>
-                </div>
-            </div>
-
-            <div class="coalition-card centro">
-                <div class="coalition-info">
-                    <h3>Centro / Terzo Polo</h3>
-                    <p>Italia Viva • Azione</p>
-                </div>
-                <div class="coalition-seats">
-                    <div class="num">10</div>
-                    <div class="pct">(2.5%)</div>
-                </div>
-            </div>
+            <div id="coalitions-container"></div>
         </div>
 
-        <!-- Colonna Destra: Singoli Partiti -->
         <div>
             <div class="section-title">
                 <span>Dettaglio Singoli Partiti</span>
                 <span>Seggi Stimati</span>
             </div>
-
-            <div class="party-list">
-                <div class="party-row">
-                    <span class="dot" style="background: #0b3c5d;"></span>
-                    <span class="party-name">Fratelli d'Italia</span>
-                    <span class="party-voto">28.0% Voto</span>
-                    <span class="party-seggi">176 <small style="font-weight:normal; font-size:10px;">seggi</small></span>
-                </div>
-
-                <div class="party-row">
-                    <span class="dot" style="background: #e63946;"></span>
-                    <span class="party-name">Partito Democratico</span>
-                    <span class="party-voto">21.9% Voto</span>
-                    <span class="party-seggi">62 <small style="font-weight:normal; font-size:10px;">seggi</small></span>
-                </div>
-
-                <div class="party-row">
-                    <span class="dot" style="background: #008000;"></span>
-                    <span class="party-name">Lega</span>
-                    <span class="party-voto">7.4% Voto</span>
-                    <span class="party-seggi">44 <small style="font-weight:normal; font-size:10px;">seggi</small></span>
-                </div>
-
-                <div class="party-row">
-                    <span class="dot" style="background: #ffb703;"></span>
-                    <span class="party-name">Movimento 5 Stelle</span>
-                    <span class="party-voto">12.5% Voto</span>
-                    <span class="party-seggi">35 <small style="font-weight:normal; font-size:10px;">seggi</small></span>
-                </div>
-
-                <div class="party-row">
-                    <span class="dot" style="background: #0077b6;"></span>
-                    <span class="party-name">Forza Italia</span>
-                    <span class="party-voto">8.1% Voto</span>
-                    <span class="party-seggi">23 <small style="font-weight:normal; font-size:10px;">seggi</small></span>
-                </div>
-
-                <div class="party-row">
-                    <span class="dot" style="background: #4cc9f0;"></span>
-                    <span class="party-name">Alleanza Verdi-Sinistra</span>
-                    <span class="party-voto">6.6% Voto</span>
-                    <span class="party-seggi">19 <small style="font-weight:normal; font-size:10px;">seggi</small></span>
-                </div>
-
-                <div class="party-row">
-                    <span class="dot" style="background: #708090;"></span>
-                    <span class="party-name">Altri / Civiche</span>
-                    <span class="party-voto">3.6% Voto</span>
-                    <span class="party-seggi">10 <small style="font-weight:normal; font-size:10px;">seggi</small></span>
-                </div>
-
-                <div class="party-row">
-                    <span class="dot" style="background: #00b4d8;"></span>
-                    <span class="party-name">Futuro Nazionale</span>
-                    <span class="party-voto">3.4% Voto</span>
-                    <span class="party-seggi">10 <small style="font-weight:normal; font-size:10px;">seggi</small></span>
-                </div>
-
-                <div class="party-row">
-                    <span class="dot" style="background: #9d4edd;"></span>
-                    <span class="party-name">Azione</span>
-                    <span class="party-voto">3.1% Voto</span>
-                    <span class="party-seggi">9 <small style="font-weight:normal; font-size:10px;">seggi</small></span>
-                </div>
-
-                <div class="party-row">
-                    <span class="dot" style="background: #1d3557;"></span>
-                    <span class="party-name">Noi Moderati</span>
-                    <span class="party-voto">1.2% Voto</span>
-                    <span class="party-seggi">7 <small style="font-weight:normal; font-size:10px;">seggi</small></span>
-                </div>
-
-                <div class="party-row">
-                    <span class="dot" style="background: #ff9f1c;"></span>
-                    <span class="party-name">+Europa</span>
-                    <span class="party-voto">1.6% Voto</span>
-                    <span class="party-seggi">4 <small style="font-weight:normal; font-size:10px;">seggi</small></span>
-                </div>
-
-                <div class="party-row">
-                    <span class="dot" style="background: #c77dff;"></span>
-                    <span class="party-name">Italia Viva</span>
-                    <span class="party-voto">2.6% Voto</span>
-                    <span class="party-seggi">1 <small style="font-weight:normal; font-size:10px;">seggio</small></span>
-                </div>
-            </div>
+            <div class="party-list" id="parties-container"></div>
         </div>
-
     </div>
 
-    <!-- Barra Ripartizione Totale -->
     <div class="distribution-box">
         <div class="distribution-header">
             <span>Ripartizione Totale Seggi (% Aula)</span>
-            <span>Maggioranza: 201 seggi su 400</span>
+            <span id="majority-text">Maggioranza: 201 seggi su 400</span>
         </div>
-        <div class="progress-bar-container">
-            <div class="segment" style="width: 56.8%; background-color: var(--cdx-color);" title="Centrodestra: 227 (57%)">227 (57%)</div>
-            <div class="segment" style="width: 21.3%; background-color: var(--csx-color);" title="Centrosinistra: 85 (21%)">85 (21%)</div>
-            <div class="segment" style="width: 10.8%; background-color: var(--altri-color);" title="Altri: 43 (11%)">43 (11%)</div>
-            <div class="segment" style="width: 8.8%; background-color: var(--m5s-color);" title="M5S: 35 (9%)">35 (9%)</div>
-            <div class="segment" style="width: 2.5%; background-color: var(--centro-color);" title="Centro: 10"></div>
-        </div>
+        <div class="progress-bar-container" id="progress-bar"></div>
     </div>
 
-    <!-- Note di Fondo -->
-    <div class="footer-note">
-        *Stima dell'assegnazione dei seggi calcolata sulla base della legge elettorale vigente (37% maggioritario uninominale, 61% proporzionale plurinominale). Le proiezioni nei collegi uninominali sono elaborate aggregando le percentuali delle coalizioni su scala nazionale. Data aggiornamento: SUPERMEDIA SONDAGGI - MAGGIO 2026.
+    <div class="footer-note" id="footer-text">
+        *Stima dell'assegnazione dei seggi calcolata sulla base della legge elettorale vigente. Data aggiornamento: MAGGIO 2026.
     </div>
 </div>
+
+<script>
+    // ==========================================
+    // AREA EDITABILE: MODIFICA I DATI QUI SOTTO
+    // ==========================================
+    const CONFIG = {
+        title: "Stima Seggi Parlamento",
+        subtitle: "Camera dei Deputati (400 Segi) • Supermedia Sondaggi - Maggio 2026",
+        author: "Bruno Rachiele",
+        totaleSeggi: 400,
+        sogliaMaggioranza: 201,
+
+        coalizioni: [
+            {
+                nome: "Centrodestra",
+                partitiInclusi: "Noi Moderati • Lega • Fratelli d'Italia • Forza Italia",
+                seggi: 227,
+                colore: "#0b3c5d",
+                haMaggioranza: true
+            },
+            {
+                nome: "Centrosinistra",
+                partitiInclusi: "Alleanza Verdi-Sinistra • +Europa • Partito Democratico",
+                seggi: 85,
+                colore: "#e63946",
+                haMaggioranza: false
+            },
+            {
+                nome: "Altri / Non Coalizzati",
+                partitiInclusi: "Civiche • Futuro Nazionale • Altri",
+                seggi: 43,
+                colore: "#708090",
+                haMaggioranza: false
+            },
+            {
+                nome: "M5S Solitario",
+                partitiInclusi: "Movimento 5 Stelle",
+                seggi: 35,
+                colore: "#ffb703",
+                haMaggioranza: false
+            },
+            {
+                nome: "Centro / Terzo Polo",
+                partitiInclusi: "Italia Viva • Azione",
+                seggi: 10,
+                colore: "#9d4edd",
+                haMaggioranza: false
+            }
+        ],
+
+        partiti: [
+            { nome: "Fratelli d'Italia", voto: "28.0%", seggi: 176, colore: "#0b3c5d" },
+            { nome: "Partito Democratico", voto: "21.9%", seggi: 62, colore: "#e63946" },
+            { nome: "Lega", voto: "7.4%", seggi: 44, colore: "#008000" },
+            { nome: "Movimento 5 Stelle", voto: "12.5%", seggi: 35, colore: "#ffb703" },
+            { nome: "Forza Italia", voto: "8.1%", seggi: 23, colore: "#0077b6" },
+            { nome: "Alleanza Verdi-Sinistra", voto: "6.6%", seggi: 19, colore: "#4cc9f0" },
+            { nome: "Altri / Civiche", voto: "3.6%", seggi: 10, colore: "#708090" },
+            { nome: "Futuro Nazionale", voto: "3.4%", seggi: 10, colore: "#00b4d8" },
+            { nome: "Azione", voto: "3.1%", seggi: 9, colore: "#9d4edd" },
+            { nome: "Noi Moderati", voto: "1.2%", seggi: 7, colore: "#1d3557" },
+            { nome: "+Europa", voto: "1.6%", seggi: 4, colore: "#ff9f1c" },
+            { nome: "Italia Viva", voto: "2.6%", seggi: 1, colore: "#c77dff" }
+        ]
+    };
+
+    // ==========================================
+    // LOGICA DI RENDERING AUTOMATICO
+    // ==========================================
+    function renderDashboard() {
+        document.getElementById('title-text').innerText = CONFIG.title;
+        document.getElementById('subtitle-text').innerText = CONFIG.subtitle;
+        document.getElementById('author-text').innerText = CONFIG.author;
+        document.getElementById('majority-text').innerText = `Maggioranza: ${CONFIG.sogliaMaggioranza} seggi su ${CONFIG.totaleSeggi}`;
+
+        // Render Coalizioni
+        const coalContainer = document.getElementById('coalitions-container');
+        coalContainer.innerHTML = '';
+        CONFIG.coalizioni.forEach(c => {
+            const pct = ((c.seggi / CONFIG.totaleSeggi) * 100).toFixed(1);
+            const badge = c.haMaggioranza ? '<span class="badge-maggioranza">Maggioranza</span>' : '';
+            
+            coalContainer.innerHTML += `
+                <div class="coalition-card" style="border-left-color: ${c.colore}">
+                    <div class="coalition-info">
+                        <h3>${c.nome} ${badge}</h3>
+                        <p>${c.partitiInclusi}</p>
+                    </div>
+                    <div class="coalition-seats">
+                        <div class="num">${c.seggi}</div>
+                        <div class="pct">(${pct}%)</div>
+                    </div>
+                </div>
+            `;
+        });
+
+        // Render Partiti
+        const partyContainer = document.getElementById('parties-container');
+        partyContainer.innerHTML = '';
+        CONFIG.partiti.forEach(p => {
+            partyContainer.innerHTML += `
+                <div class="party-row">
+                    <span class="dot" style="background: ${p.colore}"></span>
+                    <span class="party-name">${p.nome}</span>
+                    <span class="party-voto">${p.voto} Voto</span>
+                    <span class="party-seggi">${p.seggi} <small style="font-weight:normal; font-size:10px;">segg${p.seggi === 1 ? 'o' : 'i'}</small></span>
+                </div>
+            `;
+        });
+
+        // Render Barra
+        const barContainer = document.getElementById('progress-bar');
+        barContainer.innerHTML = '';
+        CONFIG.coalizioni.forEach(c => {
+            const pct = ((c.seggi / CONFIG.totaleSeggi) * 100).toFixed(1);
+            if(c.seggi > 0) {
+                barContainer.innerHTML += `
+                    <div class="segment" style="width: ${pct}%; background-color: ${c.colore};" title="${c.nome}: ${c.seggi} (${pct}%)">
+                        ${pct > 5 ? `${c.seggi} (${Math.round(pct)}%)` : ''}
+                    </div>
+                `;
+            }
+        });
+    }
+
+    // Esegui al caricamento
+    renderDashboard();
+</script>
 
 </body>
 </html>
