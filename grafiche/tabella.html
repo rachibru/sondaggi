@@ -11,19 +11,6 @@
   <!-- Script per esportare in immagine PNG -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   
-  <script>
-    // PROTEZIONE CON PASSWORD
-    (function checkAuth() {
-      const passwordCorretta = "191004";
-      let inserita = prompt("Inserisci la password per accedere al generatore:");
-      
-      if (inserita !== passwordCorretta) {
-        alert("Password errata! Accesso negato.");
-        document.write("<h2 style='font-family:sans-serif; text-align:center; margin-top:50px; color:red;'>Accesso Negato. Ricarica la pagina per riprovare.</h2>");
-        window.stop();
-      }
-    })();
-  </script>
 
   <style>
     :root {
