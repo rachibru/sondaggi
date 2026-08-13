@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stima Seggi Parlamento - Generatore Immagine</title>
+    <title>Stima Seggi Parlamento - Calcolo Automatico</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <!-- Libreria per trasformare l'HTML in Immagine PNG -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
@@ -16,267 +15,53 @@
             --border-color: #e2e8f0;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-dark); display: flex; flex-direction: column; align-items: center; padding: 20px; }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-dark);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-
-        /* --- CONTROLLI TOP --- */
-        .controls-container {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .btn {
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: 700;
-            border-radius: 6px;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.1s;
-        }
-
-        .btn:active { transform: scale(0.98); }
+        .controls-container { display: flex; gap: 12px; margin-bottom: 20px; }
+        .btn { color: white; border: none; padding: 10px 20px; font-size: 14px; font-weight: 700; border-radius: 6px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .btn-blue { background-color: #2563eb; }
         .btn-green { background-color: #10b981; }
 
-        /* --- PANNELLO DI EDITING --- */
-        .editor-panel {
-            background: #ffffff;
-            border: 2px solid #2563eb;
-            border-radius: 12px;
-            max-width: 950px;
-            width: 100%;
-            padding: 20px;
-            margin-bottom: 30px;
-            display: none;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-        }
-
+        .editor-panel { background: #ffffff; border: 2px solid #2563eb; border-radius: 12px; max-width: 950px; width: 100%; padding: 20px; margin-bottom: 30px; display: none; }
         .editor-panel.open { display: block; }
+        .editor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px; }
+        .editor-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
+        .editor-group label { font-size: 12px; font-weight: 700; }
+        .editor-group input, .editor-group select { padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 13px; width: 100%; }
 
-        .editor-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 15px;
-        }
+        .edit-item-row { display: grid; grid-template-columns: 2fr 1fr 1.5fr 40px; gap: 8px; align-items: center; margin-bottom: 6px; }
+        .edit-item-row input, .edit-item-row select { padding: 6px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 12px; width: 100%; }
 
-        .editor-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 10px;
-        }
+        .dashboard-container { background: var(--card-bg); max-width: 950px; width: 100%; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); }
+        .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid var(--text-dark); padding-bottom: 15px; margin-bottom: 25px; }
+        .header h1 { font-size: 26px; font-weight: 900; text-transform: uppercase; }
+        .header p { font-size: 13px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-top: 4px; }
+        .author-tag { background: #0f172a; color: #fff; padding: 8px 14px; border-radius: 6px; font-weight: 800; font-size: 13px; text-transform: uppercase; }
 
-        .editor-group label {
-            font-size: 12px;
-            font-weight: 700;
-        }
+        .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 25px; }
+        .section-title { font-size: 13px; font-weight: 800; text-transform: uppercase; border-bottom: 2px solid var(--text-dark); padding-bottom: 6px; margin-bottom: 15px; display: flex; justify-content: space-between; }
 
-        .editor-group input {
-            padding: 8px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 13px;
-            width: 100%;
-        }
-
-        .edit-item-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 40px;
-            gap: 8px;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-
-        .edit-item-row input {
-            padding: 6px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 12px;
-            width: 100%;
-        }
-
-        /* --- DASHBOARD GRAFICA --- */
-        .dashboard-container {
-            background: var(--card-bg);
-            max-width: 950px;
-            width: 100%;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            border-bottom: 3px solid var(--text-dark);
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-        }
-
-        .header h1 {
-            font-size: 26px;
-            font-weight: 900;
-            text-transform: uppercase;
-        }
-
-        .header p {
-            font-size: 13px;
-            color: var(--text-muted);
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-top: 4px;
-        }
-
-        .author-tag {
-            background: #0f172a;
-            color: #fff;
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-weight: 800;
-            font-size: 13px;
-            text-transform: uppercase;
-        }
-
-        .grid-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 25px;
-        }
-
-        .section-title {
-            font-size: 13px;
-            font-weight: 800;
-            text-transform: uppercase;
-            border-bottom: 2px solid var(--text-dark);
-            padding-bottom: 6px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .coalition-card {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #f8fafc;
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border-left: 5px solid #ccc;
-        }
-
-        .coalition-info h3 {
-            font-size: 15px;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .badge-maggioranza {
-            background: #10b981;
-            color: #fff;
-            font-size: 9px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 800;
-            text-transform: uppercase;
-        }
-
-        .coalition-info p {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
+        .coalition-card { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 12px 16px; border-radius: 8px; margin-bottom: 10px; border-left: 5px solid #ccc; }
+        .coalition-info h3 { font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+        .badge-maggioranza { background: #10b981; color: #fff; font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800; text-transform: uppercase; }
+        .coalition-info p { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
         .coalition-seats { text-align: right; }
         .coalition-seats .num { font-size: 18px; font-weight: 900; }
         .coalition-seats .pct { font-size: 11px; color: var(--text-muted); font-weight: 600; }
 
         .party-list { display: flex; flex-direction: column; gap: 8px; }
-
-        .party-row {
-            display: grid;
-            grid-template-columns: auto 1fr auto auto;
-            align-items: center;
-            gap: 10px;
-            font-size: 13px;
-            padding: 4px 0;
-            border-bottom: 1px dashed var(--border-color);
-        }
-
+        .party-row { display: grid; grid-template-columns: auto 1fr auto auto; align-items: center; gap: 10px; font-size: 13px; padding: 4px 0; border-bottom: 1px dashed var(--border-color); }
         .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
         .party-name { font-weight: 700; }
         .party-voto { color: var(--text-muted); font-size: 12px; font-weight: 600; text-align: right; padding-right: 10px; }
         .party-seggi { font-weight: 800; text-align: right; min-width: 50px; }
 
-        .distribution-box {
-            background: #f8fafc;
-            padding: 18px;
-            border-radius: 10px;
-            border: 1px solid var(--border-color);
-        }
-
-        .distribution-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            font-weight: 800;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-
-        .progress-bar-container {
-            height: 24px;
-            width: 100%;
-            background: #e2e8f0;
-            border-radius: 6px;
-            overflow: hidden;
-            display: flex;
-        }
-
-        .segment {
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 11px;
-            font-weight: 800;
-            white-space: nowrap;
-        }
-
-        .footer-note {
-            margin-top: 20px;
-            font-size: 10px;
-            color: var(--text-muted);
-            line-height: 1.4;
-        }
-
-        @media (max-width: 768px) {
-            .grid-layout, .editor-grid { grid-template-columns: 1fr; }
-            .header { flex-direction: column; gap: 10px; }
-        }
+        .distribution-box { background: #f8fafc; padding: 18px; border-radius: 10px; border: 1px solid var(--border-color); }
+        .distribution-header { display: flex; justify-content: space-between; font-size: 12px; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; }
+        .progress-bar-container { height: 24px; width: 100%; background: #e2e8f0; border-radius: 6px; overflow: hidden; display: flex; }
+        .segment { height: 100%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 11px; font-weight: 800; white-space: nowrap; }
+        .footer-note { margin-top: 20px; font-size: 10px; color: var(--text-muted); line-height: 1.4; }
     </style>
 </head>
 <body>
@@ -286,9 +71,8 @@
     <button class="btn btn-green" onclick="downloadImage()">📸 Scarica Immagine PNG</button>
 </div>
 
-<!-- PANNELLO DI EDITING -->
 <div class="editor-panel" id="editorPanel">
-    <h2 style="font-size: 16px; font-weight: 800; margin-bottom: 10px;">Pannello di Modifica Dati</h2>
+    <h2 style="font-size: 16px; font-weight: 800; margin-bottom: 10px;">Pannello Modifica (Calcolo Automatico Seggi)</h2>
     
     <div class="editor-grid">
         <div>
@@ -307,16 +91,15 @@
         </div>
 
         <div>
-            <h4 style="font-size: 13px; font-weight: 700; margin-bottom: 8px;">Coalizioni (Nome | Seggi | Colore)</h4>
+            <h4 style="font-size: 13px; font-weight: 700; margin-bottom: 8px;">Coalizioni (Nome | Colore)</h4>
             <div id="editorCoalitions"></div>
         </div>
     </div>
 
-    <h4 style="font-size: 13px; font-weight: 700; margin-top: 15px; margin-bottom: 8px;">Partiti (Nome | % Voto | Seggi | Colore)</h4>
+    <h4 style="font-size: 13px; font-weight: 700; margin-top: 15px; margin-bottom: 8px;">Partiti (Nome | % Voto | Coalizione | Colore)</h4>
     <div id="editorParties"></div>
 </div>
 
-<!-- GRAFICA DA CATTURARE COME IMMAGINE -->
 <div class="dashboard-container" id="captureArea">
     <div class="header">
         <div>
@@ -353,36 +136,36 @@
     </div>
 
     <div class="footer-note" id="footer-text">
-        *Stima dell'assegnazione dei seggi calcolata sulla base della legge elettorale vigente. Data aggiornamento: SUPERMEDIA SONDAGGI - MAGGIO 2026.
+        *Seggi calcolati in proporzione alle % di voto inserite su un totale di 400 seggi della Camera dei Deputati.
     </div>
 </div>
 
 <script>
     let DATA = {
         title: "Stima Seggi Parlamento",
-        subtitle: "Camera dei Deputati (400 Segi) • Supermedia Sondaggi - Maggio 2026",
+        subtitle: "Camera dei Deputati (400 Segni) • Supermedia Sondaggi - Maggio 2026",
         author: "brunorachiele.it",
         totaleSeggi: 400,
         coalizioni: [
-            { nome: "Centrodestra", partiti: "Noi Moderati • Lega • Fratelli d'Italia • Forza Italia", seggi: 227, colore: "#0b3c5d", maggioranza: true },
-            { nome: "Centrosinistra", partiti: "Alleanza Verdi-Sinistra • +Europa • Partito Democratico", seggi: 85, colore: "#e63946", maggioranza: false },
-            { nome: "Altri / Non Coalizzati", partiti: "Civiche • Futuro Nazionale • Altri", seggi: 43, colore: "#708090", maggioranza: false },
-            { nome: "M5S Solitario", partiti: "Movimento 5 Stelle", seggi: 35, colore: "#ffb703", maggioranza: false },
-            { nome: "Centro / Terzo Polo", partiti: "Italia Viva • Azione", seggi: 10, colore: "#9d4edd", maggioranza: false }
+            { id: "cdx", nome: "Centrodestra", colore: "#0b3c5d" },
+            { id: "csx", nome: "Centrosinistra", colore: "#e63946" },
+            { id: "m5s", nome: "M5S Solitario", colore: "#ffb703" },
+            { id: "cent", nome: "Centro / Terzo Polo", colore: "#9d4edd" },
+            { id: "altri", nome: "Altri / Non Coalizzati", colore: "#708090" }
         ],
         partiti: [
-            { nome: "Fratelli d'Italia", voto: "28.0%", seggi: 176, colore: "#0b3c5d" },
-            { nome: "Partito Democratico", voto: "21.9%", seggi: 62, colore: "#e63946" },
-            { nome: "Lega", voto: "7.4%", seggi: 44, colore: "#008000" },
-            { nome: "Movimento 5 Stelle", voto: "12.5%", seggi: 35, colore: "#ffb703" },
-            { nome: "Forza Italia", voto: "8.1%", seggi: 23, colore: "#0077b6" },
-            { nome: "Alleanza Verdi-Sinistra", voto: "6.6%", seggi: 19, colore: "#4cc9f0" },
-            { nome: "Altri / Civiche", voto: "3.6%", seggi: 10, colore: "#708090" },
-            { nome: "Futuro Nazionale", voto: "3.4%", seggi: 10, colore: "#00b4d8" },
-            { nome: "Azione", voto: "3.1%", seggi: 9, colore: "#9d4edd" },
-            { nome: "Noi Moderati", voto: "1.2%", seggi: 7, colore: "#1d3557" },
-            { nome: "+Europa", voto: "1.6%", seggi: 4, colore: "#ff9f1c" },
-            { nome: "Italia Viva", voto: "2.6%", seggi: 1, colore: "#c77dff" }
+            { nome: "Fratelli d'Italia", voto: 28.0, coalizioneId: "cdx", colore: "#0b3c5d" },
+            { nome: "Partito Democratico", voto: 21.9, coalizioneId: "csx", colore: "#e63946" },
+            { nome: "Movimento 5 Stelle", voto: 12.5, coalizioneId: "m5s", colore: "#ffb703" },
+            { nome: "Forza Italia", voto: 8.1, coalizioneId: "cdx", colore: "#0077b6" },
+            { nome: "Lega", voto: 7.4, coalizioneId: "cdx", colore: "#008000" },
+            { nome: "Alleanza Verdi-Sinistra", voto: 6.6, coalizioneId: "csx", colore: "#4cc9f0" },
+            { nome: "Altri / Civiche", voto: 3.6, coalizioneId: "altri", colore: "#708090" },
+            { nome: "Futuro Nazionale", voto: 3.4, coalizioneId: "altri", colore: "#00b4d8" },
+            { nome: "Azione", voto: 3.1, coalizioneId: "cent", colore: "#9d4edd" },
+            { nome: "Italia Viva", voto: 2.6, coalizioneId: "cent", colore: "#c77dff" },
+            { nome: "+Europa", voto: 1.6, coalizioneId: "csx", colore: "#ff9f1c" },
+            { nome: "Noi Moderati", voto: 1.2, coalizioneId: "cdx", colore: "#1d3557" }
         ]
     };
 
@@ -390,13 +173,9 @@
         document.getElementById('editorPanel').classList.toggle('open');
     }
 
-    // FUNZIONE PER SCARICARE L'IMMAGINE PNG
     function downloadImage() {
         const captureArea = document.getElementById('captureArea');
-        html2canvas(captureArea, {
-            scale: 2, // Alta definizione
-            backgroundColor: '#ffffff'
-        }).then(canvas => {
+        html2canvas(captureArea, { scale: 2, backgroundColor: '#ffffff' }).then(canvas => {
             const link = document.createElement('a');
             link.download = 'stima-seggi-parlamento.png';
             link.href = canvas.toDataURL('image/png');
@@ -409,26 +188,28 @@
         document.getElementById('editSubtitle').value = DATA.subtitle;
         document.getElementById('editAuthor').value = DATA.author;
 
+        // Coalizioni editor
         const cContainer = document.getElementById('editorCoalitions');
         cContainer.innerHTML = '';
         DATA.coalizioni.forEach((c, idx) => {
             cContainer.innerHTML += `
-                <div class="edit-item-row">
+                <div class="edit-item-row" style="grid-template-columns: 2fr 40px;">
                     <input type="text" value="${c.nome}" oninput="DATA.coalizioni[${idx}].nome=this.value; render();">
-                    <input type="number" value="${c.seggi}" oninput="DATA.coalizioni[${idx}].seggi=parseInt(this.value)||0; render();">
                     <input type="color" value="${c.colore}" oninput="DATA.coalizioni[${idx}].colore=this.value; render();">
                 </div>
             `;
         });
 
+        // Partiti editor
         const pContainer = document.getElementById('editorParties');
         pContainer.innerHTML = '';
         DATA.partiti.forEach((p, idx) => {
+            let options = DATA.coalizioni.map(c => `<option value="${c.id}" ${p.coalizioneId === c.id ? 'selected' : ''}>${c.nome}</option>`).join('');
             pContainer.innerHTML += `
                 <div class="edit-item-row">
                     <input type="text" value="${p.nome}" oninput="DATA.partiti[${idx}].nome=this.value; render();">
-                    <input type="text" value="${p.voto}" oninput="DATA.partiti[${idx}].voto=this.value; render();">
-                    <input type="number" value="${p.seggi}" oninput="DATA.partiti[${idx}].seggi=parseInt(this.value)||0; render();">
+                    <input type="number" step="0.1" value="${p.voto}" oninput="DATA.partiti[${idx}].voto=parseFloat(this.value)||0; render();">
+                    <select onchange="DATA.partiti[${idx}].coalizioneId=this.value; render();">${options}</select>
                     <input type="color" value="${p.colore}" oninput="DATA.partiti[${idx}].colore=this.value; render();">
                 </div>
             `;
@@ -447,46 +228,81 @@
         document.getElementById('subtitle-text').innerText = DATA.subtitle;
         document.getElementById('author-text').innerText = DATA.author;
 
+        // Calcolo automatico seggi basato sulle %
+        let totaleVoti = DATA.partiti.reduce((sum, p) => sum + p.voto, 0);
+        
+        // Calcolo seggi partiti e assegnazione alle coalizioni
+        let coalizioniStats = {};
+        DATA.coalizioni.forEach(c => {
+            coalizioniStats[c.id] = { seggi: 0, partitiNomi: [] };
+        });
+
+        const partyContainer = document.getElementById('parties-container');
+        partyContainer.innerHTML = '';
+
+        DATA.partiti.forEach(p => {
+            // Calcolo proporzionale seggi
+            let seggi = totaleVoti > 0 ? Math.round((p.voto / totaleVoti) * DATA.totaleSeggi) : 0;
+            p.seggiCalculated = seggi;
+
+            if (coalizioniStats[p.coalizioneId]) {
+                coalizioniStats[p.coalizioneId].seggi += seggi;
+                coalizioniStats[p.coalizioneId].partitiNomi.push(p.nome);
+            }
+
+            partyContainer.innerHTML += `
+                <div class="party-row">
+                    <span class="dot" style="background: ${p.colore}"></span>
+                    <span class="party-name">${p.nome}</span>
+                    <span class="party-voto">${p.voto.toFixed(1)}%</span>
+                    <span class="party-seggi">${seggi} <small style="font-weight:normal; font-size:10px;">seggi</small></span>
+                </div>
+            `;
+        });
+
+        // Trova la coalizione di maggioranza (quella con più seggi)
+        let maxSeggi = -1;
+        let idMaggioranza = null;
+        Object.keys(coalizioniStats).forEach(id => {
+            if(coalizioniStats[id].seggi > maxSeggi && coalizioniStats[id].seggi >= 201) {
+                maxSeggi = coalizioniStats[id].seggi;
+                idMaggioranza = id;
+            }
+        });
+
+        // Render Coalizioni
         const coalContainer = document.getElementById('coalitions-container');
         coalContainer.innerHTML = '';
         DATA.coalizioni.forEach(c => {
-            const pct = ((c.seggi / DATA.totaleSeggi) * 100).toFixed(1);
-            const badge = c.maggioranza ? '<span class="badge-maggioranza">Maggioranza</span>' : '';
+            let stats = coalizioniStats[c.id];
+            let pct = ((stats.seggi / DATA.totaleSeggi) * 100).toFixed(1);
+            let badge = (c.id === idMaggioranza) ? '<span class="badge-maggioranza">Maggioranza</span>' : '';
+            let elencoPartiti = stats.partitiNomi.join(' • ') || 'Nessun partito';
+
             coalContainer.innerHTML += `
                 <div class="coalition-card" style="border-left-color: ${c.colore}">
                     <div class="coalition-info">
                         <h3>${c.nome} ${badge}</h3>
-                        <p>${c.partiti}</p>
+                        <p>${elencoPartiti}</p>
                     </div>
                     <div class="coalition-seats">
-                        <div class="num">${c.seggi}</div>
+                        <div class="num">${stats.seggi}</div>
                         <div class="pct">(${pct}%)</div>
                     </div>
                 </div>
             `;
         });
 
-        const partyContainer = document.getElementById('parties-container');
-        partyContainer.innerHTML = '';
-        DATA.partiti.forEach(p => {
-            partyContainer.innerHTML += `
-                <div class="party-row">
-                    <span class="dot" style="background: ${p.colore}"></span>
-                    <span class="party-name">${p.nome}</span>
-                    <span class="party-voto">${p.voto} Voto</span>
-                    <span class="party-seggi">${p.seggi} <small style="font-weight:normal; font-size:10px;">segg${p.seggi === 1 ? 'o' : 'i'}</small></span>
-                </div>
-            `;
-        });
-
+        // Render Barra
         const barContainer = document.getElementById('progress-bar');
         barContainer.innerHTML = '';
         DATA.coalizioni.forEach(c => {
-            const pct = ((c.seggi / DATA.totaleSeggi) * 100).toFixed(1);
-            if(c.seggi > 0) {
+            let seggi = coalizioniStats[c.id].seggi;
+            let pct = ((seggi / DATA.totaleSeggi) * 100).toFixed(1);
+            if(seggi > 0) {
                 barContainer.innerHTML += `
-                    <div class="segment" style="width: ${pct}%; background-color: ${c.colore};" title="${c.nome}: ${c.seggi}">
-                        ${pct > 5 ? `${c.seggi} (${Math.round(pct)}%)` : ''}
+                    <div class="segment" style="width: ${pct}%; background-color: ${c.colore};" title="${c.nome}: ${seggi}">
+                        ${pct > 5 ? `${seggi} (${Math.round(pct)}%)` : ''}
                     </div>
                 `;
             }
