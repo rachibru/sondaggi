@@ -254,11 +254,11 @@
     <h2>Dati Sondaggio</h2>
     <div class="form-group">
       <label>Data Corrente (es. 09 MAGGIO 2026)</label>
-      <input type="text" id="input-date" value="09 MAGGIO 2026">
+      <input type="text" id="input-date" value="GG MM AAAA">
     </div>
     <div class="form-group">
       <label>Data Precedente per Trend (es. 02/05/2026)</label>
-      <input type="text" id="input-prev-date" value="02/05/2026">
+      <input type="text" id="input-prev-date" value="GG/MM/AAAA">
     </div>
 
     <h3>Partiti (Percorso Logo | Nome | Stima % | Trend)</h3>
@@ -281,7 +281,7 @@
           </div>
           <div class="title-text">
             <h1>INTENZIONI DI VOTO <span>- SUPERMEDIA</span></h1>
-            <div class="date-text" id="display-date">09 MAGGIO 2026</div>
+            <div class="date-text" id="display-date">DD MM AAAA</div>
           </div>
         </div>
         
@@ -311,17 +311,17 @@
 <script>
   // Dati iniziali predefiniti con i percorsi delle immagini nella cartella img/
   const initialData = [
-    { logo: "../img/fdi.png", party: "FRATELLI D'ITALIA", val: "28,00", trend: -0.42 },
-    { logo: "../img/pd.png", party: "PARTITO DEMOCRATICO", val: "21,97", trend: -0.31 },
-    { logo: "../img/m5s.png", party: "MOVIMENTO 5 STELLE", val: "12,57", trend: -0.21 },
-    { logo: "../img/fi.png", party: "FORZA ITALIA", val: "8,07", trend: -0.18 },
-    { logo: "../img/lega.png", party: "LEGA", val: "7,37", trend: 0.49 },
-    { logo: "../img/avs.png", party: "ALLEANZA VERDI-SINISTRA", val: "6,60", trend: 0.12 },
-    { logo: "../img/fn.png", party: "FUTURO NAZIONALE", val: "3,43", trend: 0.11 },
-    { logo: "../img/azione.png", party: "AZIONE", val: "3,07", trend: 0.07 },
-    { logo: "../img/iv.png", party: "ITALIA VIVA", val: "2,60", trend: 0.13 },
-    { logo: "../img/europa.png", party: ".+EUROPA", val: "1,63", trend: 0.33 },
-    { logo: "../img/nm.png", party: "NOI MODERATI", val: "1,20", trend: 0.03 }
+    { logo: "../img/fdi.png", party: "FRATELLI D'ITALIA", val: "00,00", trend: 0,00 },
+    { logo: "../img/pd.png", party: "PARTITO DEMOCRATICO", val: "00,00", trend: 0,00 },
+    { logo: "../img/m5s.png", party: "MOVIMENTO 5 STELLE", val: "00,00", trend: 0,00 },
+    { logo: "../img/fi.png", party: "FORZA ITALIA", val: "00,00", trend: 0,00 },
+    { logo: "../img/lega.png", party: "LEGA", val: "00,00", trend: 0,00 },
+    { logo: "../img/avs.png", party: "ALLEANZA VERDI-SINISTRA", val: "00,00", trend: 0,00 },
+    { logo: "../img/fn.png", party: "FUTURO NAZIONALE", val: "00,00", trend: 0,00 },
+    { logo: "../img/azione.png", party: "AZIONE", val: "00,00", trend: 0,00 },
+    { logo: "../img/iv.png", party: "ITALIA VIVA", val: "00,00", trend: 0,00 },
+    { logo: "../img/europa.png", party: ".+EUROPA", val: "00,00", trend: 0,00 },
+    { logo: "../img/nm.png", party: "NOI MODERATI", val: "00,00", trend: 0,00 }
   ];
 
   function renderForm() {
