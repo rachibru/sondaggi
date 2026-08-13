@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stima Seggi Parlamento - Modificabile</title>
+    <title>Stima Seggi Parlamento</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -25,90 +25,10 @@
             background-color: var(--bg-color);
             color: var(--text-dark);
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            justify-content: center;
             padding: 20px;
         }
 
-        /* --- BOTTONE TOGGLE PANNELLO --- */
-        .toggle-btn {
-            background-color: #2563eb;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 14px;
-            font-weight: 700;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
-            transition: background 0.2s;
-        }
-
-        .toggle-btn:hover {
-            background-color: #1d4ed8;
-        }
-
-        /* --- PANNELLO DI EDITING --- */
-        .editor-panel {
-            background: #ffffff;
-            border: 2px solid #2563eb;
-            border-radius: 12px;
-            max-width: 950px;
-            width: 100%;
-            padding: 20px;
-            margin-bottom: 30px;
-            display: none; /* Nascondibile */
-            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-        }
-
-        .editor-panel.open {
-            display: block;
-        }
-
-        .editor-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 15px;
-        }
-
-        .editor-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .editor-group label {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .editor-group input {
-            padding: 8px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 13px;
-        }
-
-        .edit-item-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 40px;
-            gap: 8px;
-            align-items: center;
-            margin-bottom: 6px;
-        }
-
-        .edit-item-row input {
-            padding: 6px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 12px;
-        }
-
-        /* --- GRAPHIC CONTAINER --- */
         .dashboard-container {
             background: var(--card-bg);
             max-width: 950px;
@@ -153,7 +73,7 @@
             text-transform: uppercase;
         }
 
-        /* Griglie */
+        /* Layout */
         .grid-layout {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -165,6 +85,7 @@
             font-size: 13px;
             font-weight: 800;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
             border-bottom: 2px solid var(--text-dark);
             padding-bottom: 6px;
             margin-bottom: 15px;
@@ -247,7 +168,7 @@
             display: inline-block;
         }
 
-        .party-name { font-weight: 700; }
+        .party-name { font-weight: 700; color: var(--text-dark); }
         .party-voto { color: var(--text-muted); font-size: 12px; font-weight: 600; text-align: right; padding-right: 10px; }
         .party-seggi { font-weight: 800; text-align: right; min-width: 50px; }
 
@@ -296,46 +217,13 @@
         }
 
         @media (max-width: 768px) {
-            .grid-layout, .editor-grid { grid-template-columns: 1fr; }
+            .grid-layout { grid-template-columns: 1fr; }
             .header { flex-direction: column; gap: 10px; }
         }
     </style>
 </head>
 <body>
 
-<button class="toggle-btn" onclick="toggleEditor()">✏️ Mostra / Nascondi Pannello Modifica</button>
-
-<!-- PANNELLO DI CONTROL EDITABILE -->
-<div class="editor-panel" id="editorPanel">
-    <h2 style="font-size: 16px; font-weight: 800; margin-bottom: 10px;">Pannello di Modifica Dati</h2>
-    
-    <div class="editor-grid">
-        <div>
-            <div class="editor-group">
-                <label>Titolo Principale</label>
-                <input type="text" id="editTitle" oninput="updateData()">
-            </div>
-            <div class="editor-group">
-                <label>Sottotitolo</label>
-                <input type="text" id="editSubtitle" oninput="updateData()">
-            </div>
-            <div class="editor-group">
-                <label>Autore</label>
-                <input type="text" id="editAuthor" oninput="updateData()">
-            </div>
-        </div>
-
-        <div>
-            <h4 style="font-size: 13px; font-weight: 700; margin-bottom: 8px;">Coalizioni (Nome | Seggi | Colore)</h4>
-            <div id="editorCoalitions"></div>
-        </div>
-    </div>
-
-    <h4 style="font-size: 13px; font-weight: 700; margin-top: 15px; margin-bottom: 8px;">Partiti (Nome | % Voto | Seggi | Colore)</h4>
-    <div id="editorParties"></div>
-</div>
-
-<!-- GRAFICA FINALE -->
 <div class="dashboard-container">
     <div class="header">
         <div>
@@ -366,29 +254,66 @@
     <div class="distribution-box">
         <div class="distribution-header">
             <span>Ripartizione Totale Seggi (% Aula)</span>
-            <span id="majority-text">Maggioranza: 201 seggi su 400</span>
+            <span id="majority-text"></span>
         </div>
         <div class="progress-bar-container" id="progress-bar"></div>
     </div>
 
-    <div class="footer-note" id="footer-text">
-        *Stima dell'assegnazione dei seggi calcolata sulla base della legge elettorale vigente. Data aggiornamento: SUPERMEDIA SONDAGGI - MAGGIO 2026.
-    </div>
+    <div class="footer-note" id="footer-text"></div>
 </div>
 
 <script>
-    let DATA = {
+    // =========================================================================
+    // MODIFICA DIRETTAMENTE I DATI E I COLORI QUI SOTTO
+    // =========================================================================
+    const DATA = {
         title: "Stima Seggi Parlamento",
         subtitle: "Camera dei Deputati (400 Segi) • Supermedia Sondaggi - Maggio 2026",
-        author: "Bruno Rachiele",
+        author: "brunorachiele.it",
         totaleSeggi: 400,
+        sogliaMaggioranza: 201,
+        footerNote: "*Stima dell'assegnazione dei seggi calcolata sulla base della legge elettorale vigente. Data aggiornamento: SUPERMEDIA SONDAGGI - MAGGIO 2026.",
+
+        // --- COALIZIONI ---
         coalizioni: [
-            { nome: "Centrodestra", partiti: "Noi Moderati • Lega • Fratelli d'Italia • Forza Italia", seggi: 227, colore: "#0b3c5d", maggioranza: true },
-            { nome: "Centrosinistra", partiti: "Alleanza Verdi-Sinistra • +Europa • Partito Democratico", seggi: 85, colore: "#e63946", maggioranza: false },
-            { nome: "Altri / Non Coalizzati", partiti: "Civiche • Futuro Nazionale • Altri", seggi: 43, colore: "#708090", maggioranza: false },
-            { nome: "M5S Solitario", partiti: "Movimento 5 Stelle", seggi: 35, colore: "#ffb703", maggioranza: false },
-            { nome: "Centro / Terzo Polo", partiti: "Italia Viva • Azione", seggi: 10, colore: "#9d4edd", maggioranza: false }
+            { 
+                nome: "Centrodestra", 
+                partiti: "Noi Moderati • Lega • Fratelli d'Italia • Forza Italia", 
+                seggi: 227, 
+                colore: "#0b3c5d", // <--- Puoi cambiare il colore qui
+                maggioranza: true 
+            },
+            { 
+                nome: "Centrosinistra", 
+                partiti: "Alleanza Verdi-Sinistra • +Europa • Partito Democratico", 
+                seggi: 85, 
+                colore: "#e63946", 
+                maggioranza: false 
+            },
+            { 
+                nome: "Altri / Non Coalizzati", 
+                partiti: "Civiche • Futuro Nazionale • Altri", 
+                seggi: 43, 
+                colore: "#708090", 
+                maggioranza: false 
+            },
+            { 
+                nome: "M5S Solitario", 
+                partiti: "Movimento 5 Stelle", 
+                seggi: 35, 
+                colore: "#ffb703", 
+                maggioranza: false 
+            },
+            { 
+                nome: "Centro / Terzo Polo", 
+                partiti: "Italia Viva • Azione", 
+                seggi: 10, 
+                colore: "#9d4edd", 
+                maggioranza: false 
+            }
         ],
+
+        // --- PARTITI SINGOLI ---
         partiti: [
             { nome: "Fratelli d'Italia", voto: "28.0%", seggi: 176, colore: "#0b3c5d" },
             { nome: "Partito Democratico", voto: "21.9%", seggi: 62, colore: "#e63946" },
@@ -405,55 +330,15 @@
         ]
     };
 
-    function toggleEditor() {
-        const panel = document.getElementById('editorPanel');
-        panel.classList.toggle('open');
-    }
-
-    function initEditorFields() {
-        document.getElementById('editTitle').value = DATA.title;
-        document.getElementById('editSubtitle').value = DATA.subtitle;
-        document.getElementById('editAuthor').value = DATA.author;
-
-        // Coalizioni Inputs
-        const cContainer = document.getElementById('editorCoalitions');
-        cContainer.innerHTML = '';
-        DATA.coalizioni.forEach((c, idx) => {
-            cContainer.innerHTML += `
-                <div class="edit-item-row">
-                    <input type="text" value="${c.nome}" oninput="DATA.coalizioni[${idx}].nome=this.value; render();">
-                    <input type="number" value="${c.seggi}" oninput="DATA.coalizioni[${idx}].seggi=parseInt(this.value)||0; render();">
-                    <input type="color" value="${c.colore}" oninput="DATA.coalizioni[${idx}].colore=this.value; render();">
-                </div>
-            `;
-        });
-
-        // Partiti Inputs
-        const pContainer = document.getElementById('editorParties');
-        pContainer.innerHTML = '';
-        DATA.partiti.forEach((p, idx) => {
-            pContainer.innerHTML += `
-                <div class="edit-item-row">
-                    <input type="text" value="${p.nome}" oninput="DATA.partiti[${idx}].nome=this.value; render();">
-                    <input type="text" value="${p.voto}" oninput="DATA.partiti[${idx}].voto=this.value; render();">
-                    <input type="number" value="${p.seggi}" oninput="DATA.partiti[${idx}].seggi=parseInt(this.value)||0; render();">
-                    <input type="color" value="${p.colore}" oninput="DATA.partiti[${idx}].colore=this.value; render();">
-                </div>
-            `;
-        });
-    }
-
-    function updateData() {
-        DATA.title = document.getElementById('editTitle').value;
-        DATA.subtitle = document.getElementById('editSubtitle').value;
-        DATA.author = document.getElementById('editAuthor').value;
-        render();
-    }
-
+    // =========================================================================
+    // CREAZIONE GRAFICA AUTOMATICA
+    // =========================================================================
     function render() {
         document.getElementById('title-text').innerText = DATA.title;
         document.getElementById('subtitle-text').innerText = DATA.subtitle;
         document.getElementById('author-text').innerText = DATA.author;
+        document.getElementById('majority-text').innerText = `Maggioranza: ${DATA.sogliaMaggioranza} seggi su ${DATA.totaleSeggi}`;
+        document.getElementById('footer-text').innerText = DATA.footerNote;
 
         // Coalizioni
         const coalContainer = document.getElementById('coalitions-container');
@@ -489,7 +374,7 @@
             `;
         });
 
-        // Barra
+        // Barra Ripartizione
         const barContainer = document.getElementById('progress-bar');
         barContainer.innerHTML = '';
         DATA.coalizioni.forEach(c => {
@@ -504,8 +389,6 @@
         });
     }
 
-    // Inizializza
-    initEditorFields();
     render();
 </script>
 
