@@ -12,10 +12,12 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   
   <script>
-    // PROTEZIONE CON PASSWORD (Base64 per non mostrarla in chiaro)
+    // PROTEZIONE CON PASSWORD
     (function checkAuth() {
+      const passwordCorretta = "191004";
       let inserita = prompt("Inserisci la password per accedere al generatore:");
-      if (!inserita || btoa(inserita) !== "MTkxMDA0") {
+      
+      if (inserita !== passwordCorretta) {
         alert("Password errata! Accesso negato.");
         document.write("<h2 style='font-family:sans-serif; text-align:center; margin-top:50px; color:red;'>Accesso Negato. Ricarica la pagina per riprovare.</h2>");
         window.stop();
@@ -296,8 +298,8 @@
           </div>
         </div>
         
-        <!-- Logo Personale (Aggiornato con ../ per uscire da grafiche/) -->
-        <img src="../logo.png" id="site-logo-img" class="site-logo" alt="Logo" onerror="this.style.display='none'">
+        <!-- Logo Personale da Cartella img/ -->
+        <img src="../img/logo.png" id="site-logo-img" class="site-logo" alt="Logo" onerror="this.style.display='none'">
       </div>
 
       <table class="poll-table">
@@ -320,7 +322,7 @@
 </div>
 
 <script>
-  // Dati iniziali con percorsi aggiornati (../img/) per accedere alla cartella img esterna
+  // Dati iniziali predefiniti con i percorsi delle immagini nella cartella img/
   const initialData = [
     { logo: "../img/fdi.png", party: "FRATELLI D'ITALIA", val: "28,00", trend: -0.42 },
     { logo: "../img/pd.png", party: "PARTITO DEMOCRATICO", val: "21,97", trend: -0.31 },
@@ -377,6 +379,7 @@
         arrowHTML = '<span class="arrow-eq">=</span>';
       }
 
+      // Gestione Immagine Partito con nascondimento se non trovata
       const imgTag = logoUrl ? `<img src="${logoUrl}" class="party-logo-img" alt="" onerror="this.style.display='none'">` : '';
 
       tbody.innerHTML += `
