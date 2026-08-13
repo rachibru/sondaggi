@@ -11,6 +11,17 @@
   <!-- Script per esportare in immagine PNG -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   
+  <script>
+    // PROTEZIONE CON PASSWORD (Base64 per non mostrarla in chiaro)
+    (function checkAuth() {
+      let inserita = prompt("Inserisci la password per accedere al generatore:");
+      if (!inserita || btoa(inserita) !== "MTkxMDA0") {
+        alert("Password errata! Accesso negato.");
+        document.write("<h2 style='font-family:sans-serif; text-align:center; margin-top:50px; color:red;'>Accesso Negato. Ricarica la pagina per riprovare.</h2>");
+        window.stop();
+      }
+    })();
+  </script>
 
   <style>
     :root {
@@ -254,11 +265,11 @@
     <h2>Dati Sondaggio</h2>
     <div class="form-group">
       <label>Data Corrente (es. 09 MAGGIO 2026)</label>
-      <input type="text" id="input-date" value="GG MM AAAA">
+      <input type="text" id="input-date" value="09 MAGGIO 2026">
     </div>
     <div class="form-group">
       <label>Data Precedente per Trend (es. 02/05/2026)</label>
-      <input type="text" id="input-prev-date" value="GG/MM/AAAA">
+      <input type="text" id="input-prev-date" value="02/05/2026">
     </div>
 
     <h3>Partiti (Percorso Logo | Nome | Stima % | Trend)</h3>
@@ -281,12 +292,12 @@
           </div>
           <div class="title-text">
             <h1>INTENZIONI DI VOTO <span>- SUPERMEDIA</span></h1>
-            <div class="date-text" id="display-date">DD MM AAAA</div>
+            <div class="date-text" id="display-date">09 MAGGIO 2026</div>
           </div>
         </div>
         
-        <!-- Logo Personale da Cartella img/ -->
-        <img src="../img/logo.png" id="site-logo-img" class="site-logo" alt="Logo" onerror="this.style.display='none'">
+        <!-- Logo Personale (Aggiornato con ../ per uscire da grafiche/) -->
+        <img src="../logo.png" id="site-logo-img" class="site-logo" alt="Logo" onerror="this.style.display='none'">
       </div>
 
       <table class="poll-table">
@@ -309,19 +320,19 @@
 </div>
 
 <script>
-  // Dati iniziali predefiniti con i percorsi delle immagini nella cartella img/
+  // Dati iniziali con percorsi aggiornati (../img/) per accedere alla cartella img esterna
   const initialData = [
-    { logo: "../img/fdi.png", party: "FRATELLI D'ITALIA", val: "01,00", trend: 0,00 },
-    { logo: "../img/pd.png", party: "PARTITO DEMOCRATICO", val: "01,00", trend: 0,00 },
-    { logo: "../img/m5s.png", party: "MOVIMENTO 5 STELLE", val: "01,00", trend: 0,00 },
-    { logo: "../img/fi.png", party: "FORZA ITALIA", val: "01,00", trend: 0,00 },
-    { logo: "../img/lega.png", party: "LEGA", val: "01,00", trend: 0,00 },
-    { logo: "../img/avs.png", party: "ALLEANZA VERDI-SINISTRA", val: "01,00", trend: 0,00 },
-    { logo: "../img/fn.png", party: "FUTURO NAZIONALE", val: "01,00", trend: 0,00 },
-    { logo: "../img/azione.png", party: "AZIONE", val: "01,00", trend: 0,00 },
-    { logo: "../img/iv.png", party: "ITALIA VIVA", val: "01,00", trend: 0,00 },
-    { logo: "../img/europa.png", party: ".+EUROPA", val: "01,00", trend: 0,00 },
-    { logo: "../img/nm.png", party: "NOI MODERATI", val: "01,00", trend: 0,00 }
+    { logo: "../img/fdi.png", party: "FRATELLI D'ITALIA", val: "28,00", trend: -0.42 },
+    { logo: "../img/pd.png", party: "PARTITO DEMOCRATICO", val: "21,97", trend: -0.31 },
+    { logo: "../img/m5s.png", party: "MOVIMENTO 5 STELLE", val: "12,57", trend: -0.21 },
+    { logo: "../img/fi.png", party: "FORZA ITALIA", val: "8,07", trend: -0.18 },
+    { logo: "../img/lega.png", party: "LEGA", val: "7,37", trend: 0.49 },
+    { logo: "../img/avs.png", party: "ALLEANZA VERDI-SINISTRA", val: "6,60", trend: 0.12 },
+    { logo: "../img/fn.png", party: "FUTURO NAZIONALE", val: "3,43", trend: 0.11 },
+    { logo: "../img/azione.png", party: "AZIONE", val: "3,07", trend: 0.07 },
+    { logo: "../img/iv.png", party: "ITALIA VIVA", val: "2,60", trend: 0.13 },
+    { logo: "../img/europa.png", party: ".+EUROPA", val: "1,63", trend: 0.33 },
+    { logo: "../img/nm.png", party: "NOI MODERATI", val: "1,20", trend: 0.03 }
   ];
 
   function renderForm() {
@@ -366,7 +377,6 @@
         arrowHTML = '<span class="arrow-eq">=</span>';
       }
 
-      // Gestione Immagine Partito con nascondimento se non trovata
       const imgTag = logoUrl ? `<img src="${logoUrl}" class="party-logo-img" alt="" onerror="this.style.display='none'">` : '';
 
       tbody.innerHTML += `
