@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generatore Grafica Sondaggi</title>
+  <!-- Script per esportare in immagine PNG -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    :root {
+      --bg-color: #5d8ea7;
+      --border-color: rgba(255, 255, 255, 0.4);
+      --text-color: #ffffff;
+    }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .container { grid-template-columns: 1fr; }
+    }
+
+    /* FORM STYLES */
+    .form-card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .form-card h2 { margin-top: 0; color: #2c3e50; }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 4px;
+      font-size: 0.85em;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    .party-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+
+    .party-row input {
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .btn {
+      background: #27ae60;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .btn:hover { background: #219150; }
+
+    .btn-download {
+      background: #2980b9;
+      margin-top: 15px;
+    }
+
+    .btn-download:hover { background: #1f6391; }
+
+    /* GRAPHIC CANVAS STYLES */
+    .preview-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .graphic-box {
+      width: 560px;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      padding: 20px;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .header-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+
+    .title-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .flag {
+      width: 12px;
+      height: 28px;
+      display: flex;
+      flex-direction: column;
+    }
+    .flag-green { background: #009246; flex: 1; }
+    .flag-white { background: #ffffff; flex: 1; }
+    .flag-red { background: #ce2b37; flex: 1; }
+
+    .title-text h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .title-text span {
+      font-size: 14px;
+      font-weight: 300;
+      opacity: 0.9;
+    }
+
+    .date-text {
+      font-size: 13px;
+      font-weight: bold;
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .logo-badge {
+      background: #fff;
+      color: #111;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: bold;
+      text-align: center;
+      line-height: 1;
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    /* TABLE */
+    .poll-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .poll-table th, .poll-table td {
+      border: 1px solid var(--border-color);
+      padding: 5px 8px;
+      text-align: center;
+    }
+
+    .poll-table th {
+      font-size: 10px;
+      font-weight: normal;
+      opacity: 0.85;
+      line-height: 1.1;
+    }
+
+    .poll-table td.party-name {
+      text-align: left;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.3px;
+    }
+
+    .poll-table td.val {
+      font-weight: bold;
+      font-size: 13px;
+    }
+
+    .arrow-up { color: #00ff2b; font-size: 12px; }
+    .arrow-down { color: #ff0000; font-size: 12px; }
+    .arrow-eq { color: #ffd700; font-size: 12px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- FORM INPUT -->
+  <div class="form-card">
+    <h2>Dati Sondaggio</h2>
+    <div class="form-group">
+      <label>Data Corrente (es. 09 MAGGIO 2026)</label>
+      <input type="text" id="input-date" value="09 MAGGIO 2026">
+    </div>
+    <div class="form-group">
+      <label>Data Precedente per Trend (es. 02/05/2026)</label>
+      <input type="text" id="input-prev-date" value="02/05/2026">
+    </div>
+
+    <h3>Partiti (Nome | Stima % | Trend)</h3>
+    <div id="parties-list"></div>
+
+    <button class="btn" onclick="updateGraphic()">Aggiorna Anteprima</button>
+  </div>
+
+  <!-- ANTEPRIMA GRAFICA -->
+  <div class="preview-card">
+    <div id="capture-area" class="graphic-box">
+      <div class="header-box">
+        <div class="title-section">
+          <!-- Icona Urna Elettorale SVG -->
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2z"/><path d="m9 7 3-5 3 5"/><path d="M9 14h6"/></svg>
+          <div class="flag">
+            <div class="flag-green"></div>
+            <div class="flag-white"></div>
+            <div class="flag-red"></div>
+          </div>
+          <div class="title-text">
+            <h1>INTENZIONI DI VOTO <span>- SUPERMEDIA</span></h1>
+            <div class="date-text" id="display-date">09 MAGGIO 2026</div>
+          </div>
+        </div>
+        <div class="logo-badge">
+          <span>bruno</span>
+          <span>rachiele</span>
+        </div>
+      </div>
+
+      <table class="poll-table">
+        <thead>
+          <tr>
+            <th style="width: 45%;"></th>
+            <th style="width: 15%; color: #00ff2b;">▲ <span style="color:#ff0000;">▼</span> <span style="color:#ffd700;">=</span></th>
+            <th style="width: 20%;">stima<br><span id="display-header-date">09/05/2026</span></th>
+            <th style="width: 20%;">Trend rispetto<br>al <span id="display-header-prev-date">02/05/2026</span></th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <!-- Popolato via JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <button class="btn btn-download" onclick="downloadImage()">Scarica Grafica PNG</button>
+  </div>
+</div>
+
+<script>
+  // Dati iniziali predefiniti
+  const initialData = [
+    { party: "FRATELLI D'ITALIA", val: "28,00", trend: -0.42 },
+    { party: "PARTITO DEMOCRATICO", val: "21,97", trend: -0.31 },
+    { party: "MOVIMENTO 5 STELLE", val: "12,57", trend: -0.21 },
+    { party: "FORZA ITALIA", val: "8,07", trend: -0.18 },
+    { party: "LEGA", val: "7,37", trend: 0.49 },
+    { party: "ALLEANZA VERDI-SINISTRA", val: "6,60", trend: 0.12 },
+    { party: "FUTURO NAZIONALE", val: "3,43", trend: 0.11 },
+    { party: "AZIONE", val: "3,07", trend: 0.07 },
+    { party: "ITALIA VIVA", val: "2,60", trend: 0.13 },
+    { party: ".+EUROPA", val: "1,63", trend: 0.33 },
+    { party: "NOI MODERATI", val: "1,20", trend: 0.03 }
+  ];
+
+  function renderForm() {
+    const list = document.getElementById('parties-list');
+    list.innerHTML = '';
+    initialData.forEach((item, index) => {
+      list.innerHTML += `
+        <div class="party-row">
+          <input type="text" value="${item.party}" id="p-name-${index}">
+          <input type="text" value="${item.val}" id="p-val-${index}">
+          <input type="number" step="0.01" value="${item.trend}" id="p-trend-${index}">
+        </div>
+      `;
+    });
+  }
+
+  function updateGraphic() {
+    document.getElementById('display-date').innerText = document.getElementById('input-date').value;
+    
+    // Tenta di estrarre e formattare le date per l'intestazione della tabella
+    const fullDate = document.getElementById('input-date').value;
+    document.getElementById('display-header-date').innerText = fullDate;
+    document.getElementById('display-header-prev-date').innerText = document.getElementById('input-prev-date').value;
+
+    const tbody = document.getElementById('table-body');
+    tbody.innerHTML = '';
+
+    for(let i=0; i<11; i++) {
+      const name = document.getElementById(`p-name-${i}`).value;
+      const val = document.getElementById(`p-val-${i}`).value;
+      const trend = parseFloat(document.getElementById(`p-trend-${i}`).value);
+
+      let arrowHTML = '<span class="arrow-eq">▲</span>';
+      let trendText = trend > 0 ? `+${trend.toFixed(2).replace('.', ',')}` : trend.toFixed(2).replace('.', ',');
+
+      if (trend > 0) {
+        arrowHTML = '<span class="arrow-up">▲</span>';
+      } else if (trend < 0) {
+        arrowHTML = '<span class="arrow-down">▼</span>';
+      } else {
+        arrowHTML = '<span class="arrow-eq">=</span>';
+      }
+
+      tbody.innerHTML += `
+        <tr>
+          <td class="party-name">${name}</td>
+          <td>${arrowHTML}</td>
+          <td class="val">${val}</td>
+          <td class="val">${trendText}</td>
+        </tr>
+      `;
+    }
+  }
+
+  function downloadImage() {
+    const area = document.getElementById('capture-area');
+    html2canvas(area, { scale: 2 }).then(canvas => {
+      const link = document.createElement('a');
+      link.download = `sondaggio-${document.getElementById('input-date').value.replace(/\s+/g, '_')}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  }
+
+  // Inizializzazione
+  renderForm();
+  updateGraphic();
+</script>
+
+</body>
+</html>
