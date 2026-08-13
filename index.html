@@ -27,7 +27,7 @@
 
   <style>
     :root {
-      --bg-color: #5b8da8;
+      --bg-color: #5d8fa3;
       --border-color: rgba(255, 255, 255, 0.45);
       --text-color: #ffffff;
     }
@@ -45,10 +45,10 @@
     }
 
     .container {
-      max-width: 1400px;
+      max-width: 1500px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: 480px 1fr;
+      grid-template-columns: 400px 1fr;
       gap: 30px;
     }
 
@@ -93,7 +93,7 @@
 
     .party-row {
       display: grid;
-      grid-template-columns: 1fr 1.2fr 70px 70px;
+      grid-template-columns: 2fr 1fr 1fr;
       gap: 6px;
       margin-bottom: 8px;
       align-items: center;
@@ -108,7 +108,7 @@
       border: 1px solid #334155;
       border-radius: 4px;
       color: #fff;
-      font-size: 12px;
+      font-size: 13px;
     }
 
     .btn {
@@ -130,12 +130,12 @@
     .btn-download {
       background: #0284c7;
       margin-top: 20px;
-      width: 1280px;
+      width: 1000px;
     }
 
     .btn-download:hover { background: #0369a1; }
 
-    /* GRAPHIC CANVAS STYLES (16:9 Presentation Format - 1280x720) */
+    /* GRAPHIC CANVAS STYLES */
     .preview-card {
       display: flex;
       flex-direction: column;
@@ -144,22 +144,20 @@
     }
 
     .graphic-box {
-      width: 1280px;
-      height: 720px;
+      width: 1000px;
       background-color: var(--bg-color);
       color: var(--text-color);
-      padding: 35px 45px;
+      padding: 28px 35px;
       position: relative;
       flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      box-sizing: border-box;
     }
 
     .header-box {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 20px;
     }
 
     .title-section {
@@ -169,8 +167,8 @@
     }
 
     .flag {
-      width: 14px;
-      height: 38px;
+      width: 12px;
+      height: 36px;
       display: flex;
       flex-direction: column;
     }
@@ -180,74 +178,91 @@
 
     .title-text h1 {
       margin: 0;
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 900;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       text-transform: uppercase;
       line-height: 1;
     }
 
     .title-text span {
-      font-weight: 400;
+      font-weight: 300;
       opacity: 0.9;
     }
 
     .date-text {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
-      margin-top: 6px;
+      margin-top: 4px;
       letter-spacing: 0.5px;
       text-transform: uppercase;
     }
 
-    .site-logo {
-      height: 55px;
-      width: auto;
-      object-fit: contain;
+    /* BADGE LOGO BRUNO RACHIELE */
+    .logo-badge {
+      background: #ffffff;
+      color: #0b192c;
+      border-radius: 50%;
+      width: 58px;
+      height: 58px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .logo-badge .name {
+      font-size: 10px;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.2px;
+      color: #111;
+      margin-bottom: 2px;
+    }
+
+    .logo-badge .icon-circle {
+      width: 14px;
+      height: 14px;
+      background-color: #1e5288;
+      color: #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8px;
+      font-weight: 900;
     }
 
     /* TABLE */
     .poll-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
     }
 
     .poll-table th, .poll-table td {
       border: 1px solid var(--border-color);
-      padding: 6px 12px;
+      padding: 7px 14px;
       text-align: center;
       vertical-align: middle;
     }
 
     .poll-table th {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 400;
       opacity: 0.9;
       line-height: 1.2;
-      padding-bottom: 8px;
+      padding-bottom: 6px;
+      padding-top: 6px;
     }
 
     .poll-table td.party-name {
       text-align: left;
       font-weight: 700;
       text-transform: uppercase;
-      font-size: 17px;
+      font-size: 16px;
       letter-spacing: 0.5px;
-    }
-
-    .party-cell {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .party-logo-img {
-      width: 26px;
-      height: 26px;
-      object-fit: contain;
-      border-radius: 50%;
-      background: #fff;
     }
 
     .poll-table td.val {
@@ -255,9 +270,9 @@
       font-size: 18px;
     }
 
-    .arrow-up { color: #00ff2b; font-size: 16px; }
-    .arrow-down { color: #ff2222; font-size: 16px; }
-    .arrow-eq { color: #ffd700; font-size: 16px; }
+    .arrow-up { color: #00ff2b; font-size: 15px; }
+    .arrow-down { color: #ff1111; font-size: 15px; }
+    .arrow-eq { color: #ffd700; font-size: 15px; }
   </style>
 </head>
 <body>
@@ -275,19 +290,19 @@
       <input type="text" id="input-prev-date" value="02/05/2026">
     </div>
 
-    <h3>Partiti (Logo URL | Nome | Stima % | Trend)</h3>
+    <h3>Partiti (Nome | Stima % | Trend)</h3>
     <div id="parties-list"></div>
 
     <button class="btn" onclick="updateGraphic()">Aggiorna Anteprima</button>
   </div>
 
-  <!-- ANTEPRIMA GRAFICA (PRESENTAZIONE 16:9) -->
+  <!-- ANTEPRIMA GRAFICA -->
   <div class="preview-card">
     <div id="capture-area" class="graphic-box">
       <div class="header-box">
         <div class="title-section">
           <!-- Icona Urna Elettorale SVG -->
-          <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2z"/><path d="m9 7 3-5 3 5"/><path d="M9 14h6"/></svg>
+          <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2z"/><path d="m9 7 3-5 3 5"/><path d="M9 14h6"/></svg>
           <div class="flag">
             <div class="flag-green"></div>
             <div class="flag-white"></div>
@@ -298,15 +313,19 @@
             <div class="date-text" id="display-date">09 MAGGIO 2026</div>
           </div>
         </div>
-        <!-- Logo Personale Integrato -->
-        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiOeKLAFzNySkI5ahC_uZiv0Asne6shnjr1QndoMNmRBtkNdQfe59GGO3nY5nc5C4OCXNMXGXu1XtHm0X7gPqbvTgFjqszFGQrPD3G5R4c2MIJPiZCk5OX6dLbnYKeU1itEVo7OcJB9I0N-Wi9z9WP64l5_btoNMrZ111Ex8i-W9UcKwOJPv5uDnl6LwhA/s1600-rw/logo.png" crossorigin="anonymous" class="site-logo" alt="Logo">
+        
+        <!-- Logo Vettoriale Integrato (Sempre Visibile) -->
+        <div class="logo-badge">
+          <div class="name">bruno<br>rachiele</div>
+          <div class="icon-circle">R</div>
+        </div>
       </div>
 
       <table class="poll-table">
         <thead>
           <tr>
-            <th style="width: 46%;"></th>
-            <th style="width: 14%; color: #00ff2b; font-size: 15px;">▲ <span style="color:#ff2222;">▼</span> <span style="color:#ffd700;">=</span></th>
+            <th style="width: 48%;"></th>
+            <th style="width: 12%; color: #00ff2b; font-size: 14px;">▲ <span style="color:#ff1111;">▼</span> <span style="color:#ffd700;">=</span></th>
             <th style="width: 20%;">stima<br><span id="display-header-date">09/05/2026</span></th>
             <th style="width: 20%;">Trend rispetto<br>al <span id="display-header-prev-date">02/05/2026</span></th>
           </tr>
@@ -317,24 +336,24 @@
       </table>
     </div>
 
-    <button class="btn btn-download" onclick="downloadImage()">Scarica Grafica PNG (Formato Presentazione)</button>
+    <button class="btn btn-download" onclick="downloadImage()">Scarica Grafica PNG</button>
   </div>
 </div>
 
 <script>
-  // Dati iniziali predefiniti con URL dei loghi
+  // Dati iniziali predefiniti
   const initialData = [
-    { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Fratelli_d%27Italia_2022.svg/240px-Fratelli_d%27Italia_2022.svg.png", party: "FRATELLI D'ITALIA", val: "28,00", trend: -0.42 },
-    { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Partito_Democratico_2024.svg/240px-Partito_Democratico_2024.svg.png", party: "PARTITO DEMOCRATICO", val: "21,97", trend: -0.31 },
-    { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Movimento_5_Stelle_%282021%29.svg/240px-Movimento_5_Stelle_%282021%29.svg.png", party: "MOVIMENTO 5 STELLE", val: "12,57", trend: -0.21 },
-    { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Forza_Italia_%282023%29.svg/240px-Forza_Italia_%282023%29.svg.png", party: "FORZA ITALIA", val: "8,07", trend: -0.18 },
-    { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Lega_per_Salvini_Premier_%282020%29.svg/240px-Lega_per_Salvini_Premier_%282020%29.svg.png", party: "LEGA", val: "7,37", trend: 0.49 },
-    { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Alleanza_Verdi_e_Sinistra.svg/240px-Alleanza_Verdi_e_Sinistra.svg.png", party: "ALLEANZA VERDI-SINISTRA", val: "6,60", trend: 0.12 },
-    { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Futuro_Nazionale_logo.svg/240px-Futuro_Nazionale_logo.svg.png", party: "FUTURO NAZIONALE", val: "3,43", trend: 0.11 },
-    { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Azione_logo_2020.svg/240px-Azione_logo_2020.svg.png", party: "AZIONE", val: "3,07", trend: 0.07 },
-    { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Italia_Viva_logo.svg/240px-Italia_Viva_logo.svg.png", party: "ITALIA VIVA", val: "2,60", trend: 0.13 },
-    { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Pi%C3%B9_Europa_logo_2021.svg/240px-Pi%C3%B9_Europa_logo_2021.svg.png", party: ".+EUROPA", val: "1,63", trend: 0.33 },
-    { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Noi_Moderati_logo.svg/240px-Noi_Moderati_logo.svg.png", party: "NOI MODERATI", val: "1,20", trend: 0.03 }
+    { party: "FRATELLI D'ITALIA", val: "28,00", trend: -0.42 },
+    { party: "PARTITO DEMOCRATICO", val: "21,97", trend: -0.31 },
+    { party: "MOVIMENTO 5 STELLE", val: "12,57", trend: -0.21 },
+    { party: "FORZA ITALIA", val: "8,07", trend: -0.18 },
+    { party: "LEGA", val: "7,37", trend: 0.49 },
+    { party: "ALLEANZA VERDI-SINISTRA", val: "6,60", trend: 0.12 },
+    { party: "FUTURO NAZIONALE", val: "3,43", trend: 0.11 },
+    { party: "AZIONE", val: "3,07", trend: 0.07 },
+    { party: "ITALIA VIVA", val: "2,60", trend: 0.13 },
+    { party: ".+EUROPA", val: "1,63", trend: 0.33 },
+    { party: "NOI MODERATI", val: "1,20", trend: 0.03 }
   ];
 
   function renderForm() {
@@ -343,7 +362,6 @@
     initialData.forEach((item, index) => {
       list.innerHTML += `
         <div class="party-row">
-          <input type="text" value="${item.logo}" id="p-logo-${index}" placeholder="URL Logo">
           <input type="text" value="${item.party}" id="p-name-${index}" placeholder="Nome Partito">
           <input type="text" value="${item.val}" id="p-val-${index}" placeholder="%">
           <input type="number" step="0.01" value="${item.trend}" id="p-trend-${index}" placeholder="Trend">
@@ -363,7 +381,6 @@
     tbody.innerHTML = '';
 
     for(let i=0; i<initialData.length; i++) {
-      const logoUrl = document.getElementById(`p-logo-${i}`).value;
       const name = document.getElementById(`p-name-${i}`).value;
       const val = document.getElementById(`p-val-${i}`).value;
       const trend = parseFloat(document.getElementById(`p-trend-${i}`).value);
@@ -379,16 +396,9 @@
         arrowHTML = '<span class="arrow-eq">=</span>';
       }
 
-      const imgTag = logoUrl ? `<img src="${logoUrl}" crossorigin="anonymous" class="party-logo-img" alt="">` : '';
-
       tbody.innerHTML += `
         <tr>
-          <td class="party-name">
-            <div class="party-cell">
-              ${imgTag}
-              <span>${name}</span>
-            </div>
-          </td>
+          <td class="party-name">${name}</td>
           <td>${arrowHTML}</td>
           <td class="val">${val}</td>
           <td class="val">${trendText}</td>
@@ -400,9 +410,7 @@
   function downloadImage() {
     const area = document.getElementById('capture-area');
     html2canvas(area, { 
-      scale: 2,
-      useCORS: true, 
-      allowTaint: true 
+      scale: 2
     }).then(canvas => {
       const link = document.createElement('a');
       link.download = `sondaggio-${document.getElementById('input-date').value.replace(/\s+/g, '_')}.png`;
