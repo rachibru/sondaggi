@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Riservata - Bruno Rachiele</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: #f4f6f9; color: #0f172a; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+
+        /* --- LOGO --- */
+        .logo-container { margin-bottom: 25px; text-align: center; }
+        .logo-container img { max-width: 180px; height: auto; }
+
+        /* --- SCHEDA LOGIN & DASHBOARD --- */
+        .card { background: #ffffff; border-radius: 12px; max-width: 420px; width: 100%; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; }
+        h1 { font-size: 20px; font-weight: 800; text-align: center; margin-bottom: 8px; }
+        p.subtitle { font-size: 13px; color: #64748b; text-align: center; margin-bottom: 25px; }
+
+        /* --- FORM LOGIN --- */
+        .input-group { margin-bottom: 15px; }
+        label { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; display: block; color: #475569; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 11px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; }
+        input:focus { border-color: #2563eb; }
+
+        .btn { background: #2563eb; color: white; border: none; padding: 12px; border-radius: 6px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 10px; transition: background 0.2s; }
+        .btn:hover { background: #1d4ed8; }
+
+        .error-msg { color: #ef4444; font-size: 12px; text-align: center; margin-top: 12px; font-weight: 600; display: none; }
+
+        /* --- DASHBOARD PROGETTI --- */
+        .dashboard { display: none; }
+        .project-list { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .project-card { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; text-decoration: none; color: #0f172a; font-weight: 700; font-size: 14px; transition: all 0.2s; }
+        .project-card:hover { border-color: #2563eb; background: #eff6ff; color: #2563eb; transform: translateY(-2px); }
+        .project-card span.icon { font-size: 18px; }
+
+        .logout-btn { background: #64748b; margin-top: 25px; }
+        .logout-btn:hover { background: #475569; }
+    </style>
+</head>
+<body>
+
+    <!-- LOGO IN ALTO -->
+    <div class="logo-container">
+        <img src="logo.png" alt="Bruno Rachiele Logo" onerror="this.style.display='none'">
+    </div>
+
+    <!-- SCHEDA LOGIN -->
+    <div class="card" id="loginCard">
+        <h1>Area Riservata</h1>
+        <p class="subtitle">Inserisci le credenziali per accedere ai progetti</p>
+
+        <form onsubmit="handleLogin(event)">
+            <div class="input-group">
+                <label>Username</label>
+                <input type="text" id="username" placeholder="Inserisci username" required>
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Inserisci password" required>
+            </div>
+            <button type="submit" class="btn">Accedi</button>
+            <div class="error-msg" id="errorMsg">Username o password errati!</div>
+        </form>
+    </div>
+
+    <!-- DASHBOARD PROGETTI (SBLOCCATA) -->
+    <div class="card dashboard" id="dashboardCard">
+        <h1>I Tuoi Progetti</h1>
+        <p class="subtitle">Seleziona lo strumento che desideri utilizzare</p>
+
+        <div class="project-list">
+            <a href="editorhtml.html" class="project-card">
+                <span>⚡ Generatore Post Blogger</span>
+                <span class="icon">➔</span>
+            </a>
+            <a href="tabella.html" class="project-card">
+                <span>📊 Tabella Grafiche</span>
+                <span class="icon">➔</span>
+            </a>
+            <a href="verso2027.html" class="project-card">
+                <span>🏛️ Verso 2027 (Stima Seggi)</span>
+                <span class="icon">➔</span>
+            </a>
+        </div>
+
+        <button onclick="handleLogout()" class="btn logout-btn">Logout</button>
+    </div>
+
+<script>
+    // Controllo se l'utente è già loggato
+    if (sessionStorage.getItem('isLoggedIn') === 'true') {
+        showDashboard();
+    }
+
+    function handleLogin(e) {
+        e.preventDefault();
+        const u = document.getElementById('username').value;
+        const p = document.getElementById('password').value;
+
+        // Credenziali richieste
+        if (u === 'brunorachiele' && p === '191004') {
+            sessionStorage.setItem('isLoggedIn', 'true');
+            showDashboard();
+        } else {
+            document.getElementById('errorMsg').style.display = 'block';
+        }
+    }
+
+    function showDashboard() {
+        document.getElementById('loginCard').style.display = 'none';
+        document.getElementById('dashboardCard').style.display = 'block';
+    }
+
+    function handleLogout() {
+        sessionStorage.removeItem('isLoggedIn');
+        window.location.reload();
+    }
+</script>
+
+</body>
+</html>
