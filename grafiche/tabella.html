@@ -1,404 +1,415 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generatore Grafica Sondaggi</title>
-  <!-- Google Fonts: Titillium Web -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&display=swap" rel="stylesheet">
-  <!-- Script per esportare in immagine PNG -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  
-  <style>
-    :root {
-      --bg-color: #5d8fa3;
-      --border-color: rgba(255, 255, 255, 0.45);
-      --text-color: #ffffff;
-    }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generatore Grafica Sondaggi</title>
+  <!-- Google Fonts: Titillium Web -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&display=swap" rel="stylesheet">
+  <!-- Script per esportare in immagine PNG -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  
+  <script>
+    // PROTEZIONE CON PASSWORD (Base64 per non mostrarla in chiaro)
+    (function checkAuth() {
+      let inserita = prompt("Inserisci la password per accedere al generatore:");
+      if (!inserita || btoa(inserita) !== "MTkxMDA0") {
+        alert("Password errata! Accesso negato.");
+        document.write("<h2 style='font-family:sans-serif; text-align:center; margin-top:50px; color:red;'>Accesso Negato. Ricarica la pagina per riprovare.</h2>");
+        window.stop();
+      }
+    })();
+  </script>
 
-    * {
-      box-sizing: border-box;
-      font-family: 'Titillium Web', sans-serif;
-    }
+  <style>
+    :root {
+      --bg-color: #5d8fa3;
+      --border-color: rgba(255, 255, 255, 0.45);
+      --text-color: #ffffff;
+    }
 
-    body {
-      background-color: #1e293b;
-      margin: 0;
-      padding: 20px;
-      color: #f8fafc;
-    }
+    * {
+      box-sizing: border-box;
+      font-family: 'Titillium Web', sans-serif;
+    }
 
-    .container {
-      max-width: 1500px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 460px 1fr;
-      gap: 30px;
-    }
+    body {
+      background-color: #1e293b;
+      margin: 0;
+      padding: 20px;
+      color: #f8fafc;
+    }
 
-    @media (max-width: 1200px) {
-      .container { grid-template-columns: 1fr; }
-    }
+    .container {
+      max-width: 1500px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 460px 1fr;
+      gap: 30px;
+    }
 
-    /* FORM STYLES */
-    .form-card {
-      background: #0f172a;
-      padding: 25px;
-      border-radius: 12px;
-      border: 1px solid #334155;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
+    @media (max-width: 1200px) {
+      .container { grid-template-columns: 1fr; }
+    }
 
-    .form-card h2 { margin-top: 0; color: #38bdf8; font-size: 22px; }
-    .form-card h3 { color: #94a3b8; font-size: 16px; margin-top: 20px; }
+    /* FORM STYLES */
+    .form-card {
+      background: #0f172a;
+      padding: 25px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
 
-    .form-group {
-      margin-bottom: 12px;
-    }
+    .form-card h2 { margin-top: 0; color: #38bdf8; font-size: 22px; }
+    .form-card h3 { color: #94a3b8; font-size: 16px; margin-top: 20px; }
 
-    .form-group label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 4px;
-      font-size: 13px;
-      color: #cbd5e1;
-    }
+    .form-group {
+      margin-bottom: 12px;
+    }
 
-    .form-group input {
-      width: 100%;
-      padding: 8px 12px;
-      background: #1e293b;
-      border: 1px solid #475569;
-      border-radius: 6px;
-      color: #fff;
-      font-size: 14px;
-    }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 4px;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
 
-    .party-row {
-      display: grid;
-      grid-template-columns: 1fr 1.2fr 70px 70px;
-      gap: 6px;
-      margin-bottom: 8px;
-      align-items: center;
-      background: #1e293b;
-      padding: 6px;
-      border-radius: 6px;
-    }
+    .form-group input {
+      width: 100%;
+      padding: 8px 12px;
+      background: #1e293b;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 14px;
+    }
 
-    .party-row input {
-      padding: 6px;
-      background: #0f172a;
-      border: 1px solid #334155;
-      border-radius: 4px;
-      color: #fff;
-      font-size: 12px;
-    }
+    .party-row {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr 70px 70px;
+      gap: 6px;
+      margin-bottom: 8px;
+      align-items: center;
+      background: #1e293b;
+      padding: 6px;
+      border-radius: 6px;
+    }
 
-    .btn {
-      background: #10b981;
-      color: white;
-      border: none;
-      padding: 12px 18px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 700;
-      width: 100%;
-      margin-top: 15px;
-      font-size: 15px;
-      transition: background 0.2s;
-    }
+    .party-row input {
+      padding: 6px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 12px;
+    }
 
-    .btn:hover { background: #059669; }
+    .btn {
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+      width: 100%;
+      margin-top: 15px;
+      font-size: 15px;
+      transition: background 0.2s;
+    }
 
-    .btn-download {
-      background: #0284c7;
-      margin-top: 20px;
-      width: 1000px;
-    }
+    .btn:hover { background: #059669; }
 
-    .btn-download:hover { background: #0369a1; }
+    .btn-download {
+      background: #0284c7;
+      margin-top: 20px;
+      width: 1000px;
+    }
 
-    /* GRAPHIC CANVAS STYLES */
-    .preview-card {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      overflow-x: auto;
-    }
+    .btn-download:hover { background: #0369a1; }
 
-    .graphic-box {
-      width: 1000px;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      padding: 28px 35px;
-      position: relative;
-      flex-shrink: 0;
-      box-sizing: border-box;
-    }
+    /* GRAPHIC CANVAS STYLES */
+    .preview-card {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      overflow-x: auto;
+    }
 
-    .header-box {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
+    .graphic-box {
+      width: 1000px;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      padding: 28px 35px;
+      position: relative;
+      flex-shrink: 0;
+      box-sizing: border-box;
+    }
 
-    .title-section {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
+    .header-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
 
-    .flag {
-      width: 12px;
-      height: 36px;
-      display: flex;
-      flex-direction: column;
-    }
-    .flag-green { background: #009246; flex: 1; }
-    .flag-white { background: #ffffff; flex: 1; }
-    .flag-red { background: #ce2b37; flex: 1; }
+    .title-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
 
-    .title-text h1 {
-      margin: 0;
-      font-size: 28px;
-      font-weight: 900;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      line-height: 1;
-    }
+    .flag {
+      width: 12px;
+      height: 36px;
+      display: flex;
+      flex-direction: column;
+    }
+    .flag-green { background: #009246; flex: 1; }
+    .flag-white { background: #ffffff; flex: 1; }
+    .flag-red { background: #ce2b37; flex: 1; }
 
-    .title-text span {
-      font-weight: 300;
-      opacity: 0.9;
-    }
+    .title-text h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      line-height: 1;
+    }
 
-    .date-text {
-      font-size: 16px;
-      font-weight: 700;
-      margin-top: 4px;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-    }
+    .title-text span {
+      font-weight: 300;
+      opacity: 0.9;
+    }
 
-    .site-logo {
-      height: 55px;
-      width: auto;
-      object-fit: contain;
-    }
+    .date-text {
+      font-size: 16px;
+      font-weight: 700;
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
 
-    /* TABLE */
-    .poll-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+    .site-logo {
+      height: 55px;
+      width: auto;
+      object-fit: contain;
+    }
 
-    .poll-table th, .poll-table td {
-      border: 1px solid var(--border-color);
-      padding: 6px 12px;
-      text-align: center;
-      vertical-align: middle;
-    }
+    /* TABLE */
+    .poll-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
 
-    .poll-table th {
-      font-size: 12px;
-      font-weight: 400;
-      opacity: 0.9;
-      line-height: 1.2;
-      padding-bottom: 6px;
-      padding-top: 6px;
-    }
+    .poll-table th, .poll-table td {
+      border: 1px solid var(--border-color);
+      padding: 6px 12px;
+      text-align: center;
+      vertical-align: middle;
+    }
 
-    .poll-table td.party-name {
-      text-align: left;
-      font-weight: 700;
-      text-transform: uppercase;
-      font-size: 16px;
-      letter-spacing: 0.5px;
-    }
+    .poll-table th {
+      font-size: 12px;
+      font-weight: 400;
+      opacity: 0.9;
+      line-height: 1.2;
+      padding-bottom: 6px;
+      padding-top: 6px;
+    }
 
-    .party-cell {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .poll-table td.party-name {
+      text-align: left;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 16px;
+      letter-spacing: 0.5px;
+    }
 
-    .party-logo-img {
-      width: 24px;
-      height: 24px;
-      object-fit: contain;
-      border-radius: 50%;
-      background: #ffffff;
-      padding: 1px;
-    }
+    .party-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-    .poll-table td.val {
-      font-weight: 700;
-      font-size: 18px;
-    }
+    .party-logo-img {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+      border-radius: 50%;
+      background: #ffffff;
+      padding: 1px;
+    }
 
-    .arrow-up { color: #00ff2b; font-size: 15px; }
-    .arrow-down { color: #ff1111; font-size: 15px; }
-    .arrow-eq { color: #ffd700; font-size: 15px; }
-  </style>
+    .poll-table td.val {
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .arrow-up { color: #00ff2b; font-size: 15px; }
+    .arrow-down { color: #ff1111; font-size: 15px; }
+    .arrow-eq { color: #ffd700; font-size: 15px; }
+  </style>
 </head>
 <body>
 
 <div class="container">
-  <!-- FORM INPUT -->
-  <div class="form-card">
-    <h2>Dati Sondaggio</h2>
-    <div class="form-group">
-      <label>Data Corrente (es. 09 MAGGIO 2026)</label>
-      <input type="text" id="input-date" value="09 MAGGIO 2026">
-    </div>
-    <div class="form-group">
-      <label>Data Precedente per Trend (es. 02/05/2026)</label>
-      <input type="text" id="input-prev-date" value="02/05/2026">
-    </div>
+  <!-- FORM INPUT -->
+  <div class="form-card">
+    <h2>Dati Sondaggio</h2>
+    <div class="form-group">
+      <label>Data Corrente (es. 09 MAGGIO 2026)</label>
+      <input type="text" id="input-date" value="09 MAGGIO 2026">
+    </div>
+    <div class="form-group">
+      <label>Data Precedente per Trend (es. 02/05/2026)</label>
+      <input type="text" id="input-prev-date" value="02/05/2026">
+    </div>
 
-    <h3>Partiti (Percorso Logo | Nome | Stima % | Trend)</h3>
-    <div id="parties-list"></div>
+    <h3>Partiti (Percorso Logo | Nome | Stima % | Trend)</h3>
+    <div id="parties-list"></div>
 
-    <button class="btn" onclick="updateGraphic()">Aggiorna Anteprima</button>
-  </div>
+    <button class="btn" onclick="updateGraphic()">Aggiorna Anteprima</button>
+  </div>
 
-  <!-- ANTEPRIMA GRAFICA -->
-  <div class="preview-card">
-    <div id="capture-area" class="graphic-box">
-      <div class="header-box">
-        <div class="title-section">
-          <!-- Icona Urna Elettorale SVG -->
-          <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2z"/><path d="m9 7 3-5 3 5"/><path d="M9 14h6"/></svg>
-          <div class="flag">
-            <div class="flag-green"></div>
-            <div class="flag-white"></div>
-            <div class="flag-red"></div>
-          </div>
-          <div class="title-text">
-            <h1>INTENZIONI DI VOTO <span>- SUPERMEDIA</span></h1>
-            <div class="date-text" id="display-date">09 MAGGIO 2026</div>
-          </div>
-        </div>
-        
-        <!-- Logo Personale da Cartella img/ -->
-        <img src="../img/logo.png" id="site-logo-img" class="site-logo" alt="Logo" onerror="this.style.display='none'">
-      </div>
+  <!-- ANTEPRIMA GRAFICA -->
+  <div class="preview-card">
+    <div id="capture-area" class="graphic-box">
+      <div class="header-box">
+        <div class="title-section">
+          <!-- Icona Urna Elettorale SVG -->
+          <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2z"/><path d="m9 7 3-5 3 5"/><path d="M9 14h6"/></svg>
+          <div class="flag">
+            <div class="flag-green"></div>
+            <div class="flag-white"></div>
+            <div class="flag-red"></div>
+          </div>
+          <div class="title-text">
+            <h1>INTENZIONI DI VOTO <span>- SUPERMEDIA</span></h1>
+            <div class="date-text" id="display-date">09 MAGGIO 2026</div>
+          </div>
+        </div>
+        
+        <!-- Logo Personale (Aggiornato con ../ per uscire da grafiche/) -->
+        <img src="../logo.png" id="site-logo-img" class="site-logo" alt="Logo" onerror="this.style.display='none'">
+      </div>
 
-      <table class="poll-table">
-        <thead>
-          <tr>
-            <th style="width: 48%;"></th>
-            <th style="width: 12%; color: #00ff2b; font-size: 14px;">▲ <span style="color:#ff1111;">▼</span> <span style="color:#ffd700;">=</span></th>
-            <th style="width: 20%;">stima<br><span id="display-header-date">09/05/2026</span></th>
-            <th style="width: 20%;">Trend rispetto<br>al <span id="display-header-prev-date">02/05/2026</span></th>
-          </tr>
-        </thead>
-        <tbody id="table-body">
-          <!-- Popolato via JS -->
-        </tbody>
-      </table>
-    </div>
+      <table class="poll-table">
+        <thead>
+          <tr>
+            <th style="width: 48%;"></th>
+            <th style="width: 12%; color: #00ff2b; font-size: 14px;">▲ <span style="color:#ff1111;">▼</span> <span style="color:#ffd700;">=</span></th>
+            <th style="width: 20%;">stima<br><span id="display-header-date">09/05/2026</span></th>
+            <th style="width: 20%;">Trend rispetto<br>al <span id="display-header-prev-date">02/05/2026</span></th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          <!-- Popolato via JS -->
+        </tbody>
+      </table>
+    </div>
 
-    <button class="btn btn-download" onclick="downloadImage()">Scarica Grafica PNG</button>
-  </div>
+    <button class="btn btn-download" onclick="downloadImage()">Scarica Grafica PNG</button>
+  </div>
 </div>
 
 <script>
-  // Dati iniziali predefiniti con i percorsi delle immagini nella cartella img/
-  const initialData = [
-    { logo: "../img/fdi.png", party: "FRATELLI D'ITALIA", val: "28,00", trend: -0.42 },
-    { logo: "../img/pd.png", party: "PARTITO DEMOCRATICO", val: "21,97", trend: -0.31 },
-    { logo: "../img/m5s.png", party: "MOVIMENTO 5 STELLE", val: "12,57", trend: -0.21 },
-    { logo: "../img/fi.png", party: "FORZA ITALIA", val: "8,07", trend: -0.18 },
-    { logo: "../img/lega.png", party: "LEGA", val: "7,37", trend: 0.49 },
-    { logo: "../img/avs.png", party: "ALLEANZA VERDI-SINISTRA", val: "6,60", trend: 0.12 },
-    { logo: "../img/fn.png", party: "FUTURO NAZIONALE", val: "3,43", trend: 0.11 },
-    { logo: "../img/azione.png", party: "AZIONE", val: "3,07", trend: 0.07 },
-    { logo: "../img/iv.png", party: "ITALIA VIVA", val: "2,60", trend: 0.13 },
-    { logo: "../img/europa.png", party: ".+EUROPA", val: "1,63", trend: 0.33 },
-    { logo: "../img/nm.png", party: "NOI MODERATI", val: "1,20", trend: 0.03 }
-  ];
+  // Dati iniziali con percorsi aggiornati (../img/) per accedere alla cartella img esterna
+  const initialData = [
+    { logo: "../img/fdi.png", party: "FRATELLI D'ITALIA", val: "28,00", trend: -0.42 },
+    { logo: "../img/pd.png", party: "PARTITO DEMOCRATICO", val: "21,97", trend: -0.31 },
+    { logo: "../img/m5s.png", party: "MOVIMENTO 5 STELLE", val: "12,57", trend: -0.21 },
+    { logo: "../img/fi.png", party: "FORZA ITALIA", val: "8,07", trend: -0.18 },
+    { logo: "../img/lega.png", party: "LEGA", val: "7,37", trend: 0.49 },
+    { logo: "../img/avs.png", party: "ALLEANZA VERDI-SINISTRA", val: "6,60", trend: 0.12 },
+    { logo: "../img/fn.png", party: "FUTURO NAZIONALE", val: "3,43", trend: 0.11 },
+    { logo: "../img/azione.png", party: "AZIONE", val: "3,07", trend: 0.07 },
+    { logo: "../img/iv.png", party: "ITALIA VIVA", val: "2,60", trend: 0.13 },
+    { logo: "../img/europa.png", party: ".+EUROPA", val: "1,63", trend: 0.33 },
+    { logo: "../img/nm.png", party: "NOI MODERATI", val: "1,20", trend: 0.03 }
+  ];
 
-  function renderForm() {
-    const list = document.getElementById('parties-list');
-    list.innerHTML = '';
-    initialData.forEach((item, index) => {
-      list.innerHTML += `
-        <div class="party-row">
-          <input type="text" value="${item.logo}" id="p-logo-${index}" placeholder="Percorso Foto">
-          <input type="text" value="${item.party}" id="p-name-${index}" placeholder="Nome Partito">
-          <input type="text" value="${item.val}" id="p-val-${index}" placeholder="%">
-          <input type="number" step="0.01" value="${item.trend}" id="p-trend-${index}" placeholder="Trend">
-        </div>
-      `;
-    });
-  }
+  function renderForm() {
+    const list = document.getElementById('parties-list');
+    list.innerHTML = '';
+    initialData.forEach((item, index) => {
+      list.innerHTML += `
+        <div class="party-row">
+          <input type="text" value="${item.logo}" id="p-logo-${index}" placeholder="Percorso Foto">
+          <input type="text" value="${item.party}" id="p-name-${index}" placeholder="Nome Partito">
+          <input type="text" value="${item.val}" id="p-val-${index}" placeholder="%">
+          <input type="number" step="0.01" value="${item.trend}" id="p-trend-${index}" placeholder="Trend">
+        </div>
+      `;
+    });
+  }
 
-  function updateGraphic() {
-    document.getElementById('display-date').innerText = document.getElementById('input-date').value;
-    
-    const fullDate = document.getElementById('input-date').value;
-    document.getElementById('display-header-date').innerText = fullDate;
-    document.getElementById('display-header-prev-date').innerText = document.getElementById('input-prev-date').value;
+  function updateGraphic() {
+    document.getElementById('display-date').innerText = document.getElementById('input-date').value;
+    
+    const fullDate = document.getElementById('input-date').value;
+    document.getElementById('display-header-date').innerText = fullDate;
+    document.getElementById('display-header-prev-date').innerText = document.getElementById('input-prev-date').value;
 
-    const tbody = document.getElementById('table-body');
-    tbody.innerHTML = '';
+    const tbody = document.getElementById('table-body');
+    tbody.innerHTML = '';
 
-    for(let i=0; i<initialData.length; i++) {
-      const logoUrl = document.getElementById(`p-logo-${i}`).value;
-      const name = document.getElementById(`p-name-${i}`).value;
-      const val = document.getElementById(`p-val-${i}`).value;
-      const trend = parseFloat(document.getElementById(`p-trend-${i}`).value);
+    for(let i=0; i<initialData.length; i++) {
+      const logoUrl = document.getElementById(`p-logo-${i}`).value;
+      const name = document.getElementById(`p-name-${i}`).value;
+      const val = document.getElementById(`p-val-${i}`).value;
+      const trend = parseFloat(document.getElementById(`p-trend-${i}`).value);
 
-      let arrowHTML = '<span class="arrow-eq">▲</span>';
-      let trendText = trend > 0 ? `+${trend.toFixed(2).replace('.', ',')}` : trend.toFixed(2).replace('.', ',');
+      let arrowHTML = '<span class="arrow-eq">▲</span>';
+      let trendText = trend > 0 ? `+${trend.toFixed(2).replace('.', ',')}` : trend.toFixed(2).replace('.', ',');
 
-      if (trend > 0) {
-        arrowHTML = '<span class="arrow-up">▲</span>';
-      } else if (trend < 0) {
-        arrowHTML = '<span class="arrow-down">▼</span>';
-      } else {
-        arrowHTML = '<span class="arrow-eq">=</span>';
-      }
+      if (trend > 0) {
+        arrowHTML = '<span class="arrow-up">▲</span>';
+      } else if (trend < 0) {
+        arrowHTML = '<span class="arrow-down">▼</span>';
+      } else {
+        arrowHTML = '<span class="arrow-eq">=</span>';
+      }
 
-      // Gestione Immagine Partito con nascondimento se non trovata
-      const imgTag = logoUrl ? `<img src="${logoUrl}" class="party-logo-img" alt="" onerror="this.style.display='none'">` : '';
+      const imgTag = logoUrl ? `<img src="${logoUrl}" class="party-logo-img" alt="" onerror="this.style.display='none'">` : '';
 
-      tbody.innerHTML += `
-        <tr>
-          <td class="party-name">
-            <div class="party-cell">
-              ${imgTag}
-              <span>${name}</span>
-            </div>
-          </td>
-          <td>${arrowHTML}</td>
-          <td class="val">${val}</td>
-          <td class="val">${trendText}</td>
-        </tr>
-      `;
-    }
-  }
+      tbody.innerHTML += `
+        <tr>
+          <td class="party-name">
+            <div class="party-cell">
+              ${imgTag}
+              <span>${name}</span>
+            </div>
+          </td>
+          <td>${arrowHTML}</td>
+          <td class="val">${val}</td>
+          <td class="val">${trendText}</td>
+        </tr>
+      `;
+    }
+  }
 
-  function downloadImage() {
-    const area = document.getElementById('capture-area');
-    html2canvas(area, { 
-      scale: 2
-    }).then(canvas => {
-      const link = document.createElement('a');
-      link.download = `sondaggio-${document.getElementById('input-date').value.replace(/\s+/g, '_')}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-    });
-  }
+  function downloadImage() {
+    const area = document.getElementById('capture-area');
+    html2canvas(area, { 
+      scale: 2
+    }).then(canvas => {
+      const link = document.createElement('a');
+      link.download = `sondaggio-${document.getElementById('input-date').value.replace(/\s+/g, '_')}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  }
 
-  // Inizializzazione
-  renderForm();
-  updateGraphic();
+  // Inizializzazione
+  renderForm();
+  updateGraphic();
 </script>
 
 </body>
