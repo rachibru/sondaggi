@@ -95,19 +95,19 @@
         showDashboard();
     }
 
-    function handleLogin(e) {
-        e.preventDefault();
-        const u = document.getElementById('username').value;
-        const p = document.getElementById('password').value;
+function handleLogin(e) {
+    e.preventDefault();
+    const u = document.getElementById('username').value;
+    const p = document.getElementById('password').value;
 
-        // Credenziali
-        if (u === 'brunorachiele' && p === '191004') {
-            sessionStorage.setItem('isLoggedIn', 'true');
-            showDashboard();
-        } else {
-            document.getElementById('errorMsg').style.display = 'block';
-        }
+    // Controllo con password in Base64 ('MTkxMDA0' corrisponde a '191004')
+    if (u === 'brunorachiele' && btoa(p) === 'MTkxMDA0') {
+        sessionStorage.setItem('isLoggedIn', 'true');
+        showDashboard();
+    } else {
+        document.getElementById('errorMsg').style.display = 'block';
     }
+}
 
     function showDashboard() {
         document.getElementById('loginCard').style.display = 'none';
