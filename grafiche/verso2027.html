@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stima Seggi Parlamento</title>
+    <title>Stima Seggi Parlamento - Generatore Immagine</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Libreria per trasformare l'HTML in Immagine PNG -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
             --bg-color: #f4f6f9;
@@ -25,10 +27,93 @@
             background-color: var(--bg-color);
             color: var(--text-dark);
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
             padding: 20px;
         }
 
+        /* --- CONTROLLI TOP --- */
+        .controls-container {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.1s;
+        }
+
+        .btn:active { transform: scale(0.98); }
+        .btn-blue { background-color: #2563eb; }
+        .btn-green { background-color: #10b981; }
+
+        /* --- PANNELLO DI EDITING --- */
+        .editor-panel {
+            background: #ffffff;
+            border: 2px solid #2563eb;
+            border-radius: 12px;
+            max-width: 950px;
+            width: 100%;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: none;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        }
+
+        .editor-panel.open { display: block; }
+
+        .editor-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .editor-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .editor-group label {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .editor-group input {
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 13px;
+            width: 100%;
+        }
+
+        .edit-item-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 40px;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .edit-item-row input {
+            padding: 6px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 12px;
+            width: 100%;
+        }
+
+        /* --- DASHBOARD GRAFICA --- */
         .dashboard-container {
             background: var(--card-bg);
             max-width: 950px;
@@ -38,7 +123,6 @@
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
         }
 
-        /* Header */
         .header {
             display: flex;
             justify-content: space-between;
@@ -51,7 +135,6 @@
         .header h1 {
             font-size: 26px;
             font-weight: 900;
-            letter-spacing: -0.5px;
             text-transform: uppercase;
         }
 
@@ -73,7 +156,6 @@
             text-transform: uppercase;
         }
 
-        /* Layout */
         .grid-layout {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -85,7 +167,6 @@
             font-size: 13px;
             font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
             border-bottom: 2px solid var(--text-dark);
             padding-bottom: 6px;
             margin-bottom: 15px;
@@ -93,7 +174,6 @@
             justify-content: space-between;
         }
 
-        /* Coalizioni */
         .coalition-card {
             display: flex;
             justify-content: space-between;
@@ -129,27 +209,11 @@
             margin-top: 2px;
         }
 
-        .coalition-seats {
-            text-align: right;
-        }
+        .coalition-seats { text-align: right; }
+        .coalition-seats .num { font-size: 18px; font-weight: 900; }
+        .coalition-seats .pct { font-size: 11px; color: var(--text-muted); font-weight: 600; }
 
-        .coalition-seats .num {
-            font-size: 18px;
-            font-weight: 900;
-        }
-
-        .coalition-seats .pct {
-            font-size: 11px;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        /* Partiti */
-        .party-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
+        .party-list { display: flex; flex-direction: column; gap: 8px; }
 
         .party-row {
             display: grid;
@@ -161,18 +225,11 @@
             border-bottom: 1px dashed var(--border-color);
         }
 
-        .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .party-name { font-weight: 700; color: var(--text-dark); }
+        .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .party-name { font-weight: 700; }
         .party-voto { color: var(--text-muted); font-size: 12px; font-weight: 600; text-align: right; padding-right: 10px; }
         .party-seggi { font-weight: 800; text-align: right; min-width: 50px; }
 
-        /* Barra Ripartizione */
         .distribution-box {
             background: #f8fafc;
             padding: 18px;
@@ -217,14 +274,50 @@
         }
 
         @media (max-width: 768px) {
-            .grid-layout { grid-template-columns: 1fr; }
+            .grid-layout, .editor-grid { grid-template-columns: 1fr; }
             .header { flex-direction: column; gap: 10px; }
         }
     </style>
 </head>
 <body>
 
-<div class="dashboard-container">
+<div class="controls-container">
+    <button class="btn btn-blue" onclick="toggleEditor()">✏️ Mostra / Nascondi Pannello Modifica</button>
+    <button class="btn btn-green" onclick="downloadImage()">📸 Scarica Immagine PNG</button>
+</div>
+
+<!-- PANNELLO DI EDITING -->
+<div class="editor-panel" id="editorPanel">
+    <h2 style="font-size: 16px; font-weight: 800; margin-bottom: 10px;">Pannello di Modifica Dati</h2>
+    
+    <div class="editor-grid">
+        <div>
+            <div class="editor-group">
+                <label>Titolo Principale</label>
+                <input type="text" id="editTitle" oninput="updateGeneralData()">
+            </div>
+            <div class="editor-group">
+                <label>Sottotitolo</label>
+                <input type="text" id="editSubtitle" oninput="updateGeneralData()">
+            </div>
+            <div class="editor-group">
+                <label>Autore</label>
+                <input type="text" id="editAuthor" oninput="updateGeneralData()">
+            </div>
+        </div>
+
+        <div>
+            <h4 style="font-size: 13px; font-weight: 700; margin-bottom: 8px;">Coalizioni (Nome | Seggi | Colore)</h4>
+            <div id="editorCoalitions"></div>
+        </div>
+    </div>
+
+    <h4 style="font-size: 13px; font-weight: 700; margin-top: 15px; margin-bottom: 8px;">Partiti (Nome | % Voto | Seggi | Colore)</h4>
+    <div id="editorParties"></div>
+</div>
+
+<!-- GRAFICA DA CATTURARE COME IMMAGINE -->
+<div class="dashboard-container" id="captureArea">
     <div class="header">
         <div>
             <h1 id="title-text"></h1>
@@ -254,66 +347,29 @@
     <div class="distribution-box">
         <div class="distribution-header">
             <span>Ripartizione Totale Seggi (% Aula)</span>
-            <span id="majority-text"></span>
+            <span id="majority-text">Maggioranza: 201 seggi su 400</span>
         </div>
         <div class="progress-bar-container" id="progress-bar"></div>
     </div>
 
-    <div class="footer-note" id="footer-text"></div>
+    <div class="footer-note" id="footer-text">
+        *Stima dell'assegnazione dei seggi calcolata sulla base della legge elettorale vigente. Data aggiornamento: SUPERMEDIA SONDAGGI - MAGGIO 2026.
+    </div>
 </div>
 
 <script>
-    // =========================================================================
-    // MODIFICA DIRETTAMENTE I DATI E I COLORI QUI SOTTO
-    // =========================================================================
-    const DATA = {
+    let DATA = {
         title: "Stima Seggi Parlamento",
         subtitle: "Camera dei Deputati (400 Segi) • Supermedia Sondaggi - Maggio 2026",
         author: "brunorachiele.it",
         totaleSeggi: 400,
-        sogliaMaggioranza: 201,
-        footerNote: "*Stima dell'assegnazione dei seggi calcolata sulla base della legge elettorale vigente. Data aggiornamento: SUPERMEDIA SONDAGGI - MAGGIO 2026.",
-
-        // --- COALIZIONI ---
         coalizioni: [
-            { 
-                nome: "Centrodestra", 
-                partiti: "Noi Moderati • Lega • Fratelli d'Italia • Forza Italia", 
-                seggi: 227, 
-                colore: "#0b3c5d", // <--- Puoi cambiare il colore qui
-                maggioranza: true 
-            },
-            { 
-                nome: "Centrosinistra", 
-                partiti: "Alleanza Verdi-Sinistra • +Europa • Partito Democratico", 
-                seggi: 85, 
-                colore: "#e63946", 
-                maggioranza: false 
-            },
-            { 
-                nome: "Altri / Non Coalizzati", 
-                partiti: "Civiche • Futuro Nazionale • Altri", 
-                seggi: 43, 
-                colore: "#708090", 
-                maggioranza: false 
-            },
-            { 
-                nome: "M5S Solitario", 
-                partiti: "Movimento 5 Stelle", 
-                seggi: 35, 
-                colore: "#ffb703", 
-                maggioranza: false 
-            },
-            { 
-                nome: "Centro / Terzo Polo", 
-                partiti: "Italia Viva • Azione", 
-                seggi: 10, 
-                colore: "#9d4edd", 
-                maggioranza: false 
-            }
+            { nome: "Centrodestra", partiti: "Noi Moderati • Lega • Fratelli d'Italia • Forza Italia", seggi: 227, colore: "#0b3c5d", maggioranza: true },
+            { nome: "Centrosinistra", partiti: "Alleanza Verdi-Sinistra • +Europa • Partito Democratico", seggi: 85, colore: "#e63946", maggioranza: false },
+            { nome: "Altri / Non Coalizzati", partiti: "Civiche • Futuro Nazionale • Altri", seggi: 43, colore: "#708090", maggioranza: false },
+            { nome: "M5S Solitario", partiti: "Movimento 5 Stelle", seggi: 35, colore: "#ffb703", maggioranza: false },
+            { nome: "Centro / Terzo Polo", partiti: "Italia Viva • Azione", seggi: 10, colore: "#9d4edd", maggioranza: false }
         ],
-
-        // --- PARTITI SINGOLI ---
         partiti: [
             { nome: "Fratelli d'Italia", voto: "28.0%", seggi: 176, colore: "#0b3c5d" },
             { nome: "Partito Democratico", voto: "21.9%", seggi: 62, colore: "#e63946" },
@@ -330,17 +386,67 @@
         ]
     };
 
-    // =========================================================================
-    // CREAZIONE GRAFICA AUTOMATICA
-    // =========================================================================
+    function toggleEditor() {
+        document.getElementById('editorPanel').classList.toggle('open');
+    }
+
+    // FUNZIONE PER SCARICARE L'IMMAGINE PNG
+    function downloadImage() {
+        const captureArea = document.getElementById('captureArea');
+        html2canvas(captureArea, {
+            scale: 2, // Alta definizione
+            backgroundColor: '#ffffff'
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'stima-seggi-parlamento.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    }
+
+    function initEditorFields() {
+        document.getElementById('editTitle').value = DATA.title;
+        document.getElementById('editSubtitle').value = DATA.subtitle;
+        document.getElementById('editAuthor').value = DATA.author;
+
+        const cContainer = document.getElementById('editorCoalitions');
+        cContainer.innerHTML = '';
+        DATA.coalizioni.forEach((c, idx) => {
+            cContainer.innerHTML += `
+                <div class="edit-item-row">
+                    <input type="text" value="${c.nome}" oninput="DATA.coalizioni[${idx}].nome=this.value; render();">
+                    <input type="number" value="${c.seggi}" oninput="DATA.coalizioni[${idx}].seggi=parseInt(this.value)||0; render();">
+                    <input type="color" value="${c.colore}" oninput="DATA.coalizioni[${idx}].colore=this.value; render();">
+                </div>
+            `;
+        });
+
+        const pContainer = document.getElementById('editorParties');
+        pContainer.innerHTML = '';
+        DATA.partiti.forEach((p, idx) => {
+            pContainer.innerHTML += `
+                <div class="edit-item-row">
+                    <input type="text" value="${p.nome}" oninput="DATA.partiti[${idx}].nome=this.value; render();">
+                    <input type="text" value="${p.voto}" oninput="DATA.partiti[${idx}].voto=this.value; render();">
+                    <input type="number" value="${p.seggi}" oninput="DATA.partiti[${idx}].seggi=parseInt(this.value)||0; render();">
+                    <input type="color" value="${p.colore}" oninput="DATA.partiti[${idx}].colore=this.value; render();">
+                </div>
+            `;
+        });
+    }
+
+    function updateGeneralData() {
+        DATA.title = document.getElementById('editTitle').value;
+        DATA.subtitle = document.getElementById('editSubtitle').value;
+        DATA.author = document.getElementById('editAuthor').value;
+        render();
+    }
+
     function render() {
         document.getElementById('title-text').innerText = DATA.title;
         document.getElementById('subtitle-text').innerText = DATA.subtitle;
         document.getElementById('author-text').innerText = DATA.author;
-        document.getElementById('majority-text').innerText = `Maggioranza: ${DATA.sogliaMaggioranza} seggi su ${DATA.totaleSeggi}`;
-        document.getElementById('footer-text').innerText = DATA.footerNote;
 
-        // Coalizioni
         const coalContainer = document.getElementById('coalitions-container');
         coalContainer.innerHTML = '';
         DATA.coalizioni.forEach(c => {
@@ -360,7 +466,6 @@
             `;
         });
 
-        // Partiti
         const partyContainer = document.getElementById('parties-container');
         partyContainer.innerHTML = '';
         DATA.partiti.forEach(p => {
@@ -374,7 +479,6 @@
             `;
         });
 
-        // Barra Ripartizione
         const barContainer = document.getElementById('progress-bar');
         barContainer.innerHTML = '';
         DATA.coalizioni.forEach(c => {
@@ -389,6 +493,7 @@
         });
     }
 
+    initEditorFields();
     render();
 </script>
 
