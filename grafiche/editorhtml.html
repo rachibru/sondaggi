@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generatore Post Blogger - Sondaggi Bruno Rachiele</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: #f4f6f9; color: #0f172a; padding: 20px; display: flex; justify-content: center; }
+        .container { max-width: 900px; width: 100%; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h1 { font-size: 22px; margin-bottom: 20px; border-bottom: 2px solid #0f172a; padding-bottom: 10px; }
+        
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .full-width { grid-column: span 2; }
+        
+        label { font-size: 12px; font-weight: 700; text-transform: uppercase; margin-bottom: 5px; display: block; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; }
+        textarea { height: 70px; resize: vertical; }
+
+        .btn { background: #2563eb; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; margin-bottom: 20px; }
+        .btn:hover { background: #1d4ed8; }
+        
+        .output-box { position: relative; }
+        pre { background: #0f172a; color: #f8fafc; padding: 15px; border-radius: 8px; font-size: 12px; overflow-x: auto; max-height: 350px; }
+        .copy-btn { position: absolute; top: 10px; right: 10px; background: #10b981; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 700; cursor: pointer; }
+        .copy-btn:hover { background: #059669; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🚀 Generatore Post Blogger SEO - Sondaggi</h1>
+
+    <div class="form-grid">
+        <div>
+            <label>Data (es. 16 maggio 2026)</label>
+            <input type="text" id="dataTesto" value="16 maggio 2026" oninput="generateCode()">
+        </div>
+        <div>
+            <label>Data Formato ISO (YYYY-MM-DD)</label>
+            <input type="date" id="dataIso" value="2026-05-16" oninput="generateCode()">
+        </div>
+
+        <div class="full-width">
+            <label>URL Post Finale (Canonical ID)</label>
+            <input type="text" id="postUrl" placeholder="https://www.brunorachiele.it/2026/05/sondaggio-politico-16-maggio-2026-supermedia.html" oninput="generateCode()">
+        </div>
+
+        <div class="full-width">
+            <label>URL Immagine Copertina (Copertina Principale)</label>
+            <input type="text" id="imgCopertina" placeholder="https://blogger.googleusercontent.com/img/.../NUOVE_GRAFICHE.png" oninput="generateCode()">
+        </div>
+
+        <div class="full-width">
+            <label>URL Immagine Grafica Sondaggi</label>
+            <input type="text" id="imgSondaggi" placeholder="https://blogger.googleusercontent.com/img/.../GRAFICA_SONDAGGI.jpg" oninput="generateCode()">
+        </div>
+
+        <div class="full-width">
+            <label>URL Immagine Preferenze Coalizioni</label>
+            <input type="text" id="imgCoalizioni" placeholder="https://blogger.googleusercontent.com/img/.../Le_preferenze.png" oninput="generateCode()">
+        </div>
+
+        <div class="full-width">
+            <label>Testo Breve Articolo</label>
+            <textarea id="testoArticolo" oninput="generateCode()">Di seguito la supermedia dei sondaggi politici italiani aggiornata, con il dettaglio sulle intenzioni di voto e i trend delle coalizioni.</textarea>
+        </div>
+    </div>
+
+    <div class="output-box">
+        <button class="copy-btn" onclick="copyCode()">📋 Copia Codice HTML</button>
+        <pre><code id="codeOutput"></code></pre>
+    </div>
+</div>
+
+<script>
+function generateCode() {
+    const dataTesto = document.getElementById('dataTesto').value;
+    const dataIso = document.getElementById('dataIso').value;
+    const postUrl = document.getElementById('postUrl').value || "https://www.brunorachiele.it/";
+    const imgCopertina = document.getElementById('imgCopertina').value || "URL_IMMAGINE_COPERTINA_MANCANTE";
+    const imgSondaggi = document.getElementById('imgSondaggi').value || "URL_IMMAGINE_SONDAGGI_MANCANTE";
+    const imgCoalizioni = document.getElementById('imgCoalizioni').value || "URL_IMMAGINE_COALIZIONI_MANCANTE";
+    const testoArticolo = document.getElementById('testoArticolo').value;
+
+    const htmlCode = `<!-- Schema.org Dati Strutturati per Google News -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "headline": "Sondaggio Politico ${dataTesto} – Supermedia Bruno Rachiele",
+  "datePublished": "${dataIso}T08:00:00+02:00",
+  "dateModified": "${dataIso}T08:00:00+02:00",
+  "author": {
+    "@type": "Person",
+    "name": "Bruno Rachiele",
+    "url": "https://www.brunorachiele.it/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Bruno Rachiele",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiOeKLAFzNySkI5ahC_uZiv0Asne6shnjr1QndoMNmRBtkNdQfe59GGO3nY5nc5C4OCXNMXGXu1XtHm0X7gPqbvTgFjqszFGQrPD3G5R4c2MIJPiZCk5OX6dLbnYKeU1itEVo7OcJB9I0N-Wi9z9WP64l5_btoNMrZ111Ex8i-W9UcKwOJPv5uDnl6LwhA/s1600/2ed26cc2-38e4-4d67-a1c5-5e522b654c90%20%281%29.png"
+    }
+  },
+  "image": [
+    "${imgCopertina}"
+  ],
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "${postUrl}"
+  }
+}
+<\/script>
+
+<!-- Contenuto dell'Articolo -->
+<article itemscope="" itemtype="https://schema.org/NewsArticle">
+
+  <h1 itemprop="headline">Sondaggio Politico ${dataTesto}</h1>
+
+  <p style="color: #64748b; font-size: 0.9em;">
+    Aggiornamento del <time datetime="${dataIso}" itemprop="datePublished">${dataTesto}</time>
+  </p>
+
+  <!-- Prima immagine: Eager per velocizzare LCP -->
+  <div style="text-align: center; margin-top: 15px;">
+    <img alt="Copertina Sondaggi Politici Bruno Rachiele" itemprop="image" loading="eager" src="${imgCopertina}" style="border-radius: 10px; height: auto; max-width: 100%;" />
+  </div>
+
+  <div style="text-align: center;">
+    <img alt="Grafica del sondaggio politico aggiornato al ${dataTesto}" loading="lazy" src="${imgSondaggi}" style="border-radius: 8px; height: auto; margin-top: 20px; max-width: 100%;" />
+  </div>
+
+  <div style="text-align: center;">
+    <img alt="Grafico preferenze coalizioni ${dataTesto}" loading="lazy" src="${imgCoalizioni}" style="border-radius: 8px; height: auto; margin-top: 20px; max-width: 100%;" />
+  </div>
+
+  <hr style="margin: 30px 0px; border: 0; border-top: 1px solid #e2e8f0;" />
+
+  <!-- Testo dell'articolo -->
+  <div itemprop="articleBody">
+    <p>${testoArticolo}</p>
+  </div>
+
+  <p itemprop="author" style="color: #555555; font-size: 0.9em; margin-top: 15px;">
+    Supermedia a cura di <strong>Bruno Rachiele</strong><br />
+    Fonte dati ufficiale: 
+    <a href="https://sondaggipoliticoelettorali.it" rel="noopener noreferrer" target="_blank">
+      sondaggipoliticoelettorali.it
+    </a>
+  </p>
+
+</article>`;
+
+    document.getElementById('codeOutput').textContent = htmlCode;
+}
+
+function copyCode() {
+    const codeText = document.getElementById('codeOutput').textContent;
+    navigator.clipboard.writeText(codeText).then(() => {
+        alert("Codice HTML copiato negli appunti!");
+    });
+}
+
+generateCode();
+</script>
+
+</body>
+</html>
