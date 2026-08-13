@@ -4,44 +4,70 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Generatore Grafica Sondaggi</title>
+  <!-- Google Fonts: Titillium Web -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&display=swap" rel="stylesheet">
   <!-- Script per esportare in immagine PNG -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  
+  <script>
+    // PROTEZIONE CON PASSWORD
+    (function checkAuth() {
+      const passwordCorretta = "191004";
+      let inserita = prompt("Inserisci la password per accedere al generatore:");
+      
+      if (inserita !== passwordCorretta) {
+        alert("Password errata! Accesso negato.");
+        document.write("<h2 style='font-family:sans-serif; text-align:center; margin-top:50px; color:red;'>Accesso Negato. Ricarica la pagina per riprovare.</h2>");
+        window.stop();
+      }
+    })();
+  </script>
+
   <style>
     :root {
-      --bg-color: #5d8ea7;
-      --border-color: rgba(255, 255, 255, 0.4);
+      --bg-color: #5b8da8;
+      --border-color: rgba(255, 255, 255, 0.45);
       --text-color: #ffffff;
     }
 
+    * {
+      box-sizing: border-box;
+      font-family: 'Titillium Web', sans-serif;
+    }
+
     body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background-color: #f0f2f5;
+      background-color: #1e293b;
       margin: 0;
       padding: 20px;
-      color: #333;
+      color: #f8fafc;
     }
 
     .container {
-      max-width: 1100px;
+      max-width: 1400px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      grid-template-columns: 480px 1fr;
+      gap: 30px;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 1200px) {
       .container { grid-template-columns: 1fr; }
     }
 
     /* FORM STYLES */
     .form-card {
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      background: #0f172a;
+      padding: 25px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
-    .form-card h2 { margin-top: 0; color: #2c3e50; }
+    .form-card h2 { margin-top: 0; color: #38bdf8; font-size: 22px; }
+    .form-card h3 { color: #94a3b8; font-size: 16px; margin-top: 20px; }
 
     .form-group {
       margin-bottom: 12px;
@@ -49,86 +75,102 @@
 
     .form-group label {
       display: block;
-      font-weight: bold;
+      font-weight: 600;
       margin-bottom: 4px;
-      font-size: 0.85em;
+      font-size: 13px;
+      color: #cbd5e1;
     }
 
     .form-group input {
       width: 100%;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-sizing: border-box;
+      padding: 8px 12px;
+      background: #1e293b;
+      border: 1px solid #475569;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 14px;
     }
 
     .party-row {
       display: grid;
-      grid-template-columns: 2fr 1fr 1fr;
-      gap: 8px;
+      grid-template-columns: 1fr 1.2fr 70px 70px;
+      gap: 6px;
       margin-bottom: 8px;
       align-items: center;
+      background: #1e293b;
+      padding: 6px;
+      border-radius: 6px;
     }
 
     .party-row input {
       padding: 6px;
-      border: 1px solid #ccc;
+      background: #0f172a;
+      border: 1px solid #334155;
       border-radius: 4px;
+      color: #fff;
+      font-size: 12px;
     }
 
     .btn {
-      background: #27ae60;
+      background: #10b981;
       color: white;
       border: none;
-      padding: 10px 15px;
-      border-radius: 4px;
+      padding: 12px 18px;
+      border-radius: 6px;
       cursor: pointer;
-      font-weight: bold;
+      font-weight: 700;
       width: 100%;
-      margin-top: 10px;
+      margin-top: 15px;
+      font-size: 15px;
+      transition: background 0.2s;
     }
 
-    .btn:hover { background: #219150; }
+    .btn:hover { background: #059669; }
 
     .btn-download {
-      background: #2980b9;
-      margin-top: 15px;
+      background: #0284c7;
+      margin-top: 20px;
+      width: 1280px;
     }
 
-    .btn-download:hover { background: #1f6391; }
+    .btn-download:hover { background: #0369a1; }
 
-    /* GRAPHIC CANVAS STYLES */
+    /* GRAPHIC CANVAS STYLES (16:9 Presentation Format - 1280x720) */
     .preview-card {
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: flex-start;
+      overflow-x: auto;
     }
 
     .graphic-box {
-      width: 560px;
+      width: 1280px;
+      height: 720px;
       background-color: var(--bg-color);
       color: var(--text-color);
-      padding: 20px;
-      box-sizing: border-box;
+      padding: 35px 45px;
       position: relative;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
     .header-box {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 15px;
+      align-items: center;
     }
 
     .title-section {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 15px;
     }
 
     .flag {
-      width: 12px;
-      height: 28px;
+      width: 14px;
+      height: 38px;
       display: flex;
       flex-direction: column;
     }
@@ -138,78 +180,84 @@
 
     .title-text h1 {
       margin: 0;
-      font-size: 20px;
-      font-weight: 800;
-      letter-spacing: 0.5px;
+      font-size: 32px;
+      font-weight: 900;
+      letter-spacing: 1px;
       text-transform: uppercase;
+      line-height: 1;
     }
 
     .title-text span {
-      font-size: 14px;
-      font-weight: 300;
+      font-weight: 400;
       opacity: 0.9;
     }
 
     .date-text {
-      font-size: 13px;
-      font-weight: bold;
-      margin-top: 4px;
+      font-size: 18px;
+      font-weight: 700;
+      margin-top: 6px;
       letter-spacing: 0.5px;
+      text-transform: uppercase;
     }
 
-    .logo-badge {
-      background: #fff;
-      color: #111;
-      border-radius: 50%;
-      width: 45px;
-      height: 45px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 9px;
-      font-weight: bold;
-      text-align: center;
-      line-height: 1;
-      border: 1px solid rgba(0,0,0,0.1);
+    .site-logo {
+      height: 55px;
+      width: auto;
+      object-fit: contain;
     }
 
     /* TABLE */
     .poll-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 13px;
+      margin-top: 10px;
     }
 
     .poll-table th, .poll-table td {
       border: 1px solid var(--border-color);
-      padding: 5px 8px;
+      padding: 6px 12px;
       text-align: center;
+      vertical-align: middle;
     }
 
     .poll-table th {
-      font-size: 10px;
-      font-weight: normal;
-      opacity: 0.85;
-      line-height: 1.1;
+      font-size: 13px;
+      font-weight: 400;
+      opacity: 0.9;
+      line-height: 1.2;
+      padding-bottom: 8px;
     }
 
     .poll-table td.party-name {
       text-align: left;
-      font-weight: bold;
+      font-weight: 700;
       text-transform: uppercase;
-      font-size: 12px;
-      letter-spacing: 0.3px;
+      font-size: 17px;
+      letter-spacing: 0.5px;
+    }
+
+    .party-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .party-logo-img {
+      width: 26px;
+      height: 26px;
+      object-fit: contain;
+      border-radius: 50%;
+      background: #fff;
     }
 
     .poll-table td.val {
-      font-weight: bold;
-      font-size: 13px;
+      font-weight: 700;
+      font-size: 18px;
     }
 
-    .arrow-up { color: #00ff2b; font-size: 12px; }
-    .arrow-down { color: #ff0000; font-size: 12px; }
-    .arrow-eq { color: #ffd700; font-size: 12px; }
+    .arrow-up { color: #00ff2b; font-size: 16px; }
+    .arrow-down { color: #ff2222; font-size: 16px; }
+    .arrow-eq { color: #ffd700; font-size: 16px; }
   </style>
 </head>
 <body>
@@ -227,19 +275,19 @@
       <input type="text" id="input-prev-date" value="02/05/2026">
     </div>
 
-    <h3>Partiti (Nome | Stima % | Trend)</h3>
+    <h3>Partiti (Logo URL | Nome | Stima % | Trend)</h3>
     <div id="parties-list"></div>
 
     <button class="btn" onclick="updateGraphic()">Aggiorna Anteprima</button>
   </div>
 
-  <!-- ANTEPRIMA GRAFICA -->
+  <!-- ANTEPRIMA GRAFICA (PRESENTAZIONE 16:9) -->
   <div class="preview-card">
     <div id="capture-area" class="graphic-box">
       <div class="header-box">
         <div class="title-section">
           <!-- Icona Urna Elettorale SVG -->
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2z"/><path d="m9 7 3-5 3 5"/><path d="M9 14h6"/></svg>
+          <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2z"/><path d="m9 7 3-5 3 5"/><path d="M9 14h6"/></svg>
           <div class="flag">
             <div class="flag-green"></div>
             <div class="flag-white"></div>
@@ -250,17 +298,15 @@
             <div class="date-text" id="display-date">09 MAGGIO 2026</div>
           </div>
         </div>
-        <div class="logo-badge">
-          <span>bruno</span>
-          <span>rachiele</span>
-        </div>
+        <!-- Logo Personale Integrato -->
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiOeKLAFzNySkI5ahC_uZiv0Asne6shnjr1QndoMNmRBtkNdQfe59GGO3nY5nc5C4OCXNMXGXu1XtHm0X7gPqbvTgFjqszFGQrPD3G5R4c2MIJPiZCk5OX6dLbnYKeU1itEVo7OcJB9I0N-Wi9z9WP64l5_btoNMrZ111Ex8i-W9UcKwOJPv5uDnl6LwhA/s1600-rw/logo.png" crossorigin="anonymous" class="site-logo" alt="Logo">
       </div>
 
       <table class="poll-table">
         <thead>
           <tr>
-            <th style="width: 45%;"></th>
-            <th style="width: 15%; color: #00ff2b;">▲ <span style="color:#ff0000;">▼</span> <span style="color:#ffd700;">=</span></th>
+            <th style="width: 46%;"></th>
+            <th style="width: 14%; color: #00ff2b; font-size: 15px;">▲ <span style="color:#ff2222;">▼</span> <span style="color:#ffd700;">=</span></th>
             <th style="width: 20%;">stima<br><span id="display-header-date">09/05/2026</span></th>
             <th style="width: 20%;">Trend rispetto<br>al <span id="display-header-prev-date">02/05/2026</span></th>
           </tr>
@@ -271,24 +317,24 @@
       </table>
     </div>
 
-    <button class="btn btn-download" onclick="downloadImage()">Scarica Grafica PNG</button>
+    <button class="btn btn-download" onclick="downloadImage()">Scarica Grafica PNG (Formato Presentazione)</button>
   </div>
 </div>
 
 <script>
-  // Dati iniziali predefiniti
+  // Dati iniziali predefiniti con URL dei loghi
   const initialData = [
-    { party: "FRATELLI D'ITALIA", val: "28,00", trend: -0.42 },
-    { party: "PARTITO DEMOCRATICO", val: "21,97", trend: -0.31 },
-    { party: "MOVIMENTO 5 STELLE", val: "12,57", trend: -0.21 },
-    { party: "FORZA ITALIA", val: "8,07", trend: -0.18 },
-    { party: "LEGA", val: "7,37", trend: 0.49 },
-    { party: "ALLEANZA VERDI-SINISTRA", val: "6,60", trend: 0.12 },
-    { party: "FUTURO NAZIONALE", val: "3,43", trend: 0.11 },
-    { party: "AZIONE", val: "3,07", trend: 0.07 },
-    { party: "ITALIA VIVA", val: "2,60", trend: 0.13 },
-    { party: ".+EUROPA", val: "1,63", trend: 0.33 },
-    { party: "NOI MODERATI", val: "1,20", trend: 0.03 }
+    { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Fratelli_d%27Italia_2022.svg/240px-Fratelli_d%27Italia_2022.svg.png", party: "FRATELLI D'ITALIA", val: "28,00", trend: -0.42 },
+    { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Partito_Democratico_2024.svg/240px-Partito_Democratico_2024.svg.png", party: "PARTITO DEMOCRATICO", val: "21,97", trend: -0.31 },
+    { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Movimento_5_Stelle_%282021%29.svg/240px-Movimento_5_Stelle_%282021%29.svg.png", party: "MOVIMENTO 5 STELLE", val: "12,57", trend: -0.21 },
+    { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Forza_Italia_%282023%29.svg/240px-Forza_Italia_%282023%29.svg.png", party: "FORZA ITALIA", val: "8,07", trend: -0.18 },
+    { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Lega_per_Salvini_Premier_%282020%29.svg/240px-Lega_per_Salvini_Premier_%282020%29.svg.png", party: "LEGA", val: "7,37", trend: 0.49 },
+    { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Alleanza_Verdi_e_Sinistra.svg/240px-Alleanza_Verdi_e_Sinistra.svg.png", party: "ALLEANZA VERDI-SINISTRA", val: "6,60", trend: 0.12 },
+    { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/52/Futuro_Nazionale_logo.svg/240px-Futuro_Nazionale_logo.svg.png", party: "FUTURO NAZIONALE", val: "3,43", trend: 0.11 },
+    { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Azione_logo_2020.svg/240px-Azione_logo_2020.svg.png", party: "AZIONE", val: "3,07", trend: 0.07 },
+    { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Italia_Viva_logo.svg/240px-Italia_Viva_logo.svg.png", party: "ITALIA VIVA", val: "2,60", trend: 0.13 },
+    { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Pi%C3%B9_Europa_logo_2021.svg/240px-Pi%C3%B9_Europa_logo_2021.svg.png", party: ".+EUROPA", val: "1,63", trend: 0.33 },
+    { logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Noi_Moderati_logo.svg/240px-Noi_Moderati_logo.svg.png", party: "NOI MODERATI", val: "1,20", trend: 0.03 }
   ];
 
   function renderForm() {
@@ -297,9 +343,10 @@
     initialData.forEach((item, index) => {
       list.innerHTML += `
         <div class="party-row">
-          <input type="text" value="${item.party}" id="p-name-${index}">
-          <input type="text" value="${item.val}" id="p-val-${index}">
-          <input type="number" step="0.01" value="${item.trend}" id="p-trend-${index}">
+          <input type="text" value="${item.logo}" id="p-logo-${index}" placeholder="URL Logo">
+          <input type="text" value="${item.party}" id="p-name-${index}" placeholder="Nome Partito">
+          <input type="text" value="${item.val}" id="p-val-${index}" placeholder="%">
+          <input type="number" step="0.01" value="${item.trend}" id="p-trend-${index}" placeholder="Trend">
         </div>
       `;
     });
@@ -308,7 +355,6 @@
   function updateGraphic() {
     document.getElementById('display-date').innerText = document.getElementById('input-date').value;
     
-    // Tenta di estrarre e formattare le date per l'intestazione della tabella
     const fullDate = document.getElementById('input-date').value;
     document.getElementById('display-header-date').innerText = fullDate;
     document.getElementById('display-header-prev-date').innerText = document.getElementById('input-prev-date').value;
@@ -316,7 +362,8 @@
     const tbody = document.getElementById('table-body');
     tbody.innerHTML = '';
 
-    for(let i=0; i<11; i++) {
+    for(let i=0; i<initialData.length; i++) {
+      const logoUrl = document.getElementById(`p-logo-${i}`).value;
       const name = document.getElementById(`p-name-${i}`).value;
       const val = document.getElementById(`p-val-${i}`).value;
       const trend = parseFloat(document.getElementById(`p-trend-${i}`).value);
@@ -332,9 +379,16 @@
         arrowHTML = '<span class="arrow-eq">=</span>';
       }
 
+      const imgTag = logoUrl ? `<img src="${logoUrl}" crossorigin="anonymous" class="party-logo-img" alt="">` : '';
+
       tbody.innerHTML += `
         <tr>
-          <td class="party-name">${name}</td>
+          <td class="party-name">
+            <div class="party-cell">
+              ${imgTag}
+              <span>${name}</span>
+            </div>
+          </td>
           <td>${arrowHTML}</td>
           <td class="val">${val}</td>
           <td class="val">${trendText}</td>
@@ -345,7 +399,11 @@
 
   function downloadImage() {
     const area = document.getElementById('capture-area');
-    html2canvas(area, { scale: 2 }).then(canvas => {
+    html2canvas(area, { 
+      scale: 2,
+      useCORS: true, 
+      allowTaint: true 
+    }).then(canvas => {
       const link = document.createElement('a');
       link.download = `sondaggio-${document.getElementById('input-date').value.replace(/\s+/g, '_')}.png`;
       link.href = canvas.toDataURL('image/png');
