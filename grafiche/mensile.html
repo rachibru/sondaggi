@@ -1,9 +1,9 @@
-html_content_monthly = """<!DOCTYPE html>
+html_auto_monthly = """<!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Media Mensile Partiti - Sondaggi</title>
+  <title>Media Mensile Partiti - Parser Google Sheets</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&display=swap" rel="stylesheet">
@@ -28,10 +28,10 @@ html_content_monthly = """<!DOCTYPE html>
     }
 
     .main-wrapper {
-      max-width: 1600px;
+      max-width: 1650px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: 450px 1fr;
+      grid-template-columns: 460px 1fr;
       gap: 20px;
     }
 
@@ -64,18 +64,6 @@ html_content_monthly = """<!DOCTYPE html>
       font-size: 12px;
     }
 
-    .edit-row {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 6px;
-      align-items: center;
-      background: #0f172a;
-      padding: 6px;
-      border-radius: 4px;
-    }
-    .edit-row input[type="text"] { font-size: 11px; padding: 4px; }
-    .edit-row input[type="color"] { width: 30px; height: 26px; border: none; cursor: pointer; background: transparent; }
-
     .btn {
       background: #0284c7;
       color: white;
@@ -85,28 +73,42 @@ html_content_monthly = """<!DOCTYPE html>
       cursor: pointer;
       font-weight: 700;
       width: 100%;
-      margin-top: 15px;
+      margin-top: 10px;
       font-size: 14px;
     }
     .btn:hover { background: #0369a1; }
+    .btn-parse { background: #10b981; }
+    .btn-parse:hover { background: #059669; }
 
     /* DASHBOARD */
     .dashboard-container {
       background-color: var(--bg-dashboard);
       color: var(--text-main);
       padding: 25px;
-      width: 1000px;
+      width: 1050px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.3);
       border-radius: 6px;
+      position: relative;
     }
 
-    .main-header {
+    .header-layout {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
       border-bottom: 2px solid #0284c7;
       padding-bottom: 8px;
       margin-bottom: 15px;
     }
+
+    .main-header { flex: 1; }
     .section-title { font-size: 20px; font-weight: 900; text-transform: uppercase; color: #0f172a; }
     .section-subtitle { font-size: 12px; color: var(--text-muted); font-style: italic; }
+
+    .brand-logo {
+      height: 45px;
+      object-fit: contain;
+      margin-left: 15px;
+    }
 
     .header-dates-row {
       display: flex;
@@ -118,7 +120,7 @@ html_content_monthly = """<!DOCTYPE html>
     }
     .header-party-label { width: 180px; padding-left: 10px; }
     .header-dates-container { display: flex; flex: 1; }
-    .header-date-cell { flex: 1; text-align: center; }
+    .header-date-cell { flex: 1; text-align: center; text-transform: uppercase; }
     .header-date-cell.latest { background: #94a3b8; color: #fff; border-radius: 2px; }
 
     .party-container-box {
@@ -178,41 +180,49 @@ html_content_monthly = """<!DOCTYPE html>
 <div class="main-wrapper">
   <!-- PANNELLO DI CONTROLLO -->
   <div class="editor-card">
-    <h2>Editor Media Partiti</h2>
+    <h2>Editor & Incolla Dati</h2>
     
     <div class="form-group">
+      <label>Incolla qui la tabella da Google Sheets (inclusa intestazione date):</label>
+      <textarea id="paste-input" rows="8" placeholder="Incolla qui selezionando le celle da Sheets..."></textarea>
+      <button class="btn btn-parse" onclick="parseAndCalculate()">Calcola Medie e Genera Grafico</button>
+    </div>
+
+    <h3>Impostazioni Titolo</h3>
+    <div class="form-group">
       <label>Titolo Grafico</label>
-      <input type="text" id="input-title" value="Media Mensile Sondaggi Politici" onchange="updateAll()">
+      <input type="text" id="input-title" value="Media Mensile Sondaggi Politici" onchange="renderDashboard()">
     </div>
 
     <div class="form-group">
-      <label>Sottotitolo / Mese di riferimento</label>
-      <input type="text" id="input-subtitle" value="Media ponderata delle rilevazioni nazionali (% sui voti validi)" onchange="updateAll()">
+      <label>Sottotitolo</label>
+      <input type="text" id="input-subtitle" value="Media ponderata delle rilevazioni nazionali (% sui voti validi)" onchange="renderDashboard()">
     </div>
 
     <div class="form-group">
-      <label>Mesi / Date di riferimento (Separate da virgola)</label>
-      <input type="text" id="input-dates" value="Gen26, Feb26, Mar26, Apr26, Mag26, MEDIA MESE" onchange="updateAll()">
+      <label>Percorso Logo</label>
+      <input type="text" id="input-logo" value="../img/logo.png" onchange="renderDashboard()">
     </div>
 
-    <h3>Dati Partiti (% e Colori)</h3>
-    <div id="editor-partiti"></div>
-
-    <div class="form-group" style="margin-top:15px;">
+    <div class="form-group">
       <label>Nota Footer / Fonte</label>
-      <textarea id="input-footer" rows="2" onchange="updateAll()">Media calcolata sui principali istituti demoscopici nazionali (Ipsos, SWG, Noto, Youtrend).</textarea>
+      <textarea id="input-footer" rows="2" onchange="renderDashboard()">Media calcolata sui principali制作 istituti demoscopici nazionali.</textarea>
     </div>
 
-    <button class="btn" onclick="downloadPNG()">Scarica Immagine High-Res (PNG)</button>
+    <button class="btn" onclick="downloadPNG()">Scarica Immagine PNG</button>
   </div>
 
   <!-- AREA VISUALIZZAZIONE INFOGRAFICA -->
   <div>
     <div id="dashboard-canvas" class="dashboard-container">
       
-      <div class="main-header">
-        <div class="section-title" id="display-title">Media Mensile Sondaggi Politici</div>
-        <div class="section-subtitle" id="display-subtitle">Media ponderata delle rilevazioni nazionali (% sui voti validi)</div>
+      <div class="header-layout">
+        <div class="main-header">
+          <div class="section-title" id="display-title">Media Mensile Sondaggi Politici</div>
+          <div class="section-subtitle" id="display-subtitle">Media ponderata delle rilevazioni nazionali (% sui voti validi)</div>
+        </div>
+        <!-- LOGO IN ALTO A DESTRA -->
+        <img id="display-logo" src="../img/logo.png" alt="Logo" class="brand-logo" onerror="this.style.display='none'" onload="this.style.display='block'">
       </div>
 
       <!-- INTESTAZIONE TABELLA -->
@@ -232,71 +242,128 @@ html_content_monthly = """<!DOCTYPE html>
 </div>
 
 <script>
-  let state = {
-    partiti: [
-      { name: "Fratelli d'Italia", color: "#60a5fa", vals: "28.1, 28.3, 28.5, 28.2, 28.6" },
-      { name: "Partito Democratico", color: "#f87171", vals: "20.5, 20.8, 21.2, 21.5, 21.8" },
-      { name: "Movimento 5 Stelle", color: "#facc15", vals: "15.2, 14.8, 14.5, 13.9, 13.5" },
-      { name: "Lega", color: "#4ade80", vals: "8.8, 8.6, 8.5, 8.4, 8.3" },
-      { name: "Forza Italia", color: "#38bdf8", vals: "7.2, 7.5, 7.8, 8.1, 8.2" },
-      { name: "Alleanza Verdi e Sinistra", color: "#34d399", vals: "4.1, 4.3, 4.2, 4.5, 4.6" },
-      { name: "Azione", color: "#a78bfa", vals: "3.5, 3.4, 3.3, 3.2, 3.1" },
-      { name: "Italia Viva", color: "#fb923c", vals: "2.1, 2.0, 2.2, 2.1, 2.0" }
-    ]
+  // Colori predefiniti per i partiti principali
+  const partyColors = {
+    "FRATELLI D'ITALIA": "#60a5fa",
+    "PARTITO DEMOCRATICO": "#f87171",
+    "MOVIMENTO 5 STELLE": "#facc15",
+    "LEGA": "#4ade80",
+    "FORZA ITALIA": "#38bdf8",
+    "AZIONE": "#a78bfa",
+    "ITALIA VIVA": "#fb923c",
+    "NOI MODERATI": "#c084fc",
+    "ALLEANZA VERDI-SINISTRA": "#34d399",
+    ".+EUROPA": "#f472b6",
+    "FUTURO NAZIONALE": "#94a3b8"
   };
 
-  function initEditors() {
-    const partitiDiv = document.getElementById('editor-partiti');
-    partitiDiv.innerHTML = '';
-    state.partiti.forEach((p, i) => {
-      partitiDiv.innerHTML += `
-        <div class="edit-row">
-          <input type="color" value="${p.color}" id="p-col-${i}" onchange="updateAll()">
-          <input type="text" style="width: 140px;" value="${p.name}" id="p-name-${i}" onchange="updateAll()">
-          <input type="text" style="flex:1;" value="${p.vals}" id="p-vals-${i}" onchange="updateAll()">
-        </div>
-      `;
-    });
+  const monthNames = {
+    "01": "Gen", "02": "Feb", "03": "Mar", "04": "Apr", "05": "Mag", "06": "Giu",
+    "07": "Lug", "08": "Ago", "09": "Set", "10": "Ott", "11": "Nov", "12": "Dic"
+  };
+
+  // Dati calcolati
+  let calculatedMonths = [];
+  let calculatedData = [];
+
+  // Mappa una data es. 22/11/25 a "Nov25"
+  function parseDateToMonth(dateStr) {
+    const parts = dateStr.trim().split('/');
+    if (parts.length < 3) return dateStr;
+    const m = parts[1].padStart(2, '0');
+    const y = parts[2];
+    return (monthNames[m] || m) + y;
   }
 
-  function updateAll() {
-    // Titoli
+  function parseAndCalculate() {
+    const rawText = document.getElementById('paste-input').value.trim();
+    if (!rawText) return;
+
+    const rows = rawText.split('\n').map(r => r.split('\t'));
+    if (rows.length < 2) return;
+
+    // Header date
+    const headerRow = rows[0];
+    const dateHeaders = headerRow.slice(1).map(d => d.trim());
+
+    // Mappa colonne -> Nome Mese
+    const colToMonth = dateHeaders.map(d => parseDateToMonth(d));
+
+    // Identifica mesi unici mantenendo l'ordine
+    calculatedMonths = [...new Set(colToMonth)];
+
+    calculatedData = [];
+
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i];
+      if (!row[0] || !row[0].trim()) continue;
+
+      const partyName = row[0].trim().toUpperCase();
+      const rawVals = row.slice(1).map(v => parseFloat(v.replace(',', '.')) || 0);
+
+      // Raggruppa i valori per ciascun mese
+      const monthSums = {};
+      const monthCounts = {};
+
+      colToMonth.forEach((m, colIdx) => {
+        const val = rawVals[colIdx];
+        if (val > 0) {
+          monthSums[m] = (monthSums[m] || 0) + val;
+          monthCounts[m] = (monthCounts[m] || 0) + 1;
+        }
+      });
+
+      // Calcola media
+      const monthAverages = calculatedMonths.map(m => {
+        if (monthCounts[m]) {
+          return +(monthSums[m] / monthCounts[m]).toFixed(2);
+        }
+        return 0;
+      });
+
+      calculatedData.push({
+        name: partyName,
+        color: partyColors[partyName] || "#38bdf8",
+        vals: monthAverages
+      });
+    }
+
+    renderDashboard();
+  }
+
+  function renderDashboard() {
     document.getElementById('display-title').innerText = document.getElementById('input-title').value;
     document.getElementById('display-subtitle').innerText = document.getElementById('input-subtitle').value;
+    
+    const logoSrc = document.getElementById('input-logo').value;
+    const logoImg = document.getElementById('display-logo');
+    logoImg.src = logoSrc;
 
-    // Dates
-    const datesArr = document.getElementById('input-dates').value.split(',').map(s => s.trim());
+    // Render Intestazioni Mesi
     const headerDates = document.getElementById('header-dates');
     headerDates.innerHTML = '';
-    
-    datesArr.forEach((d, idx) => {
-      const isLatest = idx === datesArr.length - 1;
-      headerDates.innerHTML += `<div class="header-date-cell ${isLatest ? 'latest' : ''}">${d}</div>`;
+    calculatedMonths.forEach((m, idx) => {
+      const isLatest = idx === calculatedMonths.length - 1;
+      headerDates.innerHTML += `<div class="header-date-cell ${isLatest ? 'latest' : ''}">${m}</div>`;
     });
 
-    // Rendering Barre Partiti
+    // Render Partiti e Barre
     const container = document.getElementById('parties-bars-container');
     container.innerHTML = '';
 
-    state.partiti.forEach((_, i) => {
-      const name = document.getElementById(`p-name-${i}`).value;
-      const color = document.getElementById(`p-col-${i}`).value;
-      const vals = document.getElementById(`p-vals-${i}`).value.split(',').map(s => parseFloat(s.trim()) || 0);
-
-      let rowHTML = `<div class="party-row"><div class="party-name">${name}</div><div class="party-dates-container">`;
+    calculatedData.forEach(p => {
+      let rowHTML = `<div class="party-row"><div class="party-name">${p.name}</div><div class="party-dates-container">`;
       
-      datesArr.forEach((_, idx) => {
-        const isLatest = idx === datesArr.length - 1;
-        const val = vals[idx] !== undefined ? vals[idx] : 0;
-        
-        // Scala percentuale per visualizzazione barre (max ~35% di voto)
+      calculatedMonths.forEach((_, idx) => {
+        const isLatest = idx === calculatedMonths.length - 1;
+        const val = p.vals[idx] || 0;
         const widthPercent = Math.min(val * 2.8, 100);
 
         rowHTML += `
           <div class="party-date-cell ${isLatest ? 'latest' : ''}">
             <div class="bar-wrapper">
-              <div class="bar-fill" style="width: ${widthPercent}%; background-color: ${color};">
-                ${val}%
+              <div class="bar-fill" style="width: ${widthPercent}%; background-color: ${p.color};">
+                ${val ? val + '%' : '-'}
               </div>
             </div>
           </div>`;
@@ -319,13 +386,21 @@ html_content_monthly = """<!DOCTYPE html>
     });
   }
 
-  initEditors();
-  updateAll();
+  // Dati di Esempio iniziali (presi dal tuo screenshot)
+  const defaultSheetText = `PARTITO\t22/11/25\t29/11/25\t06/12/25\t13/12/25\t20/12/25\t27/12/25\t10/01/26\t17/01/26\t24/01/26\t31/01/26\t07/02/26\t14/02/26\t21/02/26\t28/02/26\t25/04/26\t02/05/26\t09/05/26
+FRATELLI D'ITALIA\t30,33\t31,00\t30,93\t30,93\t31,05\t31,20\t31,20\t31,00\t30,23\t30,43\t29,43\t30,33\t29,85\t29,40\t29,15\t28,43\t28,00
+PARTITO DEMOCRATICO\t21,53\t22,10\t22,00\t22,00\t22,00\t21,95\t21,95\t22,13\t22,43\t22,43\t22,18\t22,20\t22,10\t22,28\t21,97\t22,10\t22,28
+MOVIMENTO 5 STELLE\t12,70\t12,40\t12,13\t12,13\t12,30\t12,30\t12,30\t12,40\t12,50\t12,20\t12,53\t11,80\t11,78\t12,17\t12,50\t12,78\t12,57
+LEGA\t8,27\t8,10\t8,23\t8,23\t8,45\t8,30\t8,30\t8,30\t8,37\t8,13\t8,10\t6,87\t7,45\t6,80\t6,75\t6,88\t7,37
+FORZA ITALIA\t8,43\t8,20\t9,20\t9,20\t9,50\t9,40\t9,40\t9,40\t8,37\t8,37\t8,48\t9,40\t8,95\t8,37\t8,30\t8,25\t8,07`;
+
+  document.getElementById('paste-input').value = defaultSheetText;
+  parseAndCalculate();
 </script>
 
 </body>
 </html>
 """
 
-with open("media_mensile_partiti.html", "w", encoding="utf-8") as f:
-    f.write(html_content_monthly)
+with open("media_mensile_partiti_auto.html", "w", encoding="utf-8") as f:
+    f.write(html_auto_monthly)
