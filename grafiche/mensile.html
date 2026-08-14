@@ -1,9 +1,9 @@
-html_content_interactive = """<!DOCTYPE html>
+html_content_monthly = """<!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Sondaggi Politici - Editor Completo</title>
+  <title>Media Mensile Partiti - Sondaggi</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&display=swap" rel="stylesheet">
@@ -28,18 +28,18 @@ html_content_interactive = """<!DOCTYPE html>
     }
 
     .main-wrapper {
-      max-width: 1700px;
+      max-width: 1600px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: 480px 1fr;
+      grid-template-columns: 450px 1fr;
       gap: 20px;
     }
 
-    @media (max-width: 1300px) {
+    @media (max-width: 1200px) {
       .main-wrapper { grid-template-columns: 1fr; }
     }
 
-    /* FORM ED EDITOR MODIFICABILE */
+    /* EDITOR */
     .editor-card {
       background: #1e293b;
       padding: 20px;
@@ -77,7 +77,7 @@ html_content_interactive = """<!DOCTYPE html>
     .edit-row input[type="color"] { width: 30px; height: 26px; border: none; cursor: pointer; background: transparent; }
 
     .btn {
-      background: #10b981;
+      background: #0284c7;
       color: white;
       border: none;
       padding: 10px 15px;
@@ -85,139 +85,145 @@ html_content_interactive = """<!DOCTYPE html>
       cursor: pointer;
       font-weight: 700;
       width: 100%;
-      margin-top: 10px;
+      margin-top: 15px;
       font-size: 14px;
     }
-    .btn:hover { background: #059669; }
-    .btn-download { background: #0284c7; margin-top: 15px; }
-    .btn-download:hover { background: #0369a1; }
+    .btn:hover { background: #0369a1; }
 
-    /* DASHBOARD INFOGRAFICA */
+    /* DASHBOARD */
     .dashboard-container {
       background-color: var(--bg-dashboard);
       color: var(--text-main);
       padding: 25px;
-      width: 1050px;
+      width: 1000px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-      border-radius: 4px;
+      border-radius: 6px;
     }
 
-    .section-title { font-size: 17px; font-weight: 800; margin-bottom: 2px; text-transform: uppercase; }
-    .section-subtitle { font-size: 11px; color: var(--text-muted); font-style: italic; margin-bottom: 8px; }
-
-    .poll-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-      margin-bottom: 20px;
-      background: #ffffff;
+    .main-header {
+      border-bottom: 2px solid #0284c7;
+      padding-bottom: 8px;
+      margin-bottom: 15px;
     }
+    .section-title { font-size: 20px; font-weight: 900; text-transform: uppercase; color: #0f172a; }
+    .section-subtitle { font-size: 12px; color: var(--text-muted); font-style: italic; }
 
-    .poll-table th, .poll-table td {
+    .header-dates-row {
+      display: flex;
+      background: #cbd5e1;
+      font-weight: 700;
+      font-size: 11px;
+      border-radius: 4px 4px 0 0;
+      padding: 6px 0;
+    }
+    .header-party-label { width: 180px; padding-left: 10px; }
+    .header-dates-container { display: flex; flex: 1; }
+    .header-date-cell { flex: 1; text-align: center; }
+    .header-date-cell.latest { background: #94a3b8; color: #fff; border-radius: 2px; }
+
+    .party-container-box {
+      background: #fff;
       border: 1px solid #cbd5e1;
-      text-align: center;
-      padding: 4px 2px;
-      vertical-align: middle;
+      border-top: none;
+      padding: 4px;
+      border-radius: 0 0 4px 4px;
     }
 
-    .poll-table th { background-color: #f8fafc; font-weight: 700; font-size: 10px; color: #334155; }
-    .poll-table th.latest-col, .poll-table td.latest-col { background-color: var(--latest-col-bg) !important; font-weight: 800; }
-    .poll-table td.party-label { text-align: left; padding-left: 8px; font-weight: 600; font-size: 11px; white-space: nowrap; }
-
-    .circle-val {
-      display: inline-flex;
+    .party-row {
+      display: flex;
       align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      color: #000;
-      font-weight: 800;
+      border-bottom: 1px solid #f1f5f9;
+      padding: 4px 0;
+    }
+    .party-row:last-child { border-bottom: none; }
+
+    .party-name {
+      width: 180px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-left: 6px;
+    }
+
+    .party-dates-container { display: flex; flex: 1; }
+    .party-date-cell { flex: 1; display: flex; align-items: center; justify-content: center; padding: 0 2px; }
+    .party-date-cell.latest { background-color: var(--latest-col-bg); border-radius: 2px; }
+
+    .bar-wrapper {
+      width: 100%;
+      height: 20px;
+      background-color: #f1f5f9;
+      border-radius: 3px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+    }
+    .bar-fill {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 4px;
       font-size: 10px;
-      width: 25px;
-      height: 25px;
+      font-weight: 800;
+      color: #000;
     }
 
-    .double-circle { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-    .gov-circle, .pm-circle {
-      width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 10px;
-    }
-    .gov-circle { background-color: #cbd5e1; }
-    .pm-circle { background-color: #7dd3fc; }
-
-    .leader-row { display: flex; align-items: center; border-bottom: 1px solid #e2e8f0; padding: 2px 0; }
-    .leader-name { width: 170px; font-size: 10px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-left: 4px; }
-    .leader-dates-container { display: flex; flex: 1; }
-    .leader-date-cell { flex: 1; display: flex; align-items: center; justify-content: center; padding: 0 1px; }
-
-    .bar-wrapper { width: 100%; height: 16px; background-color: #e2e8f0; border-radius: 2px; overflow: hidden; }
-    .bar-fill { height: 100%; display: flex; align-items: center; justify-content: flex-end; padding-right: 3px; font-size: 9px; font-weight: 800; color: #000; }
-
-    .footer-note { font-size: 9px; color: #64748b; margin-top: 10px; border-top: 1px solid #cbd5e1; padding-top: 4px; }
+    .footer-note { font-size: 10px; color: #64748b; margin-top: 15px; border-top: 1px solid #cbd5e1; padding-top: 6px; }
   </style>
 </head>
 <body>
 
 <div class="main-wrapper">
-  <!-- PANNELLO DI CONTROLLO ED EDITOR COMPLETAMENTE MODIFICABILE -->
+  <!-- PANNELLO DI CONTROLLO -->
   <div class="editor-card">
-    <h2>Editor Dati Grafico</h2>
+    <h2>Editor Media Partiti</h2>
     
     <div class="form-group">
-      <label>Date Rilevazioni (Separate da virgola)</label>
-      <input type="text" id="input-dates" value="28/11/21, 27/1/22, 24/2/22, 24/3/22, 28/4/22, 25/5/22, 09/05/26" onchange="updateAll()">
+      <label>Titolo Grafico</label>
+      <input type="text" id="input-title" value="Media Mensile Sondaggi Politici" onchange="updateAll()">
     </div>
 
-    <h3>1. Intenzioni di Voto (Partiti)</h3>
+    <div class="form-group">
+      <label>Sottotitolo / Mese di riferimento</label>
+      <input type="text" id="input-subtitle" value="Media ponderata delle rilevazioni nazionali (% sui voti validi)" onchange="updateAll()">
+    </div>
+
+    <div class="form-group">
+      <label>Mesi / Date di riferimento (Separate da virgola)</label>
+      <input type="text" id="input-dates" value="Gen26, Feb26, Mar26, Apr26, Mag26, MEDIA MESE" onchange="updateAll()">
+    </div>
+
+    <h3>Dati Partiti (% e Colori)</h3>
     <div id="editor-partiti"></div>
-
-    <h3>2. Gradimento Governo e Premier</h3>
-    <div class="form-group">
-      <label>Valori Governo (Separati da virgola)</label>
-      <input type="text" id="input-gov" value="63, 58, 56, 57, 58, 55, 52" onchange="updateAll()">
-    </div>
-    <div class="form-group">
-      <label>Valori Premier (Separati da virgola)</label>
-      <input type="text" id="input-pm" value="64, 59, 59, 60, 61, 58, 56" onchange="updateAll()">
-    </div>
-
-    <h3>3. Gradimento Leader</h3>
-    <div id="editor-leader"></div>
 
     <div class="form-group" style="margin-top:15px;">
       <label>Nota Footer / Fonte</label>
-      <textarea id="input-footer" rows="2" onchange="updateAll()">Sondaggio realizzato per Corriere della Sera. Campione rappresentativo della popolazione italiana.</textarea>
+      <textarea id="input-footer" rows="2" onchange="updateAll()">Media calcolata sui principali istituti demoscopici nazionali (Ipsos, SWG, Noto, Youtrend).</textarea>
     </div>
 
-    <button class="btn btn-download" onclick="downloadPNG()">Scarica Immagine High-Res (PNG)</button>
+    <button class="btn" onclick="downloadPNG()">Scarica Immagine High-Res (PNG)</button>
   </div>
 
   <!-- AREA VISUALIZZAZIONE INFOGRAFICA -->
   <div>
     <div id="dashboard-canvas" class="dashboard-container">
       
-      <!-- SEZIONE 1: INTENZIONI DI VOTO -->
-      <div class="section-title">Intenzioni di voto <span style="font-size: 11px; font-weight: normal;">(Camera dei deputati)</span></div>
-      <div class="section-subtitle">% su dichiarazioni valide</div>
-      
-      <table class="poll-table">
-        <thead><tr id="header-dates-1"></tr></thead>
-        <tbody id="body-voto"></tbody>
-      </table>
+      <div class="main-header">
+        <div class="section-title" id="display-title">Media Mensile Sondaggi Politici</div>
+        <div class="section-subtitle" id="display-subtitle">Media ponderata delle rilevazioni nazionali (% sui voti validi)</div>
+      </div>
 
-      <!-- SEZIONE 2: GRADIMENTO GOVERNO E PREMIER -->
-      <div class="section-title">Il gradimento per il governo</div>
-      <div class="section-subtitle">Indice 0-100 (% giudizi positivi)</div>
-      
-      <table class="poll-table">
-        <thead><tr id="header-dates-2"></tr></thead>
-        <tbody id="body-gov"></tbody>
-      </table>
+      <!-- INTESTAZIONE TABELLA -->
+      <div class="header-dates-row">
+        <div class="header-party-label">Partito</div>
+        <div class="header-dates-container" id="header-dates"></div>
+      </div>
 
-      <!-- SEZIONE 3: GRADIMENTO LEADER DI PARTITO -->
-      <div class="section-title">Il gradimento per i leader di partito</div>
-      <div class="section-subtitle">Indice di gradimento individuale (0-100)</div>
-      
-      <div style="background: #fff; border: 1px solid #cbd5e1; padding: 4px; border-radius: 2px;">
-        <div id="leader-container"></div>
+      <!-- CORPO TABELLA BARRE -->
+      <div class="party-container-box">
+        <div id="parties-bars-container"></div>
       </div>
 
       <div class="footer-note" id="footer-text"></div>
@@ -226,134 +232,78 @@ html_content_interactive = """<!DOCTYPE html>
 </div>
 
 <script>
-  // Struttura Dati Iniziali
   let state = {
-    dates: ["28/11/21", "27/1/22", "24/2/22", "24/3/22", "28/4/22", "25/5/22", "09/05/26"],
     partiti: [
-      { name: "Fratelli d'Italia", color: "#60a5fa", vals: "19.8, 19.5, 19.7, 21.5, 20.0, 21.0, 28.5" },
-      { name: "Partito Democratico", color: "#f87171", vals: "20.8, 20.0, 21.0, 20.9, 20.5, 21.0, 22.1" },
-      { name: "Movimento 5 Stelle", color: "#facc15", vals: "15.5, 15.9, 15.4, 14.5, 15.0, 13.7, 12.8" },
-      { name: "Lega", color: "#4ade80", vals: "19.1, 19.7, 18.0, 17.5, 16.5, 15.1, 8.5" },
-      { name: "Forza Italia", color: "#38bdf8", vals: "8.0, 9.2, 8.9, 8.9, 8.8, 8.3, 7.5" }
-    ],
-    leader: [
-      { name: "• Giorgia Meloni (FdI)", color: "#60a5fa", vals: "35, 37, 36, 37, 35, 36, 44" },
-      { name: "• Antonio Tajani (FI)", color: "#38bdf8", vals: "31, 30, 28, 30, 28, 27, 35" },
-      { name: "• Elly Schlein (PD)", color: "#f87171", vals: "28, 30, 32, 31, 30, 31, 33" },
-      { name: "• Giuseppe Conte (M5S)", color: "#facc15", vals: "43, 36, 36, 35, 34, 32, 30" }
+      { name: "Fratelli d'Italia", color: "#60a5fa", vals: "28.1, 28.3, 28.5, 28.2, 28.6" },
+      { name: "Partito Democratico", color: "#f87171", vals: "20.5, 20.8, 21.2, 21.5, 21.8" },
+      { name: "Movimento 5 Stelle", color: "#facc15", vals: "15.2, 14.8, 14.5, 13.9, 13.5" },
+      { name: "Lega", color: "#4ade80", vals: "8.8, 8.6, 8.5, 8.4, 8.3" },
+      { name: "Forza Italia", color: "#38bdf8", vals: "7.2, 7.5, 7.8, 8.1, 8.2" },
+      { name: "Alleanza Verdi e Sinistra", color: "#34d399", vals: "4.1, 4.3, 4.2, 4.5, 4.6" },
+      { name: "Azione", color: "#a78bfa", vals: "3.5, 3.4, 3.3, 3.2, 3.1" },
+      { name: "Italia Viva", color: "#fb923c", vals: "2.1, 2.0, 2.2, 2.1, 2.0" }
     ]
   };
 
   function initEditors() {
-    // Genera form per Partiti
     const partitiDiv = document.getElementById('editor-partiti');
     partitiDiv.innerHTML = '';
     state.partiti.forEach((p, i) => {
       partitiDiv.innerHTML += `
         <div class="edit-row">
           <input type="color" value="${p.color}" id="p-col-${i}" onchange="updateAll()">
-          <input type="text" style="width: 110px;" value="${p.name}" id="p-name-${i}" onchange="updateAll()">
+          <input type="text" style="width: 140px;" value="${p.name}" id="p-name-${i}" onchange="updateAll()">
           <input type="text" style="flex:1;" value="${p.vals}" id="p-vals-${i}" onchange="updateAll()">
-        </div>
-      `;
-    });
-
-    // Genera form per Leader
-    const leaderDiv = document.getElementById('editor-leader');
-    leaderDiv.innerHTML = '';
-    state.leader.forEach((l, i) => {
-      leaderDiv.innerHTML += `
-        <div class="edit-row">
-          <input type="color" value="${l.color}" id="l-col-${i}" onchange="updateAll()">
-          <input type="text" style="width: 120px;" value="${l.name}" id="l-name-${i}" onchange="updateAll()">
-          <input type="text" style="flex:1;" value="${l.vals}" id="l-vals-${i}" onchange="updateAll()">
         </div>
       `;
     });
   }
 
   function updateAll() {
-    // Leggi Date
+    // Titoli
+    document.getElementById('display-title').innerText = document.getElementById('input-title').value;
+    document.getElementById('display-subtitle').innerText = document.getElementById('input-subtitle').value;
+
+    // Dates
     const datesArr = document.getElementById('input-dates').value.split(',').map(s => s.trim());
+    const headerDates = document.getElementById('header-dates');
+    headerDates.innerHTML = '';
     
-    // Header Tabella
-    let dateColsHTML = '<th style="width: 170px; text-align: left; padding-left: 8px;">Voce / Data</th>';
     datesArr.forEach((d, idx) => {
       const isLatest = idx === datesArr.length - 1;
-      dateColsHTML += `<th class="${isLatest ? 'latest-col' : ''}">${d}</th>`;
+      headerDates.innerHTML += `<div class="header-date-cell ${isLatest ? 'latest' : ''}">${d}</div>`;
     });
-    document.getElementById('header-dates-1').innerHTML = dateColsHTML;
-    document.getElementById('header-dates-2').innerHTML = dateColsHTML;
 
-    // Render Partiti
-    const bodyVoto = document.getElementById('body-voto');
-    bodyVoto.innerHTML = '';
+    // Rendering Barre Partiti
+    const container = document.getElementById('parties-bars-container');
+    container.innerHTML = '';
+
     state.partiti.forEach((_, i) => {
       const name = document.getElementById(`p-name-${i}`).value;
       const color = document.getElementById(`p-col-${i}`).value;
       const vals = document.getElementById(`p-vals-${i}`).value.split(',').map(s => parseFloat(s.trim()) || 0);
 
-      let row = `<tr><td class="party-label">${name}</td>`;
+      let rowHTML = `<div class="party-row"><div class="party-name">${name}</div><div class="party-dates-container">`;
+      
       datesArr.forEach((_, idx) => {
         const isLatest = idx === datesArr.length - 1;
         const val = vals[idx] !== undefined ? vals[idx] : 0;
-        row += `
-          <td class="${isLatest ? 'latest-col' : ''}">
-            <div class="circle-val" style="background-color: ${color};">${val}</div>
-          </td>`;
-      });
-      row += `</tr>`;
-      bodyVoto.innerHTML += row;
-    });
-
-    // Render Governo & PM
-    const govVals = document.getElementById('input-gov').value.split(',').map(s => parseInt(s.trim()) || 0);
-    const pmVals = document.getElementById('input-pm').value.split(',').map(s => parseInt(s.trim()) || 0);
-    const bodyGov = document.getElementById('body-gov');
-    bodyGov.innerHTML = `
-      <tr>
-        <td class="party-label">
-          <div style="font-weight: bold;">Governo</div>
-          <div style="color: #0284c7; font-weight: bold; margin-top: 2px;">Presidente del Consiglio</div>
-        </td>
-        ${datesArr.map((_, idx) => {
-          const isLatest = idx === datesArr.length - 1;
-          return `
-            <td class="${isLatest ? 'latest-col' : ''}">
-              <div class="double-circle">
-                <div class="gov-circle">${govVals[idx] || 0}</div>
-                <div class="pm-circle">${pmVals[idx] || 0}</div>
-              </div>
-            </td>`;
-        }).join('')}
-      </tr>
-    `;
-
-    // Render Leader
-    const leaderContainer = document.getElementById('leader-container');
-    leaderContainer.innerHTML = '';
-    state.leader.forEach((_, i) => {
-      const name = document.getElementById(`l-name-${i}`).value;
-      const color = document.getElementById(`l-col-${i}`).value;
-      const vals = document.getElementById(`l-vals-${i}`).value.split(',').map(s => parseInt(s.trim()) || 0);
-
-      let row = `<div class="leader-row"><div class="leader-name">${name}</div><div class="leader-dates-container">`;
-      datesArr.forEach((_, idx) => {
-        const isLatest = idx === datesArr.length - 1;
-        const val = vals[idx] !== undefined ? vals[idx] : 0;
-        const widthPercent = Math.min(val * 1.5, 100);
         
-        row += `
-          <div class="leader-date-cell ${isLatest ? 'latest-col' : ''}">
+        // Scala percentuale per visualizzazione barre (max ~35% di voto)
+        const widthPercent = Math.min(val * 2.8, 100);
+
+        rowHTML += `
+          <div class="party-date-cell ${isLatest ? 'latest' : ''}">
             <div class="bar-wrapper">
               <div class="bar-fill" style="width: ${widthPercent}%; background-color: ${color};">
-                ${val}
+                ${val}%
               </div>
             </div>
           </div>`;
       });
-      row += `</div></div>`;
-      leaderContainer.innerHTML += row;
+
+      rowHTML += `</div></div>`;
+      container.innerHTML += rowHTML;
     });
 
     document.getElementById('footer-text').innerText = document.getElementById('input-footer').value;
@@ -363,7 +313,7 @@ html_content_interactive = """<!DOCTYPE html>
     const area = document.getElementById('dashboard-canvas');
     html2canvas(area, { scale: 2.5 }).then(canvas => {
       const link = document.createElement('a');
-      link.download = 'dashboard-editata.png';
+      link.download = 'media-mensile-partiti.png';
       link.href = canvas.toDataURL('image/png');
       link.click();
     });
@@ -377,5 +327,5 @@ html_content_interactive = """<!DOCTYPE html>
 </html>
 """
 
-with open("dashboard_sondaggi_interactive.html", "w", encoding="utf-8") as f:
-    f.write(html_content_interactive)
+with open("media_mensile_partiti.html", "w", encoding="utf-8") as f:
+    f.write(html_content_monthly)
