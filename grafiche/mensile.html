@@ -1,10 +1,11 @@
-# Prepariamo la nuova versione dell'HTML dove gestiamo in modo impeccabile la visibilità del testo
-html_readable = """<!DOCTYPE html>
+# Generiamo il file HTML puro (senza Python attorno) che l'utente possa usare o caricare direttamente su GitHub Pages.
+
+html_clean = """<!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Media Mensile Partiti - Testo Leggibile</title>
+  <title>Media Mensile Sondaggi Politici</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&display=swap" rel="stylesheet">
@@ -171,27 +172,20 @@ html_readable = """<!DOCTYPE html>
       border-radius: 2px 0 0 2px;
     }
 
-    /* ETICHETTA DEL VALORE SEMPRE VISIBILE */
     .bar-value-label {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 900;
       white-space: nowrap;
       pointer-events: none;
       line-height: 1;
+      color: #0f172a;
     }
 
-    /* Se dentro la barra */
     .bar-value-label.inside {
-      color: #0f172a;
-      right: 6px;
-    }
-
-    /* Se fuori dalla barra */
-    .bar-value-label.outside {
-      color: #0f172a;
+      right: 4px;
     }
 
     .footer-note { font-size: 10px; color: #64748b; margin-top: 15px; border-top: 1px solid #cbd5e1; padding-top: 6px; }
@@ -297,7 +291,7 @@ html_readable = """<!DOCTYPE html>
     const rawText = document.getElementById('paste-input').value.trim();
     if (!rawText) return;
 
-    const rows = rawText.split('\\n').map(r => r.split('\\t'));
+    const rows = rawText.split('\n').map(r => r.split('\t'));
     if (rows.length < 2) return;
 
     const headerRow = rows[0];
@@ -366,11 +360,8 @@ html_readable = """<!DOCTYPE html>
       calculatedMonths.forEach((_, idx) => {
         const isLatest = idx === calculatedMonths.length - 1;
         const val = p.vals[idx] || 0;
-        
-        // Moltiplicatore per scalare visivamente la percentuale nella colonna
         const widthPercent = Math.min(val * 2.8, 100);
 
-        // Se la barra è più ampia del 35% del riquadro, mettiamo il testo dentro a destra, altrimenti subito fuori a destra
         const isWideEnough = widthPercent > 35;
         const valText = val ? val + '%' : '-';
 
@@ -430,5 +421,5 @@ FUTURO NAZIONALE\t0,00\t0,00\t0,00\t0,00\t0,00\t0,00\t0,00\t0,00\t0,00\t0,00\t0,
 </html>
 """
 
-with open("media_mensile_partiti_perfetto.html", "w", encoding="utf-8") as f:
-    f.write(html_readable)
+with open("mensile.html", "w", encoding="utf-8") as f:
+    f.write(html_clean)
