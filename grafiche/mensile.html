@@ -1,9 +1,10 @@
-html_fixed = """<!DOCTYPE html>
+# Prepariamo la nuova versione dell'HTML dove gestiamo in modo impeccabile la visibilità del testo
+html_readable = """<!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Media Mensile Partiti - Layout Corretto</title>
+  <title>Media Mensile Partiti - Testo Leggibile</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&display=swap" rel="stylesheet">
@@ -158,8 +159,7 @@ html_fixed = """<!DOCTYPE html>
       height: 22px;
       background-color: #f1f5f9;
       border-radius: 3px;
-      overflow: hidden;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #cbd5e1;
       position: relative;
       display: flex;
       align-items: center;
@@ -167,23 +167,31 @@ html_fixed = """<!DOCTYPE html>
 
     .bar-fill {
       height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding-right: 4px;
-      font-size: 10px;
-      font-weight: 800;
-      color: #000;
       transition: width 0.3s ease;
+      border-radius: 2px 0 0 2px;
     }
 
-    /* Etichetta fuori dalla barra se il valore è piccolo */
-    .bar-label-outside {
+    /* ETICHETTA DEL VALORE SEMPRE VISIBILE */
+    .bar-value-label {
       position: absolute;
-      font-size: 10px;
-      font-weight: 800;
-      color: #0f172a;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 10.5px;
+      font-weight: 900;
       white-space: nowrap;
+      pointer-events: none;
+      line-height: 1;
+    }
+
+    /* Se dentro la barra */
+    .bar-value-label.inside {
+      color: #0f172a;
+      right: 6px;
+    }
+
+    /* Se fuori dalla barra */
+    .bar-value-label.outside {
+      color: #0f172a;
     }
 
     .footer-note { font-size: 10px; color: #64748b; margin-top: 15px; border-top: 1px solid #cbd5e1; padding-top: 6px; }
@@ -235,7 +243,6 @@ html_fixed = """<!DOCTYPE html>
           <div class="section-title" id="display-title">Media Mensile Sondaggi Politici</div>
           <div class="section-subtitle" id="display-subtitle">Media ponderata delle rilevazioni nazionali (% sui voti validi)</div>
         </div>
-        <!-- LOGO IN ALTO A DESTRA -->
         <img id="display-logo" src="../img/logo.png" alt="Logo" class="brand-logo" onerror="this.style.display='none'" onload="this.style.display='block'">
       </div>
 
@@ -290,7 +297,7 @@ html_fixed = """<!DOCTYPE html>
     const rawText = document.getElementById('paste-input').value.trim();
     if (!rawText) return;
 
-    const rows = rawText.split('\n').map(r => r.split('\t'));
+    const rows = rawText.split('\\n').map(r => r.split('\\t'));
     if (rows.length < 2) return;
 
     const headerRow = rows[0];
@@ -359,19 +366,28 @@ html_fixed = """<!DOCTYPE html>
       calculatedMonths.forEach((_, idx) => {
         const isLatest = idx === calculatedMonths.length - 1;
         const val = p.vals[idx] || 0;
+        
+        // Moltiplicatore per scalare visivamente la percentuale nella colonna
         const widthPercent = Math.min(val * 2.8, 100);
 
-        // Se la percentuale è inferiore al 6%, metti il testo all'esterno della barra
-        const isSmall = widthPercent < 22; 
+        // Se la barra è più ampia del 35% del riquadro, mettiamo il testo dentro a destra, altrimenti subito fuori a destra
+        const isWideEnough = widthPercent > 35;
         const valText = val ? val + '%' : '-';
+
+        let labelHTML = '';
+        if (val) {
+          if (isWideEnough) {
+            labelHTML = `<span class="bar-value-label inside" style="left: calc(${widthPercent}% - 38px); text-align: right;">${valText}</span>`;
+          } else {
+            labelHTML = `<span class="bar-value-label outside" style="left: calc(${widthPercent}% + 5px);">${valText}</span>`;
+          }
+        }
 
         rowHTML += `
           <div class="party-date-cell ${isLatest ? 'latest' : ''}">
             <div class="bar-wrapper">
-              <div class="bar-fill" style="width: ${widthPercent}%; background-color: ${p.color};">
-                ${(!isSmall && val) ? valText : ''}
-              </div>
-              ${(isSmall && val) ? `<span class="bar-label-outside" style="left: calc(${widthPercent}% + 4px);">${valText}</span>` : ''}
+              <div class="bar-fill" style="width: ${widthPercent}%; background-color: ${p.color};"></div>
+              ${labelHTML}
             </div>
           </div>`;
       });
@@ -414,5 +430,5 @@ FUTURO NAZIONALE\t0,00\t0,00\t0,00\t0,00\t0,00\t0,00\t0,00\t0,00\t0,00\t0,00\t0,
 </html>
 """
 
-with open("media_mensile_partiti_fixed.html", "w", encoding="utf-8") as f:
-    f.write(html_fixed)
+with open("media_mensile_partiti_perfetto.html", "w", encoding="utf-8") as f:
+    f.write(html_readable)
