@@ -1,9 +1,9 @@
-html_auto_monthly = """<!DOCTYPE html>
+html_fixed = """<!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Media Mensile Partiti - Parser Google Sheets</title>
+  <title>Media Mensile Partiti - Layout Corretto</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&display=swap" rel="stylesheet">
@@ -31,7 +31,7 @@ html_auto_monthly = """<!DOCTYPE html>
       max-width: 1650px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: 460px 1fr;
+      grid-template-columns: 440px 1fr;
       gap: 20px;
     }
 
@@ -155,12 +155,16 @@ html_auto_monthly = """<!DOCTYPE html>
 
     .bar-wrapper {
       width: 100%;
-      height: 20px;
+      height: 22px;
       background-color: #f1f5f9;
       border-radius: 3px;
       overflow: hidden;
       border: 1px solid #e2e8f0;
+      position: relative;
+      display: flex;
+      align-items: center;
     }
+
     .bar-fill {
       height: 100%;
       display: flex;
@@ -170,6 +174,16 @@ html_auto_monthly = """<!DOCTYPE html>
       font-size: 10px;
       font-weight: 800;
       color: #000;
+      transition: width 0.3s ease;
+    }
+
+    /* Etichetta fuori dalla barra se il valore è piccolo */
+    .bar-label-outside {
+      position: absolute;
+      font-size: 10px;
+      font-weight: 800;
+      color: #0f172a;
+      white-space: nowrap;
     }
 
     .footer-note { font-size: 10px; color: #64748b; margin-top: 15px; border-top: 1px solid #cbd5e1; padding-top: 6px; }
@@ -206,7 +220,7 @@ html_auto_monthly = """<!DOCTYPE html>
 
     <div class="form-group">
       <label>Nota Footer / Fonte</label>
-      <textarea id="input-footer" rows="2" onchange="renderDashboard()">Media calcolata sui principali制作 istituti demoscopici nazionali.</textarea>
+      <textarea id="input-footer" rows="2" onchange="renderDashboard()">Media calcolata sui principali istituti demoscopici nazionali.</textarea>
     </div>
 
     <button class="btn" onclick="downloadPNG()">Scarica Immagine PNG</button>
@@ -242,7 +256,6 @@ html_auto_monthly = """<!DOCTYPE html>
 </div>
 
 <script>
-  // Colori predefiniti per i partiti principali
   const partyColors = {
     "FRATELLI D'ITALIA": "#60a5fa",
     "PARTITO DEMOCRATICO": "#f87171",
@@ -262,11 +275,9 @@ html_auto_monthly = """<!DOCTYPE html>
     "07": "Lug", "08": "Ago", "09": "Set", "10": "Ott", "11": "Nov", "12": "Dic"
   };
 
-  // Dati calcolati
   let calculatedMonths = [];
   let calculatedData = [];
 
-  // Mappa una data es. 22/11/25 a "Nov25"
   function parseDateToMonth(dateStr) {
     const parts = dateStr.trim().split('/');
     if (parts.length < 3) return dateStr;
@@ -282,16 +293,11 @@ html_auto_monthly = """<!DOCTYPE html>
     const rows = rawText.split('\n').map(r => r.split('\t'));
     if (rows.length < 2) return;
 
-    // Header date
     const headerRow = rows[0];
     const dateHeaders = headerRow.slice(1).map(d => d.trim());
-
-    // Mappa colonne -> Nome Mese
     const colToMonth = dateHeaders.map(d => parseDateToMonth(d));
 
-    // Identifica mesi unici mantenendo l'ordine
     calculatedMonths = [...new Set(colToMonth)];
-
     calculatedData = [];
 
     for (let i = 1; i < rows.length; i++) {
@@ -301,7 +307,6 @@ html_auto_monthly = """<!DOCTYPE html>
       const partyName = row[0].trim().toUpperCase();
       const rawVals = row.slice(1).map(v => parseFloat(v.replace(',', '.')) || 0);
 
-      // Raggruppa i valori per ciascun mese
       const monthSums = {};
       const monthCounts = {};
 
@@ -313,7 +318,6 @@ html_auto_monthly = """<!DOCTYPE html>
         }
       });
 
-      // Calcola media
       const monthAverages = calculatedMonths.map(m => {
         if (monthCounts[m]) {
           return +(monthSums[m] / monthCounts[m]).toFixed(2);
@@ -339,7 +343,6 @@ html_auto_monthly = """<!DOCTYPE html>
     const logoImg = document.getElementById('display-logo');
     logoImg.src = logoSrc;
 
-    // Render Intestazioni Mesi
     const headerDates = document.getElementById('header-dates');
     headerDates.innerHTML = '';
     calculatedMonths.forEach((m, idx) => {
@@ -347,7 +350,6 @@ html_auto_monthly = """<!DOCTYPE html>
       headerDates.innerHTML += `<div class="header-date-cell ${isLatest ? 'latest' : ''}">${m}</div>`;
     });
 
-    // Render Partiti e Barre
     const container = document.getElementById('parties-bars-container');
     container.innerHTML = '';
 
@@ -359,12 +361,17 @@ html_auto_monthly = """<!DOCTYPE html>
         const val = p.vals[idx] || 0;
         const widthPercent = Math.min(val * 2.8, 100);
 
+        // Se la percentuale è inferiore al 6%, metti il testo all'esterno della barra
+        const isSmall = widthPercent < 22; 
+        const valText = val ? val + '%' : '-';
+
         rowHTML += `
           <div class="party-date-cell ${isLatest ? 'latest' : ''}">
             <div class="bar-wrapper">
               <div class="bar-fill" style="width: ${widthPercent}%; background-color: ${p.color};">
-                ${val ? val + '%' : '-'}
+                ${(!isSmall && val) ? valText : ''}
               </div>
+              ${(isSmall && val) ? `<span class="bar-label-outside" style="left: calc(${widthPercent}% + 4px);">${valText}</span>` : ''}
             </div>
           </div>`;
       });
@@ -386,13 +393,18 @@ html_auto_monthly = """<!DOCTYPE html>
     });
   }
 
-  // Dati di Esempio iniziali (presi dal tuo screenshot)
   const defaultSheetText = `PARTITO\t22/11/25\t29/11/25\t06/12/25\t13/12/25\t20/12/25\t27/12/25\t10/01/26\t17/01/26\t24/01/26\t31/01/26\t07/02/26\t14/02/26\t21/02/26\t28/02/26\t25/04/26\t02/05/26\t09/05/26
 FRATELLI D'ITALIA\t30,33\t31,00\t30,93\t30,93\t31,05\t31,20\t31,20\t31,00\t30,23\t30,43\t29,43\t30,33\t29,85\t29,40\t29,15\t28,43\t28,00
 PARTITO DEMOCRATICO\t21,53\t22,10\t22,00\t22,00\t22,00\t21,95\t21,95\t22,13\t22,43\t22,43\t22,18\t22,20\t22,10\t22,28\t21,97\t22,10\t22,28
 MOVIMENTO 5 STELLE\t12,70\t12,40\t12,13\t12,13\t12,30\t12,30\t12,30\t12,40\t12,50\t12,20\t12,53\t11,80\t11,78\t12,17\t12,50\t12,78\t12,57
 LEGA\t8,27\t8,10\t8,23\t8,23\t8,45\t8,30\t8,30\t8,30\t8,37\t8,13\t8,10\t6,87\t7,45\t6,80\t6,75\t6,88\t7,37
-FORZA ITALIA\t8,43\t8,20\t9,20\t9,20\t9,50\t9,40\t9,40\t9,40\t8,37\t8,37\t8,48\t9,40\t8,95\t8,37\t8,30\t8,25\t8,07`;
+FORZA ITALIA\t8,43\t8,20\t9,20\t9,20\t9,50\t9,40\t9,40\t9,40\t8,37\t8,37\t8,48\t9,40\t8,95\t8,37\t8,30\t8,25\t8,07
+AZIONE\t3,07\t3,25\t3,20\t3,20\t3,15\t3,15\t3,15\t3,10\t2,93\t3,13\t2,85\t3,40\t2,95\t3,23\t3,13\t3,30\t3,00
+ITALIA VIVA\t2,53\t2,40\t2,27\t2,27\t2,15\t2,15\t2,15\t2,20\t2,17\t2,27\t2,33\t2,17\t2,33\t2,20\t2,35\t2,48\t2,60
+NOI MODERATI\t0,00\t1,10\t1,10\t1,10\t1,05\t1,00\t1,00\t1,00\t1,03\t1,07\t1,18\t1,10\t0,97\t1,10\t1,10\t1,18\t1,20
+ALLEANZA VERDI-SINISTRA\t0,00\t6,65\t6,50\t6,50\t6,50\t6,55\t6,55\t6,45\t6,57\t6,83\t6,53\t6,50\t6,35\t6,87\t6,45\t6,48\t6,60
+.+EUROPA\t0,00\t1,55\t1,60\t1,60\t1,55\t1,50\t1,50\t1,40\t1,43\t1,60\t1,58\t1,67\t1,50\t1,53\t1,55\t1,30\t1,63
+FUTURO NAZIONALE\t0,00\t0,00\t0,00\t0,00\t0,00\t0,00\t0,00\t0,00\t0,00\t0,00\t0,00\t0,00\t0,00\t0,00\t3,43\t3,33\t3,43`;
 
   document.getElementById('paste-input').value = defaultSheetText;
   parseAndCalculate();
@@ -402,5 +414,5 @@ FORZA ITALIA\t8,43\t8,20\t9,20\t9,20\t9,50\t9,40\t9,40\t9,40\t8,37\t8,37\t8,48\t
 </html>
 """
 
-with open("media_mensile_partiti_auto.html", "w", encoding="utf-8") as f:
-    f.write(html_auto_monthly)
+with open("media_mensile_partiti_fixed.html", "w", encoding="utf-8") as f:
+    f.write(html_fixed)
