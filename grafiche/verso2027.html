@@ -23,9 +23,15 @@
         .btn { color: white; border: none; padding: 10px 20px; font-size: 14px; font-weight: 700; border-radius: 6px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .btn-blue { background-color: #2563eb; }
         .btn-green { background-color: #10b981; }
+        .btn-purple { background-color: #8b5cf6; }
 
         .editor-panel { background: #ffffff; border: 2px solid #2563eb; border-radius: 12px; max-width: 950px; width: 100%; padding: 20px; margin-bottom: 30px; display: none; }
         .editor-panel.open { display: block; }
+        
+        .paste-box-container { background: #f8fafc; border: 1px dashed #2563eb; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .paste-box-container label { font-size: 13px; font-weight: 800; color: #1e40af; display: block; margin-bottom: 6px; }
+        .paste-box-container textarea { width: 100%; height: 90px; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 12px; font-family: monospace; margin-bottom: 8px; resize: vertical; }
+
         .editor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px; }
         .editor-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 10px; }
         .editor-group label { font-size: 12px; font-weight: 700; }
@@ -73,8 +79,15 @@
 </div>
 
 <div class="editor-panel" id="editorPanel">
-    <h2 style="font-size: 16px; font-weight: 800; margin-bottom: 10px;">Pannello Modifica (Calcolo Automatico Seggi)</h2>
+    <h2 style="font-size: 16px; font-weight: 800; margin-bottom: 15px;">Pannello Modifica (Calcolo Automatico Seggi)</h2>
     
+    <!-- BOX INCOLLA DA FOGLIO DI CALCOLO -->
+    <div class="paste-box-container">
+        <label for="pasteInput">📋 Incolla i dati dal foglio di calcolo (Excel / Google Sheets)</label>
+        <textarea id="pasteInput" placeholder="Seleziona le celle nel foglio di calcolo, copiale (Ctrl+C) e incollale qui (Ctrl+V)..."></textarea>
+        <button class="btn btn-purple" onclick="importFromSpreadsheet()">📋 Importa Dati e Aggiorna Grafica</button>
+    </div>
+
     <div class="editor-grid">
         <div>
             <div class="editor-group">
@@ -160,7 +173,7 @@
             { nome: "Movimento 5 Stelle", voto: 12.5, coalizioneId: "m5s", colore: "#ffb703" },
             { nome: "Forza Italia", voto: 8.1, coalizioneId: "cdx", colore: "#0364ab" },
             { nome: "Lega", voto: 7.4, coalizioneId: "cdx", colore: "#27713a" },
-            { nome: "Alleanza Verdi-Sinistra", voto: 6.6, coalizioneId: "csx", colore: "#d7f8ed" },
+            { nome: "Alleanza Verdi-Sinistra", voto: 6.6, coalizioneId: "csx", colore: "#10b981" },
             { nome: "Altri / Civiche", voto: 3.6, coalizioneId: "altri", colore: "#708090" },
             { nome: "Futuro Nazionale", voto: 3.4, coalizioneId: "altri", colore: "#202125" },
             { nome: "Azione", voto: 3.1, coalizioneId: "cent", colore: "#9d4edd" },
@@ -168,6 +181,21 @@
             { nome: "+Europa", voto: 1.6, coalizioneId: "csx", colore: "#ff9f1c" },
             { nome: "Noi Moderati", voto: 1.2, coalizioneId: "cdx", colore: "#1d3557" }
         ]
+    };
+
+    // Mappatura automatica per la coalizione e il colore standard dei partiti
+    const PARTY_MAP = {
+        "FRATELLI D'ITALIA": { coalizioneId: "cdx", colore: "#0b3c5d" },
+        "PARTITO DEMOCRATICO": { coalizioneId: "csx", colore: "#e63946" },
+        "MOVIMENTO 5 STELLE": { coalizioneId: "m5s", colore: "#ffb703" },
+        "LEGA": { coalizioneId: "cdx", colore: "#27713a" },
+        "FORZA ITALIA": { coalizioneId: "cdx", colore: "#0364ab" },
+        "ALLEANZA VERDI-SINISTRA": { coalizioneId: "csx", colore: "#10b981" },
+        "AZIONE": { coalizioneId: "cent", colore: "#9d4edd" },
+        "ITALIA VIVA": { coalizioneId: "cent", colore: "#e8467f" },
+        "+EUROPA": { coalizioneId: "csx", colore: "#ff9f1c" },
+        "NOI MODERATI": { coalizioneId: "cdx", colore: "#1d3557" },
+        "FUTURO NAZIONALE": { coalizioneId: "altri", colore: "#202125" }
     };
 
     function toggleEditor() {
@@ -182,6 +210,55 @@
             link.href = canvas.toDataURL('image/png');
             link.click();
         });
+    }
+
+    function importFromSpreadsheet() {
+        const rawText = document.getElementById('pasteInput').value.trim();
+        if (!rawText) return;
+
+        const lines = rawText.split('\n');
+        let newParties = [];
+
+        lines.forEach(line => {
+            // Dividi la riga in base alle tabulazioni (\t)
+            const cols = line.split('\t').map(c => c.trim());
+            
+            // Verifica che ci siano almeno il nome e una % di voto
+            if (cols.length >= 2) {
+                let rawName = cols[0];
+                
+                // Salta eventuali intestazioni di colonna
+                if (rawName.toUpperCase().includes("IMGCASE") || rawName.toUpperCase().includes("PARTITO")) return;
+
+                // Prendi l'ultimo valore come percentuale di voto
+                let rawVote = cols[cols.length - 1].replace(',', '.');
+                let voteVal = parseFloat(rawVote);
+
+                if (!isNaN(voteVal) && rawName) {
+                    let upperName = rawName.toUpperCase();
+                    let mapped = PARTY_MAP[upperName] || { coalizioneId: "altri", colore: "#708090" };
+
+                    // Formatta il nome con la prima lettera maiuscola per parola
+                    let formattedName = rawName.toLowerCase().replace(/(?:^|\s|-)\S/g, function(a) { return a.toUpperCase(); });
+
+                    newParties.push({
+                        nome: formattedName,
+                        voto: voteVal,
+                        coalizioneId: mapped.coalizioneId,
+                        colore: mapped.colore
+                    });
+                }
+            }
+        });
+
+        if (newParties.length > 0) {
+            DATA.partiti = newParties;
+            initEditorFields();
+            render();
+            alert(`Importati con successo ${newParties.length} partiti!`);
+        } else {
+            alert("Nessun dato valido trovato. Assicurati di aver incollato le righe del foglio di calcolo.");
+        }
     }
 
     function initEditorFields() {
@@ -209,7 +286,7 @@
             pContainer.innerHTML += `
                 <div class="edit-item-row">
                     <input type="text" value="${p.nome}" oninput="DATA.partiti[${idx}].nome=this.value; render();">
-                    <input type="number" step="0.1" value="${p.voto}" oninput="DATA.partiti[${idx}].voto=parseFloat(this.value)||0; render();">
+                    <input type="number" step="0.01" value="${p.voto}" oninput="DATA.partiti[${idx}].voto=parseFloat(this.value)||0; render();">
                     <select onchange="DATA.partiti[${idx}].coalizioneId=this.value; render();">${options}</select>
                     <input type="color" value="${p.colore}" oninput="DATA.partiti[${idx}].colore=this.value; render();">
                 </div>
@@ -255,13 +332,13 @@
                 <div class="party-row">
                     <span class="dot" style="background: ${p.colore}"></span>
                     <span class="party-name">${p.nome}</span>
-                    <span class="party-voto">${p.voto.toFixed(1)}%</span>
+                    <span class="party-voto">${p.voto.toFixed(2)}%</span>
                     <span class="party-seggi">${seggi} <small style="font-weight:normal; font-size:10px;">seggi</small></span>
                 </div>
             `;
         });
 
-        // Trova la coalizione di maggioranza (quella con più seggi)
+        // Trova la coalizione di maggioranza (quella con più seggi e >= 201)
         let maxSeggi = -1;
         let idMaggioranza = null;
         Object.keys(coalizioniStats).forEach(id => {
