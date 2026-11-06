@@ -315,7 +315,6 @@
     function removeCoalition(idx) {
         let removed = DATA.coalizioni.splice(idx, 1)[0];
         if(removed) {
-            // Sposta i partiti associati alla coalizione rimossa su 'altri' o sulla prima disponibile
             let fallbackId = DATA.coalizioni[0] ? DATA.coalizioni[0].id : "";
             DATA.partiti.forEach(p => {
                 if(p.coalizioneId === removed.id) p.coalizioneId = fallbackId;
@@ -383,92 +382,90 @@
     }
 
     function renderHemicycle(coalizioniStats) {
-    const svg = document.getElementById('hemicycle-svg');
-    svg.innerHTML = '';
+        const svg = document.getElementById('hemicycle-svg');
+        svg.innerHTML = '';
 
-    const totalSeats = 400;
-    const centerX = 250;
-    const centerY = 215; // Alzato leggermente per fare spazio al testo e badge sotto
-    
-    // Raggi ed elementi per riga per un emiciclo compatto e proporzionato
-    const rowCounts = [26, 32, 37, 43, 48, 54, 59, 65, 76];
-    const radii =     [75, 87, 99, 111, 123, 135, 147, 159, 171];
+        const totalSeats = 400;
+        const centerX = 250;
+        const centerY = 215;
+        
+        const rowCounts = [26, 32, 37, 43, 48, 54, 59, 65, 76];
+        const radii =     [75, 87, 99, 111, 123, 135, 147, 159, 171];
 
-    // 1. Generazione punti
-    let points = [];
-    rowCounts.forEach((count, rIndex) => {
-        const radius = radii[rIndex];
-        for (let i = 0; i < count; i++) {
-            const angle = Math.PI - (i * Math.PI / (count - 1));
-            points.push({
-                x: centerX + radius * Math.cos(angle),
-                y: centerY - radius * Math.sin(angle),
-                angle: angle,
-                radius: radius
-            });
+        // 1. Generazione punti ordinati a spicchi verticali
+        let points = [];
+        rowCounts.forEach((count, rIndex) => {
+            const radius = radii[rIndex];
+            for (let i = 0; i < count; i++) {
+                const angle = Math.PI - (i * Math.PI / (count - 1));
+                points.push({
+                    x: centerX + radius * Math.cos(angle),
+                    y: centerY - radius * Math.sin(angle),
+                    angle: angle,
+                    radius: radius
+                });
+            }
+        });
+
+        // Ordina per angolo (da sinistra a destra) e secondariamente dal raggio esterno all'interno
+        points.sort((a, b) => {
+            if (Math.abs(b.angle - a.angle) > 0.03) {
+                return b.angle - a.angle;
+            }
+            return b.radius - a.radius;
+        });
+
+        points = points.slice(0, totalSeats);
+
+        // 2. Mappatura colori delle coalizioni
+        let seatColors = [];
+        DATA.coalizioni.forEach(c => {
+            let numSeggi = coalizioniStats[c.id] ? coalizioniStats[c.id].seggi : 0;
+            for (let i = 0; i < numSeggi; i++) {
+                seatColors.push(c.colore);
+            }
+        });
+
+        while (seatColors.length < totalSeats) {
+            seatColors.push('#cbd5e1');
         }
-    });
 
-    // CORREZIONE FONDAMENTALE: Ordina per angolo (spicchio da sinistra a destra)
-    // E a parità di angolo o settore, dal raggio esterno a quello interno
-    points.sort((a, b) => {
-        if (Math.abs(b.angle - a.angle) > 0.03) {
-            return b.angle - a.angle; // Da sinistra verso destra
-        }
-        return b.radius - a.radius;  // Dall'esterno verso l'interno
-    });
+        // 3. Testo centralizzato "400 Total seats"
+        const textGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        
+        const numText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        numText.setAttribute("x", centerX);
+        numText.setAttribute("y", centerY - 20);
+        numText.setAttribute("text-anchor", "middle");
+        numText.setAttribute("fill", "#0f172a");
+        numText.setAttribute("font-size", "34px");
+        numText.setAttribute("font-weight", "900");
+        numText.textContent = "400";
 
-    points = points.slice(0, totalSeats);
+        const labelText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        labelText.setAttribute("x", centerX);
+        labelText.setAttribute("y", centerY + 4);
+        labelText.setAttribute("text-anchor", "middle");
+        labelText.setAttribute("fill", "#64748b");
+        labelText.setAttribute("font-size", "11px");
+        labelText.setAttribute("font-weight", "700");
+        labelText.setAttribute("letter-spacing", "0.5px");
+        labelText.textContent = "Total seats";
 
-    // 2. Mappatura colori delle coalizioni
-    let seatColors = [];
-    DATA.coalizioni.forEach(c => {
-        let numSeggi = coalizioniStats[c.id] ? coalizioniStats[c.id].seggi : 0;
-        for (let i = 0; i < numSeggi; i++) {
-            seatColors.push(c.colore);
-        }
-    });
+        textGroup.appendChild(numText);
+        textGroup.appendChild(labelText);
+        svg.appendChild(textGroup);
 
-    while (seatColors.length < totalSeats) {
-        seatColors.push('#cbd5e1');
+        // 4. Disegno dei pallini dell'emiciclo
+        points.forEach((pt, index) => {
+            let circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            circle.setAttribute("cx", pt.x);
+            circle.setAttribute("cy", pt.y);
+            circle.setAttribute("r", 4.0);
+            circle.setAttribute("fill", seatColors[index]);
+            svg.appendChild(circle);
+        });
     }
-
-    // 3. Testo 400 Total seats al centro dell'emiciclo
-    const textGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    
-    const numText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    numText.setAttribute("x", centerX);
-    numText.setAttribute("y", centerY - 20);
-    numText.setAttribute("text-anchor", "middle");
-    numText.setAttribute("fill", "#0f172a");
-    numText.setAttribute("font-size", "34px");
-    numText.setAttribute("font-weight", "900");
-    numText.textContent = "400";
-
-    const labelText = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    labelText.setAttribute("x", centerX);
-    labelText.setAttribute("y", centerY + 4);
-    labelText.setAttribute("text-anchor", "middle");
-    labelText.setAttribute("fill", "#64748b");
-    labelText.setAttribute("font-size", "11px");
-    labelText.setAttribute("font-weight", "700");
-    labelText.setAttribute("letter-spacing", "0.5px");
-    labelText.textContent = "Total seats";
-
-    textGroup.appendChild(numText);
-    textGroup.appendChild(labelText);
-    svg.appendChild(textGroup);
-
-    // 4. Disegno dei pallini
-    points.forEach((pt, index) => {
-        let circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        circle.setAttribute("cx", pt.x);
-        circle.setAttribute("cy", pt.y);
-        circle.setAttribute("r", 4.0);
-        circle.setAttribute("fill", seatColors[index]);
-        svg.appendChild(circle);
-    });
-}
 
     function render() {
         document.getElementById('title-text').innerText = DATA.title;
