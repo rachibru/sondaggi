@@ -5,26 +5,12 @@
   <meta name="robots" content="noindex, nofollow">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Generatore Grafica Sondaggi - Bruno Rachiele</title>
-  <!-- Google Fonts: Titillium Web -->
+  <!-- Google Fonts: Titillium Web (caricati tutti i pesi per massima resa visiva) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,300;0,400;0,600;0,700;0,900;1,400&display=swap" rel="stylesheet">
   <!-- Script per esportare in immagine PNG -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  
-  <script>
-    // PROTEZIONE CON PASSWORD
-    (function checkAuth() {
-      const passwordCorretta = "191004";
-      let inserita = prompt("Inserisci la password per accedere al generatore:");
-      
-      if (inserita !== passwordCorretta) {
-        alert("Password errata! Accesso negato.");
-        document.write("<h2 style='font-family:sans-serif; text-align:center; margin-top:50px; color:red;'>Accesso Negato. Ricarica la pagina per riprovare.</h2>");
-        window.stop();
-      }
-    })();
-  </script>
 
   <style>
     :root {
@@ -215,7 +201,7 @@
 
     .date-text {
       font-size: 18px;
-      font-weight: 800;
+      font-weight: 700;
       margin-top: 5px;
       letter-spacing: 0.5px;
       text-transform: uppercase;
@@ -249,10 +235,10 @@
       background: rgba(0, 0, 0, 0.08);
     }
 
-    /* NOME DEL PARTITO NON IN GRASSETTO */
+    /* NOME DEL PARTITO REGULAR */
     .poll-table td.party-name {
       text-align: left;
-      font-weight: 400; /* IMPOSIZIONATO NORMAL / REGULAR */
+      font-weight: 400;
       text-transform: uppercase;
       font-size: 18px;
       letter-spacing: 0.5px;
@@ -274,15 +260,17 @@
       padding: 1px;
     }
 
+    /* VALORI E NUMERI: LEGGERI, PULITI E LEGGIBILI (SEMI-BOLD 600) */
     .poll-table td.val {
-      font-weight: 800;
+      font-weight: 600;
       font-size: 20px;
+      letter-spacing: 0.5px;
     }
 
     /* SIMBOLI TREND COLORATI */
     .symbol-up { color: #00ff2b; font-size: 16px; font-weight: 900; }
     .symbol-down { color: #ff1111; font-size: 16px; font-weight: 900; }
-    .symbol-eq { color: #ffffff; font-size: 18px; font-weight: 800; }
+    .symbol-eq { color: #ffffff; font-size: 18px; font-weight: 700; }
   </style>
 </head>
 <body>
@@ -364,7 +352,7 @@
 </div>
 
 <script>
-  // Mappatura automatica per la cartella img/
+  // Mappatura automatica per i loghi
   const LOGO_MAP = {
     "FRATELLI D'ITALIA": "../img/fdi.png",
     "FRATELLI D’ITALIA": "../img/fdi.png",
@@ -433,7 +421,6 @@
     updateGraphic();
   }
 
-  // ALGORITMO INTELLIGENTE DI IMPORTAZIONE DA GOOGLE SHEETS
   function importFromSpreadsheet() {
     const rawText = document.getElementById('pasteInput').value.trim();
     if (!rawText) return;
@@ -442,14 +429,12 @@
     let newPollData = [];
 
     lines.forEach(line => {
-      // Pulisce le tabulazioni e gli spazi vuoti vuoti creati da Google Sheets
       const cols = line.split('\t').map(c => c.trim()).filter(c => c !== "");
       
       if (cols.length >= 2) {
         let rawName = cols[0];
         if (rawName.toUpperCase().includes("PARTITI") || rawName.toUpperCase().includes("NOME")) return;
 
-        // Prende la prima colonna numerica per la Stima % e l'ultima colonna per il Trend
         let rawVal = cols[1].replace('.', ',');
         let rawTrend = cols[cols.length - 1] ? parseFloat(cols[cols.length - 1].replace(',', '.')) : 0;
 
