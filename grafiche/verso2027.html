@@ -43,13 +43,17 @@
 
         .edit-item-row { display: grid; grid-template-columns: 2fr 1fr 1.5fr 40px 35px; gap: 6px; align-items: center; margin-bottom: 6px; }
         .edit-item-row input, .edit-item-row select { padding: 6px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 12px; width: 100%; }
+        
+        .edit-coalition-row { display: grid; grid-template-columns: 2fr 40px 35px; gap: 6px; align-items: center; margin-bottom: 6px; }
+        .edit-coalition-row input { padding: 6px; border: 1px solid var(--border-color); border-radius: 4px; font-size: 12px; width: 100%; }
 
         /* AREA DASHBOARD IMMAGINE */
         .dashboard-container { background: var(--card-bg); max-width: 980px; width: 100%; padding: 35px; border-radius: 16px; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08); position: relative; }
         .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--text-dark); padding-bottom: 18px; margin-bottom: 25px; }
         .header h1 { font-size: 28px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.5px; }
         .header p { font-size: 13px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-top: 4px; }
-        .author-tag { background: #0f172a; color: #fff; padding: 8px 16px; border-radius: 8px; font-weight: 800; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .brand-wrapper { display: flex; align-items: center; gap: 12px; }
+        .brand-logo { width: 55px; height: 55px; border-radius: 8px; object-fit: contain; }
 
         /* VISUAL GRAFICO EMICICLO */
         .hemicycle-section { background: #f8fafc; border: 1px solid var(--border-color); border-radius: 14px; padding: 25px; margin-bottom: 30px; text-align: center; position: relative; }
@@ -111,13 +115,16 @@
                 <input type="text" id="editSubtitle" oninput="updateGeneralData()">
             </div>
             <div class="editor-group">
-                <label>Autore / Brand</label>
-                <input type="text" id="editAuthor" oninput="updateGeneralData()">
+                <label>URL Logo Statico Quadrato</label>
+                <input type="text" id="editLogoUrl" value="https://static.brunorachiele.it/logo.png" oninput="updateGeneralData()">
             </div>
         </div>
 
         <div>
-            <h4 style="font-size: 13px; font-weight: 700; margin-bottom: 8px;">Coalizioni (Nome | Colore)</h4>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h4 style="font-size: 13px; font-weight: 700;">Coalizioni (Nome | Colore)</h4>
+                <button class="btn btn-blue btn-sm" onclick="addCoalition()">➕ Nuova Coalizione</button>
+            </div>
             <div id="editorCoalitions"></div>
         </div>
     </div>
@@ -136,10 +143,12 @@
             <h1 id="title-text"></h1>
             <p id="subtitle-text"></p>
         </div>
-        <div class="author-tag" id="author-text"></div>
+        <div class="brand-wrapper">
+            <img id="brand-logo-img" class="brand-logo" src="https://static.brunorachiele.it/logo.png" alt="Bruno Rachiele Logo" crossorigin="anonymous">
+        </div>
     </div>
 
-    <!-- SEZIONE NUOVO EMICICLO PARLAMENTARE -->
+    <!-- SEZIONE EMICICLO PARLAMENTARE -->
     <div class="hemicycle-section">
         <div class="hemicycle-title">
             <span>Composizione Emiciclo Camera dei Deputati</span>
@@ -179,7 +188,7 @@
 
     <div class="footer-note">
         <span>*Seggi calcolati in proporzione alle % di voto inserite su un totale di 400 seggi della Camera dei Deputati.</span>
-        <span>Elaborazione a cura di Bruno Rachiele</span>
+        <span>Elaborazione a cura di Bruno Rachiele • brunorachiele.it</span>
     </div>
 </div>
 
@@ -187,7 +196,7 @@
     let DATA = {
         title: "Verso le politiche 2027",
         subtitle: "Camera dei Deputati (400 Seggi) • Supermedia Sondaggi Politici",
-        author: "brunorachiele.it",
+        logoUrl: "https://static.brunorachiele.it/logo.png",
         totaleSeggi: 400,
         coalizioni: [
             { id: "cdx", nome: "Centrodestra", colore: "#0b3c5d" },
@@ -219,7 +228,7 @@
 
     function downloadImage() {
         const captureArea = document.getElementById('captureArea');
-        html2canvas(captureArea, { scale: 2.5, backgroundColor: '#ffffff' }).then(canvas => {
+        html2canvas(captureArea, { scale: 2.5, backgroundColor: '#ffffff', useCORS: true }).then(canvas => {
             const link = document.createElement('a');
             link.download = `stima-seggi-coalizioni-${new Date().toISOString().slice(0,10)}.png`;
             link.href = canvas.toDataURL('image/png');
@@ -292,6 +301,30 @@
         }
     }
 
+    function addCoalition() {
+        let newId = "coal_" + Date.now();
+        DATA.coalizioni.push({
+            id: newId,
+            nome: "Nuova Coalizione",
+            colore: "#3b82f6"
+        });
+        initEditorFields();
+        render();
+    }
+
+    function removeCoalition(idx) {
+        let removed = DATA.coalizioni.splice(idx, 1)[0];
+        if(removed) {
+            // Sposta i partiti associati alla coalizione rimossa su 'altri' o sulla prima disponibile
+            let fallbackId = DATA.coalizioni[0] ? DATA.coalizioni[0].id : "";
+            DATA.partiti.forEach(p => {
+                if(p.coalizioneId === removed.id) p.coalizioneId = fallbackId;
+            });
+        }
+        initEditorFields();
+        render();
+    }
+
     function addParty() {
         DATA.partiti.push({
             nome: "Nuovo Partito",
@@ -312,15 +345,16 @@
     function initEditorFields() {
         document.getElementById('editTitle').value = DATA.title;
         document.getElementById('editSubtitle').value = DATA.subtitle;
-        document.getElementById('editAuthor').value = DATA.author;
+        document.getElementById('editLogoUrl').value = DATA.logoUrl;
 
         const cContainer = document.getElementById('editorCoalitions');
         cContainer.innerHTML = '';
         DATA.coalizioni.forEach((c, idx) => {
             cContainer.innerHTML += `
-                <div class="edit-item-row" style="grid-template-columns: 2fr 40px;">
+                <div class="edit-coalition-row">
                     <input type="text" value="${c.nome}" oninput="DATA.coalizioni[${idx}].nome=this.value; render();">
                     <input type="color" value="${c.colore}" oninput="DATA.coalizioni[${idx}].colore=this.value; render();">
+                    <button class="btn btn-danger" onclick="removeCoalition(${idx})" title="Elimina Coalizione">🗑️</button>
                 </div>
             `;
         });
@@ -344,11 +378,10 @@
     function updateGeneralData() {
         DATA.title = document.getElementById('editTitle').value;
         DATA.subtitle = document.getElementById('editSubtitle').value;
-        DATA.author = document.getElementById('editAuthor').value;
+        DATA.logoUrl = document.getElementById('editLogoUrl').value;
         render();
     }
 
-    // ALGORITMO PER IL DISEGNO DELL'EMICICLO PARLAMENTARE
     function renderHemicycle(coalizioniStats) {
         const svg = document.getElementById('hemicycle-svg');
         svg.innerHTML = '';
@@ -360,7 +393,6 @@
         const minRadius = 75;
         const maxRadius = 205;
 
-        // Costruiamo i punti dei 400 seggi disposti in un semicerchio
         let points = [];
         for (let r = 0; r < rows; r++) {
             let radius = minRadius + (r * ((maxRadius - minRadius) / (rows - 1)));
@@ -375,11 +407,9 @@
             }
         }
 
-        // Ordiniamo i seggi da sinistra a destra dell'emiciclo
         points.sort((a, b) => b.angle - a.angle);
         points = points.slice(0, totalSeats);
 
-        // Prepariamo la lista dei colori associati ai seggi
         let seatColors = [];
         DATA.coalizioni.forEach(c => {
             let numSeggi = coalizioniStats[c.id] ? coalizioniStats[c.id].seggi : 0;
@@ -388,12 +418,10 @@
             }
         });
 
-        // Riempiamo con il grigio se mancano seggi
         while (seatColors.length < totalSeats) {
             seatColors.push('#cbd5e1');
         }
 
-        // Disegno linea tratteggiata di maggioranza (centro emiciclo)
         let line = document.createElementNS("http://www.w3.org/2000/svg", "line");
         line.setAttribute("x1", centerX);
         line.setAttribute("y1", 20);
@@ -404,7 +432,6 @@
         line.setAttribute("stroke-dasharray", "4,4");
         svg.appendChild(line);
 
-        // Disegno di ciascun pallino-seggio
         points.forEach((pt, index) => {
             let circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
             circle.setAttribute("cx", pt.x);
@@ -418,7 +445,7 @@
     function render() {
         document.getElementById('title-text').innerText = DATA.title;
         document.getElementById('subtitle-text').innerText = DATA.subtitle;
-        document.getElementById('author-text').innerText = DATA.author;
+        document.getElementById('brand-logo-img').src = DATA.logoUrl;
 
         let totaleVoti = DATA.partiti.reduce((sum, p) => sum + p.voto, 0);
         
@@ -496,7 +523,6 @@
             }
         });
 
-        // Render dell'Emiciclo Parlamentare
         renderHemicycle(coalizioniStats);
     }
 
