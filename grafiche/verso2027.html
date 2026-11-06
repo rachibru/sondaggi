@@ -383,64 +383,87 @@
     }
 
     function renderHemicycle(coalizioniStats) {
-        const svg = document.getElementById('hemicycle-svg');
-        svg.innerHTML = '';
+    const svg = document.getElementById('hemicycle-svg');
+    svg.innerHTML = '';
 
-        const totalSeats = 400;
-        const rows = 8;
-        const centerX = 250;
-        const centerY = 230;
-        const minRadius = 75;
-        const maxRadius = 205;
+    const totalSeats = 400;
+    const centerX = 250;
+    const centerY = 230;
+    
+    // Configurazione file per un emiciclo denso (stile 4080studio)
+    const rowCounts = [26, 32, 37, 43, 48, 54, 59, 65, 76]; // Totale 438 punti disponibili
+    const radii =     [85, 98, 111, 124, 137, 150, 163, 176, 189];
 
-        let points = [];
-        for (let r = 0; r < rows; r++) {
-            let radius = minRadius + (r * ((maxRadius - minRadius) / (rows - 1)));
-            let countInRow = Math.round((radius / maxRadius) * 65);
-            for (let i = 0; i < countInRow; i++) {
-                let angle = Math.PI - (i * Math.PI / (countInRow - 1));
-                points.push({
-                    x: centerX + radius * Math.cos(angle),
-                    y: centerY - radius * Math.sin(angle),
-                    angle: angle
-                });
-            }
+    // 1. Generazione dei punti lungo archi di cerchio regolari
+    let points = [];
+    rowCounts.forEach((count, rIndex) => {
+        const radius = radii[rIndex];
+        for (let i = 0; i < count; i++) {
+            // Angolo da PI a 0 (da sinistra a destra)
+            const angle = Math.PI - (i * Math.PI / (count - 1));
+            points.push({
+                x: centerX + radius * Math.cos(angle),
+                y: centerY - radius * Math.sin(angle),
+                angle: angle,
+                radius: radius
+            });
         }
+    });
 
-        points.sort((a, b) => b.angle - a.angle);
-        points = points.slice(0, totalSeats);
+    // Ordina i punti da sinistra a destra (dal diametro esterno a quello interno per massima coerenza)
+    points.sort((a, b) => b.angle - a.angle);
+    points = points.slice(0, totalSeats);
 
-        let seatColors = [];
-        DATA.coalizioni.forEach(c => {
-            let numSeggi = coalizioniStats[c.id] ? coalizioniStats[c.id].seggi : 0;
-            for (let i = 0; i < numSeggi; i++) {
-                seatColors.push(c.colore);
-            }
-        });
-
-        while (seatColors.length < totalSeats) {
-            seatColors.push('#cbd5e1');
+    // 2. Mappatura precisa dei colori per ogni seggio
+    let seatColors = [];
+    DATA.coalizioni.forEach(c => {
+        let numSeggi = coalizioniStats[c.id] ? coalizioniStats[c.id].seggi : 0;
+        for (let i = 0; i < numSeggi; i++) {
+            seatColors.push(c.colore);
         }
+    });
 
-        let line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", centerX);
-        line.setAttribute("y1", 20);
-        line.setAttribute("x2", centerX);
-        line.setAttribute("y2", centerY);
-        line.setAttribute("stroke", "#64748b");
-        line.setAttribute("stroke-width", "2");
-        line.setAttribute("stroke-dasharray", "4,4");
-        svg.appendChild(line);
-
-        points.forEach((pt, index) => {
-            let circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-            circle.setAttribute("cx", pt.x);
-            circle.setAttribute("cy", pt.y);
-            circle.setAttribute("r", 4.2);
-            circle.setAttribute("fill", seatColors[index] || '#cbd5e1');
-            svg.appendChild(circle);
-        });
+    // Riempi con grigio chiaro se mancano seggi al totale
+    while (seatColors.length < totalSeats) {
+        seatColors.push('#cbd5e1');
     }
+
+    // 3. Render Testo al Centro dell'Emiciclo (Totale Seggi)
+    const textGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    
+    const numText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    numText.setAttribute("x", centerX);
+    numText.setAttribute("y", centerY - 25);
+    numText.setAttribute("text-anchor", "middle");
+    numText.setAttribute("fill", "#0f172a");
+    numText.setAttribute("font-size", "36px");
+    numText.setAttribute("font-weight", "900");
+    numText.textContent = "400";
+
+    const labelText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    labelText.setAttribute("x", centerX);
+    labelText.setAttribute("y", centerY + 2);
+    labelText.setAttribute("text-anchor", "middle");
+    labelText.setAttribute("fill", "#64748b");
+    labelText.setAttribute("font-size", "12px");
+    labelText.setAttribute("font-weight", "700");
+    labelText.setAttribute("letter-spacing", "0.5px");
+    labelText.textContent = "Total seats";
+
+    textGroup.appendChild(numText);
+    textGroup.appendChild(labelText);
+    svg.appendChild(textGroup);
+
+    // 4. Disegno dei pallini con raggio identico all'immagine di riferimento
+    points.forEach((pt, index) => {
+        let circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", pt.x);
+        circle.setAttribute("cy", pt.y);
+        circle.setAttribute("r", 4.5);
+        circle.setAttribute("fill", seatColors[index]);
+        svg.appendChild(circle);
+    });
+}
 
     function render() {
         document.getElementById('title-text').innerText = DATA.title;
