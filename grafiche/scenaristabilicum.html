@@ -7,13 +7,13 @@
   <!-- Tailwind CSS per Editor -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Chart.js per la gestione impeccabile del semi-donut -->
+  <!-- Chart.js per la gestione del semi-donut -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     body { font-family: 'Inter', sans-serif; }
 
-    /* LAYOUT EDITORIALE RESPONSIVE */
+    /* LAYOUT EDITORIALE RESPONSIVE STILE CORRIERE */
     .corriere-card {
       background: #ffffff;
       color: #111827;
@@ -95,7 +95,6 @@
     .coalition-stats { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
     .coalition-seats-num { font-size: 18px; font-weight: 900; }
 
-    /* CONTENITORE CHART.JS */
     .chart-wrapper {
       position: relative;
       width: 100%;
@@ -129,7 +128,7 @@
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen pb-12">
 
-  <!-- HEADER -->
+  <!-- HEADER APPLICAZIONE -->
   <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
       <div class="flex items-center gap-3">
@@ -137,8 +136,8 @@
           <i class="fa-solid fa-chart-pie text-xl"></i>
         </div>
         <div>
-          <h1 class="font-bold text-lg leading-tight">Generatore Scenari (Chart.js Vettoriale)</h1>
-          <p class="text-xs text-slate-400">Grafici perfetti per brunorachiele.it</p>
+          <h1 class="font-bold text-lg leading-tight">Generatore Scenari Legge Elettorale</h1>
+          <p class="text-xs text-slate-400">Strumento per brunorachiele.it</p>
         </div>
       </div>
       <div class="flex bg-slate-900 p-1 rounded-lg text-sm">
@@ -154,7 +153,7 @@
 
   <main class="max-w-7xl mx-auto px-4 mt-6">
 
-    <!-- EDITOR -->
+    <!-- SEZIONE EDITOR -->
     <div id="view-editor" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
       <div class="lg:col-span-5 space-y-6">
@@ -221,7 +220,7 @@ NOI MODERATI	6,43</textarea>
       <div class="lg:col-span-7 space-y-4">
         <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
           <h2 class="font-bold text-white text-sm">Anteprima HTML Responsive (Chart.js)</h2>
-          <span class="text-xs bg-emerald-600 text-white px-2.5 py-1 rounded-full font-bold">Grafici Sferici Perfetti</span>
+          <span class="text-xs bg-emerald-600 text-white px-2.5 py-1 rounded-full font-bold">Senza Duplicati</span>
         </div>
 
         <div id="captureArea" class="corriere-card">
@@ -277,6 +276,11 @@ NOI MODERATI	6,43</textarea>
   </main>
 
   <script>
+    // Funzione helper per pulire e normalizzare le stringhe dei nomi partiti
+    function cleanName(str) {
+      return str.toUpperCase().replace(/[’`.]/g, "'").replace(/^\+/, "").trim();
+    }
+
     let PARTITI_DATI = [
       { nome: "FRATELLI D'ITALIA", voto: 28.33 },
       { nome: "PARTITO DEMOCRATICO", voto: 20.23 },
@@ -341,7 +345,7 @@ NOI MODERATI	6,43</textarea>
         let coalHtml = '';
         sc.coalizioni.forEach((c, cIdx) => {
           let partitiCheckboxes = PARTITI_DATI.map(p => {
-            let isChecked = c.partiti.includes(p.nome) ? 'checked' : '';
+            let isChecked = c.partiti.some(cp => cleanName(cp) === cleanName(p.nome)) ? 'checked' : '';
             return `
               <label class="inline-flex items-center gap-1 bg-slate-900 px-2 py-1 rounded text-[11px] text-slate-300">
                 <input type="checkbox" ${isChecked} onchange="togglePartyInCoalition(${sIdx}, ${cIdx}, '${p.nome}')" class="rounded border-slate-700 text-blue-600 focus:ring-0">
@@ -379,8 +383,11 @@ NOI MODERATI	6,43</textarea>
 
     function togglePartyInCoalition(sIdx, cIdx, partyName) {
       let coal = SCENARI_CONFIG[sIdx].coalizioni[cIdx];
-      if (coal.partiti.includes(partyName)) {
-        coal.partiti = coal.partiti.filter(p => p !== partyName);
+      let cleanTarget = cleanName(partyName);
+      
+      let exists = coal.partiti.some(p => cleanName(p) === cleanTarget);
+      if (exists) {
+        coal.partiti = coal.partiti.filter(p => cleanName(p) !== cleanTarget);
       } else {
         coal.partiti.push(partyName);
       }
@@ -443,7 +450,6 @@ NOI MODERATI	6,43</textarea>
 
       const commentText = document.getElementById('editor-comment-input').value.trim();
 
-      // Distruggi vecchi grafici attivi per evitare memoria occupata
       Object.keys(chartInstances).forEach(k => {
         if(chartInstances[k]) chartInstances[k].destroy();
       });
@@ -452,11 +458,19 @@ NOI MODERATI	6,43</textarea>
       SCENARI_CONFIG.forEach((sc, sIdx) => {
         let evaluatedCoalitions = sc.coalizioni.map(c => {
           let sumVoto = 0;
+          let uniquePartiesInCoal = [];
+
           c.partiti.forEach(pName => {
-            let found = PARTITI_DATI.find(x => x.nome.includes(pName) || pName.includes(x.nome));
-            if (found) sumVoto += found.voto;
+            let cleanP = cleanName(pName);
+            let found = PARTITI_DATI.find(x => cleanName(x.nome) === cleanP);
+            if (found) {
+              sumVoto += found.voto;
+              if (!uniquePartiesInCoal.includes(found.nome)) {
+                uniquePartiesInCoal.push(found.nome);
+              }
+            }
           });
-          return { ...c, votoSum: sumVoto, seggi: 0, pctSeggi: 0 };
+          return { ...c, partitiPuliti: uniquePartiesInCoal, votoSum: sumVoto, seggi: 0, pctSeggi: 0 };
         });
 
         let winner = evaluatedCoalitions.reduce((prev, current) => (prev.votoSum > current.votoSum) ? prev : current, { votoSum: 0 });
@@ -476,11 +490,11 @@ NOI MODERATI	6,43</textarea>
         let boxesHtml = evaluatedCoalitions.map(c => `
           <div class="coalition-box ${isWinnerBonus && c.nome === winner.nome ? 'active-winner' : ''}">
             <div class="coalition-name" style="color:${c.colore};">${c.nome}</div>
-            <div class="coalition-parties">(${c.partiti.join(', ') || 'Liste minori'})</div>
+            <div class="coalition-parties">(${c.partitiPuliti.join(', ') || 'Liste minori'})</div>
             <div class="coalition-stats">
               <span class="coalition-seats-num">${c.seggi}</span>
               <span class="tag-black">${c.votoSum.toFixed(1).replace('.', ',')}%</span>
-              <span class="tag-border">${c.pctSeggi}%</span>
+              <span class="tag-border">${c.pctSeggi.toFixed(1).replace('.', ',')}%</span>
             </div>
           </div>
         `).join('');
@@ -510,7 +524,6 @@ NOI MODERATI	6,43</textarea>
         }
       });
 
-      // Generazione Grafici Chart.js (Semi-Doughnut Sferico Perfetto)
       setTimeout(() => {
         SCENARI_CONFIG.forEach((sc, sIdx) => {
           let canvasId = `chart-canvas-${sIdx}`;
@@ -522,7 +535,8 @@ NOI MODERATI	6,43</textarea>
           let dataValues = sc.coalizioni.map(c => {
             let sumVoto = 0;
             c.partiti.forEach(pName => {
-              let found = PARTITI_DATI.find(x => x.nome.includes(pName) || pName.includes(x.nome));
+              let cleanP = cleanName(pName);
+              let found = PARTITI_DATI.find(x => cleanName(x.nome) === cleanP);
               if (found) sumVoto += found.voto;
             });
             return sumVoto;
@@ -575,7 +589,8 @@ NOI MODERATI	6,43</textarea>
         let dataValues = JSON.stringify(sc.coalizioni.map(c => {
           let sumVoto = 0;
           c.partiti.forEach(pName => {
-            let found = PARTITI_DATI.find(x => x.nome.includes(pName) || pName.includes(x.nome));
+            let cleanP = cleanName(pName);
+            let found = PARTITI_DATI.find(x => cleanName(x.nome) === cleanP);
             if (found) sumVoto += found.voto;
           });
           return sumVoto;
