@@ -3,15 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generatore Scenari HTML Responsive - Bruno Rachiele</title>
-  <!-- Tailwind CSS -->
+  <title>Generatore Scenari Elettorali (Chart.js) - Bruno Rachiele</title>
+  <!-- Tailwind CSS per Editor -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js per la gestione impeccabile del semi-donut -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     body { font-family: 'Inter', sans-serif; }
 
-    /* STILI EDITORIALI STILE CORRIERE / IL SOLE */
+    /* LAYOUT EDITORIALE RESPONSIVE */
     .corriere-card {
       background: #ffffff;
       color: #111827;
@@ -93,11 +95,13 @@
     .coalition-stats { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
     .coalition-seats-num { font-size: 18px; font-weight: 900; }
 
+    /* CONTENITORE CHART.JS */
     .chart-wrapper {
       position: relative;
       width: 100%;
-      max-width: 480px;
-      margin: 10px auto;
+      max-width: 460px;
+      height: 240px;
+      margin: 10px auto 0 auto;
     }
     .center-seats-label {
       position: absolute;
@@ -105,6 +109,7 @@
       left: 50%;
       transform: translateX(-50%);
       text-align: center;
+      pointer-events: none;
     }
     .center-seats-label .num { font-size: 32px; font-weight: 900; color: #000000; line-height: 1; }
     .center-seats-label .sub { font-size: 11px; font-weight: 700; color: #6b7280; }
@@ -124,16 +129,16 @@
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen pb-12">
 
-  <!-- HEADER APPLICAZIONE -->
+  <!-- HEADER -->
   <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
       <div class="flex items-center gap-3">
         <div class="bg-blue-600 p-2.5 rounded-xl text-white">
-          <i class="fa-solid fa-code text-xl"></i>
+          <i class="fa-solid fa-chart-pie text-xl"></i>
         </div>
         <div>
-          <h1 class="font-bold text-lg leading-tight">Generatore Scenari HTML Responsive</h1>
-          <p class="text-xs text-slate-400">Strumento per grafici vettoriali su brunorachiele.it</p>
+          <h1 class="font-bold text-lg leading-tight">Generatore Scenari (Chart.js Vettoriale)</h1>
+          <p class="text-xs text-slate-400">Grafici perfetti per brunorachiele.it</p>
         </div>
       </div>
       <div class="flex bg-slate-900 p-1 rounded-lg text-sm">
@@ -149,10 +154,9 @@
 
   <main class="max-w-7xl mx-auto px-4 mt-6">
 
-    <!-- SEZIONE EDITOR -->
+    <!-- EDITOR -->
     <div id="view-editor" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-      <!-- COLONNA SINISTRA -->
       <div class="lg:col-span-5 space-y-6">
         <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg">
           <h2 class="text-base font-bold text-blue-400 mb-2 flex items-center gap-2">
@@ -176,16 +180,15 @@ NOI MODERATI	6,43</textarea>
 
         <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3">
           <h2 class="text-base font-bold text-blue-400 border-b border-slate-700 pb-2 flex items-center gap-2">
-            <i class="fa-solid fa-comment-dots"></i> 2. Commento / Analisi Editoriale
+            <i class="fa-solid fa-comment-dots"></i> 2. Commento Editoriale
           </h2>
           <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Testo dell'Analisi (Inserito tra i grafici)</label>
             <textarea id="editor-comment-input" rows="4" oninput="updateAll()" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white">L'elemento chiave di questa simulazione è il superamento della soglia del 42%: nello Scenario B l'ingresso di Futuro Nazionale permette alla coalizione di far scattare il premio di maggioranza portandola a 220 seggi.</textarea>
           </div>
         </div>
 
         <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3">
-          <h2 class="text-base font-bold text-blue-400 border-b border-slate-700 pb-2">Metadati Post Blogger</h2>
+          <h2 class="text-base font-bold text-blue-400 border-b border-slate-700 pb-2">Metadati Blogger</h2>
           <div>
             <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Data Simulazione</label>
             <input type="text" id="input-date" value="09 Novembre 2026" oninput="updateAll()" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white">
@@ -197,7 +200,6 @@ NOI MODERATI	6,43</textarea>
         </div>
       </div>
 
-      <!-- COLONNA DESTRA -->
       <div class="lg:col-span-7 bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4">
         <div class="flex justify-between items-center border-b border-slate-700 pb-3">
           <h2 class="text-base font-bold text-blue-400">
@@ -208,24 +210,20 @@ NOI MODERATI	6,43</textarea>
           </button>
         </div>
 
-        <div id="scenarios-config-list" class="space-y-4">
-          <!-- Popolato JS -->
-        </div>
+        <div id="scenarios-config-list" class="space-y-4"></div>
       </div>
 
     </div>
 
-    <!-- SEZIONE ANTEPRIMA & EXPORT -->
+    <!-- ANTEPRIMA & EXPORT -->
     <div id="view-preview" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-      <!-- ANTEPRIMA GRAFICA RESPONSIVE (7 COLONNE) -->
       <div class="lg:col-span-7 space-y-4">
         <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
-          <h2 class="font-bold text-white text-sm">Anteprima Risultato HTML (Responsive)</h2>
-          <span class="text-xs bg-slate-700 text-slate-300 px-2.5 py-1 rounded-full font-medium">Layout Vettoriale SVG</span>
+          <h2 class="font-bold text-white text-sm">Anteprima HTML Responsive (Chart.js)</h2>
+          <span class="text-xs bg-emerald-600 text-white px-2.5 py-1 rounded-full font-bold">Grafici Sferici Perfetti</span>
         </div>
 
-        <!-- CONTENITORE PRINCIPALE HTML PRONTO -->
         <div id="captureArea" class="corriere-card">
           
           <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #111827; padding-bottom: 6px;">
@@ -233,12 +231,10 @@ NOI MODERATI	6,43</textarea>
             <div class="corriere-header-sub">Camera dei Deputati</div>
           </div>
 
-          <!-- COPERTINA FISSA -->
           <div class="cover-img-box">
             <img src="https://static.brunorachiele.it/sfondo.png" alt="Scenari Legge Elettorale Bruno Rachiele">
           </div>
 
-          <!-- PARAMETRI DI LEGGE -->
           <div class="param-grid">
             <div class="param-card">Seggi totali: <b>400</b></div>
             <div class="param-card">Quota proporzionale: <b>319</b></div>
@@ -254,10 +250,7 @@ NOI MODERATI	6,43</textarea>
             <span class="tag-border">% seggi ottenuti</span>
           </div>
 
-          <!-- CONTENITORE DINAMICO SCENARI E COMMENTI -->
-          <div id="preview-scenarios-container">
-            <!-- Generato JS -->
-          </div>
+          <div id="preview-scenarios-container"></div>
 
           <div style="font-size: 9px; color: #6b7280; margin-top: 24px; border-top: 1px solid #e5e7eb; padding-top: 8px;">
             *Simulazione effettuata in applicazione della proposta di legge elettorale per la Camera dei Deputati (400 seggi). Elaborazione a cura di Bruno Rachiele • brunorachiele.it
@@ -266,7 +259,6 @@ NOI MODERATI	6,43</textarea>
         </div>
       </div>
 
-      <!-- CODICE HTML BLOGGER (5 COLONNE) -->
       <div class="lg:col-span-5 space-y-4">
         <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
           <h2 class="font-bold text-white text-sm">Codice HTML Finale per Blogger</h2>
@@ -319,6 +311,8 @@ NOI MODERATI	6,43</textarea>
       }
     ];
 
+    let chartInstances = {};
+
     function switchTab(tab) {
       const btnEditor = document.getElementById('tab-btn-editor');
       const btnPreview = document.getElementById('tab-btn-preview');
@@ -359,13 +353,11 @@ NOI MODERATI	6,43</textarea>
           coalHtml += `
             <div class="bg-slate-950 p-3 rounded border border-slate-800 space-y-2">
               <div class="flex gap-2">
-                <input type="text" value="${c.nome}" oninput="SCENARI_CONFIG[${sIdx}].coalizioni[${cIdx}].nome=this.value" class="flex-1 bg-slate-900 text-white text-xs px-2 py-1 rounded border border-slate-700 font-bold" placeholder="Nome Coalizione">
+                <input type="text" value="${c.nome}" oninput="SCENARI_CONFIG[${sIdx}].coalizioni[${cIdx}].nome=this.value" class="flex-1 bg-slate-900 text-white text-xs px-2 py-1 rounded border border-slate-700 font-bold">
                 <input type="color" value="${c.colore}" onchange="SCENARI_CONFIG[${sIdx}].coalizioni[${cIdx}].colore=this.value" class="w-8 h-7 bg-slate-900 border border-slate-700 rounded cursor-pointer">
-                <button onclick="removeCoalition(${sIdx}, ${cIdx})" class="text-red-400 hover:text-red-300 text-xs px-2"><i class="fa-solid fa-trash"></i></button>
+                <button onclick="removeCoalition(${sIdx}, ${cIdx})" class="text-red-400 text-xs px-2"><i class="fa-solid fa-trash"></i></button>
               </div>
-              <div class="flex flex-wrap gap-1.5 pt-1">
-                ${partitiCheckboxes}
-              </div>
+              <div class="flex flex-wrap gap-1.5 pt-1">${partitiCheckboxes}</div>
             </div>
           `;
         });
@@ -373,12 +365,10 @@ NOI MODERATI	6,43</textarea>
         container.innerHTML += `
           <div class="bg-slate-900 p-4 rounded-lg border border-slate-700 space-y-3">
             <div class="flex justify-between items-center">
-              <input type="text" value="${sc.titolo}" oninput="SCENARI_CONFIG[${sIdx}].titolo=this.value" class="w-full bg-slate-800 text-blue-400 font-bold text-xs px-3 py-1.5 rounded border border-slate-600" placeholder="Titolo Scenario">
-              <button onclick="removeScenario(${sIdx})" class="text-red-400 hover:text-red-300 text-xs ml-2"><i class="fa-solid fa-trash-can"></i></button>
+              <input type="text" value="${sc.titolo}" oninput="SCENARI_CONFIG[${sIdx}].titolo=this.value" class="w-full bg-slate-800 text-blue-400 font-bold text-xs px-3 py-1.5 rounded border border-slate-600">
+              <button onclick="removeScenario(${sIdx})" class="text-red-400 text-xs ml-2"><i class="fa-solid fa-trash-can"></i></button>
             </div>
-            <div class="space-y-2">
-              ${coalHtml}
-            </div>
+            <div class="space-y-2">${coalHtml}</div>
             <button onclick="addCoalition(${sIdx})" class="bg-slate-800 hover:bg-slate-700 text-blue-400 text-xs font-bold px-3 py-1 rounded border border-slate-700">
               + Aggiungi Coalizione / Blocco
             </button>
@@ -447,48 +437,17 @@ NOI MODERATI	6,43</textarea>
       }
     }
 
-    // FORMULA CORRETTA: DISEGNA ARCHI SEMICIRCOLARI PERFETTI CON TRATTO SPESSO
-    function drawSemiDonutSvg(svgId, slices) {
-      const svg = document.getElementById(svgId);
-      svg.innerHTML = '';
-
-      const cx = 250;
-      const cy = 210;
-      const r = 135;
-      const strokeWidth = 55;
-
-      let totalPct = slices.reduce((sum, s) => sum + s.pct, 0);
-      let currentAngle = Math.PI; // Da 180° a 0°
-
-      slices.forEach(slice => {
-        let sliceAngle = (slice.pct / totalPct) * Math.PI;
-        let endAngle = currentAngle - sliceAngle;
-
-        let x1 = cx + r * Math.cos(currentAngle);
-        let y1 = cy - r * Math.sin(currentAngle);
-        let x2 = cx + r * Math.cos(endAngle);
-        let y2 = cy - r * Math.sin(endAngle);
-
-        let largeArcFlag = sliceAngle > Math.PI ? 1 : 0;
-
-        let pathData = `M ${x1} ${y1} A ${r} ${r} 0 ${largeArcFlag} 0 ${x2} ${y2}`;
-
-        let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        path.setAttribute("d", pathData);
-        path.setAttribute("fill", "none");
-        path.setAttribute("stroke", slice.color);
-        path.setAttribute("stroke-width", strokeWidth);
-        svg.appendChild(path);
-
-        currentAngle = endAngle;
-      });
-    }
-
     function updateAll() {
       const container = document.getElementById('preview-scenarios-container');
       container.innerHTML = '';
 
       const commentText = document.getElementById('editor-comment-input').value.trim();
+
+      // Distruggi vecchi grafici attivi per evitare memoria occupata
+      Object.keys(chartInstances).forEach(k => {
+        if(chartInstances[k]) chartInstances[k].destroy();
+      });
+      chartInstances = {};
 
       SCENARI_CONFIG.forEach((sc, sIdx) => {
         let evaluatedCoalitions = sc.coalizioni.map(c => {
@@ -526,14 +485,14 @@ NOI MODERATI	6,43</textarea>
           </div>
         `).join('');
 
-        let svgId = `svg-scenario-dynamic-${sIdx}`;
+        let canvasId = `chart-canvas-${sIdx}`;
 
         container.innerHTML += `
           <div class="scenario-section">
             <div class="scenario-heading">${sc.titolo}</div>
             <div class="coalition-box-row">${boxesHtml}</div>
             <div class="chart-wrapper">
-              <svg id="${svgId}" viewBox="0 0 500 250" style="width: 100%; height: auto; display: block;"></svg>
+              <canvas id="${canvasId}"></canvas>
               <div class="center-seats-label">
                 <div class="num">400</div>
                 <div class="sub">Totale seggi</div>
@@ -551,20 +510,55 @@ NOI MODERATI	6,43</textarea>
         }
       });
 
-      // Disegna gli emicicli SVG vettoriali perfettamente sferici
-      SCENARI_CONFIG.forEach((sc, sIdx) => {
-        let svgId = `svg-scenario-dynamic-${sIdx}`;
-        let slices = sc.coalizioni.map(c => {
-          let sumVoto = 0;
-          c.partiti.forEach(pName => {
-            let found = PARTITI_DATI.find(x => x.nome.includes(pName) || pName.includes(x.nome));
-            if (found) sumVoto += found.voto;
-          });
-          return { pct: sumVoto, color: c.colore };
-        });
+      // Generazione Grafici Chart.js (Semi-Doughnut Sferico Perfetto)
+      setTimeout(() => {
+        SCENARI_CONFIG.forEach((sc, sIdx) => {
+          let canvasId = `chart-canvas-${sIdx}`;
+          let ctx = document.getElementById(canvasId);
+          if (!ctx) return;
 
-        drawSemiDonutSvg(svgId, slices);
-      });
+          let labels = sc.coalizioni.map(c => c.nome);
+          let colors = sc.coalizioni.map(c => c.colore);
+          let dataValues = sc.coalizioni.map(c => {
+            let sumVoto = 0;
+            c.partiti.forEach(pName => {
+              let found = PARTITI_DATI.find(x => x.nome.includes(pName) || pName.includes(x.nome));
+              if (found) sumVoto += found.voto;
+            });
+            return sumVoto;
+          });
+
+          chartInstances[sIdx] = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+              labels: labels,
+              datasets: [{
+                data: dataValues,
+                backgroundColor: colors,
+                borderWidth: 2,
+                borderColor: '#ffffff'
+              }]
+            },
+            options: {
+              rotation: -90,
+              circumference: 180,
+              cutout: '65%',
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: { display: false },
+                tooltip: {
+                  callbacks: {
+                    label: function(context) {
+                      return ' ' + context.label + ': ' + context.raw.toFixed(1) + '%';
+                    }
+                  }
+                }
+              }
+            }
+          });
+        });
+      }, 50);
 
       generateFinalHtmlCode();
     }
@@ -573,9 +567,48 @@ NOI MODERATI	6,43</textarea>
       const dateVal = document.getElementById('input-date').value || "09 Novembre 2026";
       const postUrl = document.getElementById('input-post-url').value || "https://www.brunorachiele.it";
       const now = new Date().toISOString();
-      const articleInnerContent = document.getElementById('captureArea').innerHTML;
 
-      const code = `<!-- METADATI SCHEMA.ORG (NEWSARTICLE) -->
+      let scriptGeneratorPart = '';
+      SCENARI_CONFIG.forEach((sc, sIdx) => {
+        let labels = JSON.stringify(sc.coalizioni.map(c => c.nome));
+        let colors = JSON.stringify(sc.coalizioni.map(c => c.colore));
+        let dataValues = JSON.stringify(sc.coalizioni.map(c => {
+          let sumVoto = 0;
+          c.partiti.forEach(pName => {
+            let found = PARTITI_DATI.find(x => x.nome.includes(pName) || pName.includes(x.nome));
+            if (found) sumVoto += found.voto;
+          });
+          return sumVoto;
+        }));
+
+        scriptGeneratorPart += `
+        new Chart(document.getElementById('chart-canvas-export-${sIdx}'), {
+          type: 'doughnut',
+          data: {
+            labels: ${labels},
+            datasets: [{
+              data: ${dataValues},
+              backgroundColor: ${colors},
+              borderWidth: 2,
+              borderColor: '#ffffff'
+            }]
+          },
+          options: {
+            rotation: -90,
+            circumference: 180,
+            cutout: '65%',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } }
+          }
+        });`;
+      });
+
+      const articleInnerContent = document.getElementById('captureArea').innerHTML.replace(/chart-canvas-/g, 'chart-canvas-export-');
+
+      const code = `<!-- INCLUSIONE LIBRERIA CHART.JS E METADATI SCHEMA.ORG -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"><\/script>
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -599,13 +632,8 @@ NOI MODERATI	6,43</textarea>
   "publisher": {
     "@type": "Organization",
     "name": "brunorachiele.it",
-    "url": "https://www.brunorachiele.it",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://static.brunorachiele.it/logo.png"
-    }
-  },
-  "description": "Simulazione degli scenari elettorali alla Camera dei Deputati con la nuova legge elettorale Stabilicum aggiornata al ${dateVal}."
+    "url": "https://www.brunorachiele.it"
+  }
 }
 <\/script>
 
@@ -640,17 +668,23 @@ NOI MODERATI	6,43</textarea>
   .coalition-parties { font-size: 10px; color: #4b5563; font-weight: 600; margin-bottom: 4px; }
   .coalition-stats { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
   .coalition-seats-num { font-size: 18px; font-weight: 900; }
-  .chart-wrapper { position: relative; width: 100%; max-width: 480px; margin: 10px auto; }
-  .center-seats-label { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); text-align: center; }
-  .center-seats-label .num { font-size: 28px; font-weight: 900; color: #000000; line-height: 1; }
-  .center-seats-label .sub { font-size: 10px; font-weight: 700; color: #6b7280; }
+  .chart-wrapper { position: relative; width: 100%; max-width: 460px; height: 240px; margin: 10px auto 0 auto; }
+  .center-seats-label { position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); text-align: center; pointer-events: none; }
+  .center-seats-label .num { font-size: 32px; font-weight: 900; color: #000000; line-height: 1; }
+  .center-seats-label .sub { font-size: 11px; font-weight: 700; color: #6b7280; }
   .editor-comment-box { background: #f8fafc; border-left: 4px solid #0284c7; padding: 14px 18px; margin: 20px 0; font-size: 13.5px; color: #334155; line-height: 1.5; border-radius: 0 4px 4px 0; }
   .editor-comment-box b { color: #0f172a; }
 </style>
 
 <div class="corriere-card">
   ${articleInnerContent}
-</div>`;
+</div>
+
+<script>
+  window.addEventListener('load', function() {
+    ${scriptGeneratorPart}
+  });
+<\/script>`;
 
       document.getElementById('output-code').value = code;
     }
