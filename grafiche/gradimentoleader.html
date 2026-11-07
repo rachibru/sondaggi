@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generatore Supermedia Gradimento Leader - Bruno Rachiele</title>
+  <!-- Tailwind CSS per l'interfaccia dell'editor -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icone -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Script per esportazione grafica in PNG -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+
+    /* STILI ANTEPRIMA GRAFICA PER BLOGGER (Esportati anche nel codice HTML) */
+    .leader-grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .leader-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .leader-avatar {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #0056b3;
+      background-color: #f1f5f9;
+      flex-shrink: 0;
+    }
+
+    .leader-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .leader-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: #0f172a;
+      text-transform: uppercase;
+      margin: 0;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .leader-role {
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 600;
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .leader-metrics {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .leader-pct {
+      font-size: 22px;
+      font-weight: 900;
+      color: #0056b3;
+    }
+
+    .trend-badge {
+      font-size: 12px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .trend-up { background-color: #dcfce7; color: #15803d; }
+    .trend-down { background-color: #fee2e2; color: #b91c1c; }
+    .trend-eq { background-color: #f1f5f9; color: #475569; }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 3px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #0056b3, #38bdf8);
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen pb-12">
+
+  <!-- HEADER APPLICAZIONE -->
+  <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+      <div class="flex items-center gap-3">
+        <div class="bg-blue-600 p-2.5 rounded-xl shadow-md text-white">
+          <i class="fa-solid fa-user-tie text-xl"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg leading-tight">Supermedia Gradimento Leader</h1>
+          <p class="text-xs text-slate-400">Generatore HTML & Schema.org per brunorachiele.it</p>
+        </div>
+      </div>
+      <!-- TAB SWITCHER -->
+      <div class="flex bg-slate-900 p-1 rounded-lg text-sm">
+        <button id="tab-btn-editor" onclick="switchTab('editor')" class="px-4 py-1.5 rounded-md font-medium text-white bg-blue-600 shadow">
+          <i class="fa-solid fa-pen-to-square mr-1.5"></i> Editor Dati
+        </button>
+        <button id="tab-btn-preview" onclick="switchTab('preview')" class="px-4 py-1.5 rounded-md font-medium text-slate-400 hover:text-white">
+          <i class="fa-solid fa-code mr-1.5"></i> Anteprima & HTML Blogger
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 mt-6">
+
+    <!-- SEZIONE EDITOR -->
+    <div id="view-editor" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- COLONNA SINISTRA: CONFIGURAZIONE & PASTE BOX -->
+      <div class="lg:col-span-5 space-y-6">
+
+        <!-- PASTE BOX GOOGLE SHEETS -->
+        <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg">
+          <h2 class="text-base font-bold text-blue-400 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-file-csv"></i> 1. Incolla da Google Sheets
+          </h2>
+          <p class="text-xs text-slate-400 mb-3 leading-relaxed">
+            Seleziona le righe dei leader nel tuo foglio di calcolo, copiale (<kbd class="bg-slate-700 px-1 rounded">Ctrl+C</kbd>) e incollale qui sotto.
+          </p>
+          <textarea id="pasteInput" rows="6" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-slate-200 focus:outline-none focus:border-blue-500 mb-3" placeholder="Incolla qui i dati dal foglio di calcolo..."></textarea>
+          <button onclick="importFromSpreadsheet()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-file-import"></i> Elabora & Importa Dati
+          </button>
+        </div>
+
+        <!-- INFORMZIONI POST BLOGGER -->
+        <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg space-y-4">
+          <h2 class="text-base font-bold text-blue-400 border-b border-slate-700 pb-3 flex items-center gap-2">
+            <i class="fa-solid fa-sliders"></i> 2. Dati Articolo (SEO & Schema)
+          </h2>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Data Sondaggio</label>
+            <input type="text" id="input-date" value="09 Novembre 2026" oninput="updateAll()" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-sm text-white focus:outline-none focus:border-blue-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">URL Post Articolo (Blogger)</label>
+            <input type="text" id="input-post-url" value="https://www.brunorachiele.it/2026/11/gradimento-leader-politici-09-novembre-2026.html" oninput="updateAll()" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-white focus:outline-none focus:border-blue-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Link Canale Google News</label>
+            <input type="text" id="input-gnews-link" value="https://news.google.com/publications/CAAqLAgKIiZDQklTRmdnTWFoSUtFR0p5ZFc1dmNtRmphR2xsYkdVdWFYUW9BQVAB?hl=it&gl=IT&ceid=IT:it" oninput="updateAll()" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-white focus:outline-none focus:border-blue-500">
+          </div>
+        </div>
+
+      </div>
+
+      <!-- COLONNA DESTRO: MANUTENZIONE MANUALE LEADER -->
+      <div class="lg:col-span-7 bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg">
+        <div class="flex justify-between items-center border-b border-slate-700 pb-3 mb-4">
+          <h2 class="text-base font-bold text-blue-400 flex items-center gap-2">
+            <i class="fa-solid fa-users"></i> Leader Inseriti (<span id="leaders-count">0</span>)
+          </h2>
+          <button onclick="addLeaderRow()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1">
+            <i class="fa-solid fa-plus"></i> Aggiungi Leader
+          </button>
+        </div>
+
+        <div id="leaders-list" class="space-y-3 max-h-[600px] overflow-y-auto pr-2">
+          <!-- Popolato via JS -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SEZIONE ANTEPRIMA & CODICE HTML -->
+    <div id="view-preview" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- VISUAL ANTEPRIMA POST (7 COLONNE) -->
+      <div class="lg:col-span-7 space-y-4">
+        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
+          <h2 class="font-bold text-white text-sm flex items-center gap-2">
+            <i class="fa-solid fa-eye text-blue-400"></i> Anteprima Card Leader
+          </h2>
+          <span class="text-xs bg-slate-700 text-slate-300 px-2.5 py-1 rounded-full font-medium">Responsive Layout</span>
+        </div>
+
+        <!-- CONTENITORE CHE SIMULA IL BLOG -->
+        <div class="bg-white text-slate-800 p-6 rounded-xl shadow-2xl max-w-[800px] mx-auto">
+          
+          <div style="background-color: #f8f9fa; border-left: 5px solid #0056b3; padding: 15px 20px; margin-bottom: 20px; border-radius: 0 8px 8px 0;">
+            <p style="margin: 0 0 10px 0; font-size: 1.05rem; font-family: sans-serif;">
+              Di seguito l'indice di gradimento dei principali leader politici italiani aggiornato al <strong id="pv-date">09 Novembre 2026</strong>, con le percentuali attive ed il trend di variazione.
+            </p>
+            <div style="font-size: 0.9rem; color: #6c757d; font-weight: bold; text-transform: uppercase;">Supermedia a cura di Bruno Rachiele</div>
+          </div>
+
+          <!-- BANNER GOOGLE NEWS -->
+          <div style="text-align: center; margin: 20px 0;">
+            <a id="pv-gnews-link" href="#" target="_blank" style="display: inline-flex; align-items: center; gap: 10px; background-color: #ffffff; color: #3c4043; border: 1px solid #dadce0; padding: 10px 20px; border-radius: 24px; font-size: 0.95rem; font-weight: 600; text-decoration: none;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z" fill="#4285F4"/>
+              </svg>
+              Segui il Blog su Google News
+            </a>
+          </div>
+
+          <!-- GRID CARD LEADER -->
+          <div id="pv-leader-cards" class="leader-grid-container">
+            <!-- Popolato via JS -->
+          </div>
+
+        </div>
+      </div>
+
+      <!-- CODICE EXPORT BLOGGER (5 COLONNE) -->
+      <div class="lg:col-span-5 space-y-4">
+        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
+          <h2 class="font-bold text-white text-sm flex items-center gap-2">
+            <i class="fa-solid fa-code text-emerald-400"></i> Codice HTML Finale Blogger
+          </h2>
+          <button onclick="copyGeneratedCode()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow transition flex items-center gap-1.5">
+            <i class="fa-solid fa-copy"></i> Copia Codice
+          </button>
+        </div>
+
+        <div class="bg-slate-950 rounded-xl p-4 border border-slate-800">
+          <textarea id="output-code" readonly rows="26" class="w-full bg-transparent text-emerald-400 font-mono text-xs leading-relaxed focus:outline-none resize-none"></textarea>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- SCRIPT DI LOGICA -->
+  <script>
+    // Mappatura automatica foto leader nella tua cartella img/
+    const FOTO_MAP = {
+      "GIORGIA MELONI": "../img/meloni.png",
+      "ELLY SCHLEIN": "../img/schlein.png",
+      "MATTEO SALVINI": "../img/salvini.png",
+      "ANTONIO TAJANI": "../img/tajani.png",
+      "GIUSEPPE CONTE": "../img/conte.png",
+      "CARLO CALENDA": "../img/calenda.png",
+      "MATTEO RENZI": "../img/renzi.png"
+    };
+
+    let leaderData = [
+      { foto: "../img/meloni.png", nome: "Giorgia Meloni", ruolo: "Presidente del Consiglio", val: "44.5", trend: 0.20 },
+      { foto: "../img/schlein.png", nome: "Elly Schlein", ruolo: "Leader PD", val: "31.2", trend: -0.10 },
+      { foto: "../img/tajani.png", nome: "Antonio Tajani", ruolo: "Ministro degli Esteri", val: "30.5", trend: 0.05 },
+      { foto: "../img/conte.png", nome: "Giuseppe Conte", ruolo: "Leader M5S", val: "29.8", trend: -0.30 },
+      { foto: "../img/salvini.png", nome: "Matteo Salvini", ruolo: "Ministro dei Trasporti", val: "26.0", trend: 0.15 },
+      { foto: "../img/calenda.png", nome: "Carlo Calenda", ruolo: "Leader Azione", val: "18.4", trend: 0.00 },
+      { foto: "../img/renzi.png", nome: "Matteo Renzi", ruolo: "Leader Italia Viva", val: "14.2", trend: -0.05 }
+    ];
+
+    function switchTab(tab) {
+      const btnEditor = document.getElementById('tab-btn-editor');
+      const btnPreview = document.getElementById('tab-btn-preview');
+      const viewEditor = document.getElementById('view-editor');
+      const viewPreview = document.getElementById('view-preview');
+
+      if (tab === 'editor') {
+        btnEditor.className = "px-4 py-1.5 rounded-md font-medium text-white bg-blue-600 shadow";
+        btnPreview.className = "px-4 py-1.5 rounded-md font-medium text-slate-400 hover:text-white";
+        viewEditor.classList.remove('hidden');
+        viewPreview.classList.add('hidden');
+      } else {
+        btnPreview.className = "px-4 py-1.5 rounded-md font-medium text-white bg-blue-600 shadow";
+        btnEditor.className = "px-4 py-1.5 rounded-md font-medium text-slate-400 hover:text-white";
+        viewPreview.classList.remove('hidden');
+        viewEditor.classList.add('hidden');
+        updateAll();
+      }
+    }
+
+    function renderLeaderEditorList() {
+      const list = document.getElementById('leaders-list');
+      document.getElementById('leaders-count').innerText = leaderData.length;
+      list.innerHTML = '';
+
+      leaderData.forEach((item, index) => {
+        list.innerHTML += `
+          <div class="bg-slate-900 p-3 rounded-lg border border-slate-700 grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+            <div class="sm:col-span-3">
+              <input type="text" value="${item.nome}" oninput="leaderData[${index}].nome=this.value; updateAll();" class="w-full bg-slate-800 text-white text-xs px-2 py-1.5 rounded border border-slate-600" placeholder="Nome Leader">
+            </div>
+            <div class="sm:col-span-3">
+              <input type="text" value="${item.ruolo}" oninput="leaderData[${index}].ruolo=this.value; updateAll();" class="w-full bg-slate-800 text-slate-300 text-xs px-2 py-1.5 rounded border border-slate-600" placeholder="Ruolo">
+            </div>
+            <div class="sm:col-span-2">
+              <input type="text" value="${item.val}" oninput="leaderData[${index}].val=this.value; updateAll();" class="w-full bg-slate-800 text-blue-400 font-bold text-xs px-2 py-1.5 rounded border border-slate-600 text-center" placeholder="% Gradimento">
+            </div>
+            <div class="sm:col-span-2">
+              <input type="number" step="0.01" value="${item.trend}" oninput="leaderData[${index}].trend=parseFloat(this.value)||0; updateAll();" class="w-full bg-slate-800 text-emerald-400 font-bold text-xs px-2 py-1.5 rounded border border-slate-600 text-center" placeholder="Trend">
+            </div>
+            <div class="sm:col-span-2 flex justify-end">
+              <button onclick="removeLeaderRow(${index})" class="text-red-400 hover:text-red-300 p-1.5 rounded hover:bg-slate-800" title="Elimina">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function addLeaderRow() {
+      leaderData.push({ foto: "../img/leader.png", nome: "NUOVO LEADER", ruolo: "Ruolo Politico", val: "20.0", trend: 0.00 });
+      renderLeaderEditorList();
+      updateAll();
+    }
+
+    function removeLeaderRow(index) {
+      leaderData.splice(index, 1);
+      renderLeaderEditorList();
+      updateAll();
+    }
+
+    function importFromSpreadsheet() {
+      const rawText = document.getElementById('pasteInput').value.trim();
+      if (!rawText) return;
+
+      const lines = rawText.split('\n');
+      let newLeaders = [];
+
+      lines.forEach(line => {
+        const cols = line.split('\t').map(c => c.trim()).filter(c => c !== "");
+        if (cols.length >= 2) {
+          let rawName = cols[0];
+          if (rawName.toUpperCase().includes("LEADER") || rawName.toUpperCase().includes("NOME")) return;
+
+          let rawRuolo = cols[1] || "Leader Politico";
+          let rawVal = cols[2] ? cols[2].replace(',', '.') : "0.0";
+          let rawTrend = cols[cols.length - 1] ? parseFloat(cols[cols.length - 1].replace(',', '.')) : 0;
+
+          let upperName = rawName.toUpperCase();
+          let fotoPath = FOTO_MAP[upperName] || "../img/" + upperName.toLowerCase().replace(/[^a-z0-9]/g, '') + ".png";
+
+          newLeaders.push({
+            foto: fotoPath,
+            nome: rawName,
+            ruolo: rawRuolo,
+            val: rawVal,
+            trend: isNaN(rawTrend) ? 0 : rawTrend
+          });
+        }
+      });
+
+      if (newLeaders.length > 0) {
+        leaderData = newLeaders;
+        renderLeaderEditorList();
+        updateAll();
+        alert(`Importati con successo ${newLeaders.length} leader politici!`);
+      } else {
+        alert("Nessun dato valido trovato. Seleziona e incolla le righe dal tuo foglio Google.");
+      }
+    }
+
+    function updateAll() {
+      const dateVal = document.getElementById('input-date').value || "09 Novembre 2026";
+      const gnewsLink = document.getElementById('input-gnews-link').value || "#";
+      const postUrl = document.getElementById('input-post-url').value || "https://www.brunorachiele.it";
+
+      document.getElementById('pv-date').innerText = dateVal;
+      document.getElementById('pv-gnews-link').href = gnewsLink;
+
+      // Render Card Preview
+      const cardsBox = document.getElementById('pv-leader-cards');
+      cardsBox.innerHTML = '';
+
+      let cardsHtmlForExport = '';
+
+      leaderData.forEach(item => {
+        let trendVal = parseFloat(item.trend) || 0;
+        let badgeClass = 'trend-eq';
+        let symbol = '=';
+        let trendFormatted = trendVal.toFixed(2).replace('.', ',');
+
+        if (trendVal > 0) {
+          badgeClass = 'trend-up';
+          symbol = '▲ +' + trendFormatted;
+        } else if (trendVal < 0) {
+          badgeClass = 'trend-down';
+          symbol = '▼ ' + trendFormatted;
+        } else {
+          badgeClass = 'trend-eq';
+          symbol = '= 0,00';
+        }
+
+        let pctVal = parseFloat(item.val.replace(',', '.')) || 0;
+
+        const cardSnippet = `
+          <div class="leader-card">
+            <img src="${item.foto}" class="leader-avatar" alt="${item.nome}" onerror="this.src='https://placehold.co/100x100/0056b3/ffffff?text=Leader'">
+            <div class="leader-info">
+              <h3 class="leader-name">${item.nome}</h3>
+              <div class="leader-role">${item.ruolo}</div>
+              <div class="leader-metrics">
+                <span class="leader-pct">${item.val}%</span>
+                <span class="trend-badge ${badgeClass}">${symbol}</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" style="width: ${Math.min(pctVal * 1.5, 100)}%;"></div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        cardsBox.innerHTML += cardSnippet;
+        cardsHtmlForExport += cardSnippet;
+      });
+
+      generateFinalHtmlCode(dateVal, postUrl, gnewsLink, cardsHtmlForExport);
+    }
+
+    function generateFinalHtmlCode(dateVal, postUrl, gnewsLink, cardsHtml) {
+      const now = new Date().toISOString();
+      const code = `<!-- METADATI E DATI STRUTTURATI (SCHEMA.ORG) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "${postUrl}"
+  },
+  "url": "${postUrl}",
+  "headline": "Supermedia Gradimento Leader Politici - ${dateVal}",
+  "image": [
+    "https://static.brunorachiele.it/supermedie_2027.png"
+  ],
+  "datePublished": "${now}",
+  "dateModified": "${now}",
+  "author": {
+    "@type": "Person",
+    "name": "Bruno Rachiele",
+    "url": "https://bio.brunorachiele.it"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "brunorachiele.it",
+    "url": "https://www.brunorachiele.it",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://static.brunorachiele.it/logo.png"
+    }
+  },
+  "description": "Supermedia dell'indice di gradimento dei leader politici italiani aggiornata al ${dateVal} con percentuali di fiducia e variazioni di trend."
+}
+<\/script>
+
+<!-- STILI CSS DEDICATI AL LAYOUT LEADER -->
+<style>
+  .sondaggi-container {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #2c3e50;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 10px;
+  }
+  .sondaggi-header {
+    background-color: #f8f9fa;
+    border-left: 5px solid #0056b3;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border-radius: 0 8px 8px 0;
+  }
+  .sondaggi-credit {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .discover-btn-wrapper { text-align: center; margin: 20px 0; }
+  .discover-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #ffffff;
+    color: #3c4043;
+    border: 1px solid #dadce0;
+    padding: 10px 20px;
+    border-radius: 24px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  .leader-grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .leader-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  }
+  .leader-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #0056b3;
+    background-color: #f1f5f9;
+    flex-shrink: 0;
+  }
+  .leader-info { flex: 1; min-width: 0; }
+  .leader-name {
+    font-size: 16px;
+    font-weight: 800;
+    color: #0f172a;
+    text-transform: uppercase;
+    margin: 0;
+    line-height: 1.2;
+  }
+  .leader-role { font-size: 12px; color: #64748b; font-weight: 600; margin-top: 2px; }
+  .leader-metrics { display: flex; align-items: baseline; gap: 8px; margin-top: 6px; }
+  .leader-pct { font-size: 22px; font-weight: 900; color: #0056b3; }
+  .trend-badge { font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 12px; }
+  .trend-up { background-color: #dcfce7; color: #15803d; }
+  .trend-down { background-color: #fee2e2; color: #b91c1c; }
+  .trend-eq { background-color: #f1f5f9; color: #475569; }
+  .progress-bar-bg { width: 100%; height: 6px; background: #e2e8f0; border-radius: 3px; margin-top: 8px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #0056b3, #38bdf8); border-radius: 3px; }
+</style>
+
+<div class="sondaggi-container">
+
+  <!-- INTRODUZIONE E CREDIT -->
+  <div class="sondaggi-header">
+    <p>Di seguito l'indice di gradimento dei principali leader politici italiani aggiornato al <strong>${dateVal}</strong>, con le percentuali di fiducia ed i trend di variazione.</p>
+    <div class="sondaggi-credit">Supermedia a cura di Bruno Rachiele</div>
+  </div>
+
+  <!-- PULSANTE GOOGLE NEWS -->
+  <div class="discover-btn-wrapper">
+    <a class="discover-btn" href="${gnewsLink}" target="_blank" rel="noopener">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z" fill="#4285F4"/>
+      </svg>
+      Segui il Blog su Google News
+    </a>
+  </div>
+
+  <!-- GRID BANNER LEADER POLITICI -->
+  <div class="leader-grid-container">
+    ${cardsHtml}
+  </div>
+
+</div>`;
+
+      document.getElementById('output-code').value = code;
+    }
+
+    function copyGeneratedCode() {
+      const codeArea = document.getElementById('output-code');
+      codeArea.select();
+      document.execCommand('copy');
+      alert("Codice HTML per Blogger copiato negli appunti!");
+    }
+
+    // Inizializzazione
+    renderLeaderEditorList();
+    updateAll();
+  </script>
+</body>
+</html>
