@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generatore Scenari Legge Elettorale - Bruno Rachiele</title>
+  <title>Generatore Scenari Elettorali Custom - Bruno Rachiele</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -11,28 +11,23 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     body { font-family: 'Inter', sans-serif; }
 
-    /* LAYOUT EDITORIALE STILE CORRIERE / IL SOLE */
+    /* LAYOUT EDITORIALE CORRIERE */
     .corriere-card {
       background: #ffffff;
       color: #111827;
       border: 1px solid #d1d5db;
       border-radius: 4px;
       padding: 24px;
-      max-width: 780px;
+      max-width: 800px;
       margin: 0 auto;
       box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
-    .corriere-header-title {
-      font-size: 30px;
-      font-weight: 900;
-      color: #000000;
-      line-height: 1.1;
-    }
-    .corriere-header-sub {
-      font-size: 14px;
-      font-weight: 600;
-      color: #4b5563;
-    }
+    .corriere-header-title { font-size: 28px; font-weight: 900; color: #000; line-height: 1.1; }
+    .corriere-header-sub { font-size: 14px; font-weight: 600; color: #4b5563; }
+    
+    .cover-img-box { margin: 15px 0 20px 0; width: 100%; border-radius: 6px; overflow: hidden; }
+    .cover-img-box img { width: 100%; height: auto; display: block; }
+
     .param-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -49,13 +44,7 @@
       color: #374151;
       line-height: 1.2;
     }
-    .param-card b {
-      display: block;
-      font-size: 17px;
-      font-weight: 900;
-      color: #000000;
-      margin-top: 2px;
-    }
+    .param-card b { display: block; font-size: 16px; font-weight: 900; color: #000; margin-top: 2px; }
     
     .legenda-row {
       display: flex;
@@ -67,16 +56,16 @@
       padding-top: 10px;
       margin-bottom: 20px;
     }
-    .tag-black { background: #000000; color: #ffffff; padding: 2px 6px; }
-    .tag-border { border: 1px solid #000000; color: #000000; padding: 1px 5px; background: #fff; }
+    .tag-black { background: #000; color: #fff; padding: 2px 6px; }
+    .tag-border { border: 1px solid #000; color: #000; padding: 1px 5px; background: #fff; }
 
     .scenario-section {
       border-top: 2px solid #111827;
-      padding-top: 14px;
+      padding-top: 16px;
       margin-top: 24px;
     }
     .scenario-heading {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 900;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -84,37 +73,29 @@
       margin-bottom: 16px;
     }
 
-    /* BOX DETTAGLIO COALIZIONI ED EMICICLO */
     .coalition-box-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
       margin-bottom: 15px;
     }
     .coalition-box {
       border: 1px solid #9ca3af;
-      padding: 8px 12px;
-      border-radius: 2px;
+      padding: 10px;
+      border-radius: 3px;
       font-size: 12px;
       background: #ffffff;
     }
-    .coalition-box.active-winner {
-      border: 2px solid #ef4444; /* Evidenziatore rosso come immagine originale */
-    }
-    .coalition-name { font-weight: 900; text-transform: uppercase; font-size: 13px; }
-    .coalition-parties { font-size: 10px; color: #4b5563; font-weight: 600; }
-    .coalition-stats {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 4px;
-    }
-    .coalition-seats-num { font-size: 20px; font-weight: 900; }
+    .coalition-box.active-winner { border: 2px solid #ef4444; }
+    .coalition-name { font-weight: 900; text-transform: uppercase; font-size: 12px; }
+    .coalition-parties { font-size: 10px; color: #4b5563; font-weight: 600; margin-bottom: 4px; }
+    .coalition-stats { display: flex; align-items: center; gap: 6px; }
+    .coalition-seats-num { font-size: 18px; font-weight: 900; }
 
     .chart-wrapper {
       position: relative;
       width: 100%;
-      max-width: 460px;
+      max-width: 480px;
       margin: 10px auto;
     }
     .center-seats-label {
@@ -124,17 +105,19 @@
       transform: translateX(-50%);
       text-align: center;
     }
-    .center-seats-label .num { font-size: 32px; font-weight: 900; color: #000; line-height: 1; }
-    .center-seats-label .sub { font-size: 11px; font-weight: 700; color: #6b7280; }
+    .center-seats-label .num { font-size: 30px; font-weight: 900; color: #000; line-height: 1; }
+    .center-seats-label .sub { font-size: 10px; font-weight: 700; color: #6b7280; }
 
-    .footer-note-text {
-      font-size: 9px;
-      color: #6b7280;
-      line-height: 1.35;
-      margin-top: 24px;
-      border-top: 1px solid #e5e7eb;
-      padding-top: 8px;
+    .editor-comment-box {
+      background: #f8fafc;
+      border-left: 4px solid #0284c7;
+      padding: 14px 18px;
+      margin: 20px 0;
+      font-size: 13.5px;
+      color: #334155;
+      line-height: 1.5;
     }
+    .editor-comment-box b { color: #0f172a; }
   </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen pb-12">
@@ -144,19 +127,19 @@
     <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
       <div class="flex items-center gap-3">
         <div class="bg-blue-600 p-2.5 rounded-xl text-white">
-          <i class="fa-solid fa-chart-pie text-xl"></i>
+          <i class="fa-solid fa-layer-group text-xl"></i>
         </div>
         <div>
-          <h1 class="font-bold text-lg leading-tight">Generatore Scenari "Stabilicum"</h1>
-          <p class="text-xs text-slate-400">Grafica Editoriale per brunorachiele.it</p>
+          <h1 class="font-bold text-lg leading-tight">Compositore Scenari Elettorali</h1>
+          <p class="text-xs text-slate-400">Strumento grafico per brunorachiele.it</p>
         </div>
       </div>
       <div class="flex bg-slate-900 p-1 rounded-lg text-sm">
         <button id="tab-btn-editor" onclick="switchTab('editor')" class="px-4 py-1.5 rounded-md font-medium text-white bg-blue-600 shadow">
-          <i class="fa-solid fa-pen-to-square mr-1.5"></i> Editor Dati
+          <i class="fa-solid fa-sliders mr-1.5"></i> Configura Coalizioni
         </button>
         <button id="tab-btn-preview" onclick="switchTab('preview')" class="px-4 py-1.5 rounded-md font-medium text-slate-400 hover:text-white">
-          <i class="fa-solid fa-eye mr-1.5"></i> Anteprima & Codice HTML
+          <i class="fa-solid fa-eye mr-1.5"></i> Anteprima & Codice Blogger
         </button>
       </div>
     </div>
@@ -167,16 +150,13 @@
     <!-- SEZIONE EDITOR -->
     <div id="view-editor" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
+      <!-- COLONNA SINISTRA: IMPORT DATI E COMMENTO -->
       <div class="lg:col-span-5 space-y-6">
-        <!-- PASTE BOX -->
         <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg">
           <h2 class="text-base font-bold text-blue-400 mb-2 flex items-center gap-2">
-            <i class="fa-solid fa-file-csv"></i> Incolla Partiti da Google Sheets
+            <i class="fa-solid fa-file-csv"></i> 1. Incolla Voti da Sheets
           </h2>
-          <p class="text-xs text-slate-400 mb-3">
-            Incolla il blocco di dati con Nome Partito e % di Voto.
-          </p>
-          <textarea id="pasteInput" rows="10" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-slate-200 focus:outline-none mb-3">FRATELLI D'ITALIA	28,33
+          <textarea id="pasteInput" rows="7" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-slate-200 focus:outline-none mb-3">FRATELLI D'ITALIA	28,33
 PARTITO DEMOCRATICO	20,23
 MOVIMENTO 5 STELLE	12,83
 FUTURO NAZIONALE	5,37
@@ -187,31 +167,34 @@ AZIONE	1,17
 ITALIA VIVA	6,13
 +EUROPA	1,30
 NOI MODERATI	6,43</textarea>
-          <button onclick="importFromSpreadsheet()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition flex items-center justify-center gap-2">
-            <i class="fa-solid fa-calculator"></i> Calcola & Aggiorna Grafica
+          <button onclick="importFromSpreadsheet()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition">
+            <i class="fa-solid fa-calculator"></i> Aggiorna Voti Partiti
           </button>
         </div>
 
-        <!-- METADATI ARTICLE -->
         <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3">
-          <h2 class="text-base font-bold text-blue-400 border-b border-slate-700 pb-2">Metadati Articolo Blogger</h2>
+          <h2 class="text-base font-bold text-blue-400 border-b border-slate-700 pb-2">
+            <i class="fa-solid fa-comment-dots"></i> 2. Commento tra i Grafici
+          </h2>
           <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Data Simulazione</label>
-            <input type="text" id="input-date" value="09 Novembre 2026" oninput="updateAll()" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">URL Articolo Post</label>
-            <input type="text" id="input-post-url" value="https://www.brunorachiele.it/2026/11/scenari-legge-elettorale-stabilicum-09-novembre-2026.html" oninput="updateAll()" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-white">
+            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Testo dell'Analisi Editoriale</label>
+            <textarea id="editor-comment-input" rows="4" oninput="updateAll()" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white">L'elemento chiave di questa simulazione è il superamento della soglia del 42%: nello Scenario B l'ingresso di Futuro Nazionale permette alla coalizione di far scattare il premio di maggioranza portandola a 220 seggi.</textarea>
           </div>
         </div>
       </div>
 
-      <!-- TABELLA DATI PARTITI CARICATI -->
-      <div class="lg:col-span-7 bg-slate-800 p-5 rounded-xl border border-slate-700">
-        <h2 class="text-base font-bold text-blue-400 mb-4 border-b border-slate-700 pb-2">
-          Intenzioni di Voto Inserite
-        </h2>
-        <div id="parties-list-container" class="space-y-2 max-h-[500px] overflow-y-auto pr-2">
+      <!-- COLONNA DESTRA: COMPOSITORE SCENARI -->
+      <div class="lg:col-span-7 bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4">
+        <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+          <h2 class="text-base font-bold text-blue-400">
+            <i class="fa-solid fa-diagram-project"></i> 3. Componi gli Scenari
+          </h2>
+          <button onclick="addScenarioConfig()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg">
+            <i class="fa-solid fa-plus"></i> Nuovo Scenario
+          </button>
+        </div>
+
+        <div id="scenarios-config-list" class="space-y-4">
           <!-- Popolato JS -->
         </div>
       </div>
@@ -224,13 +207,13 @@ NOI MODERATI	6,43</textarea>
       <!-- ANTEPRIMA GRAFICA (7 COLONNE) -->
       <div class="lg:col-span-7 space-y-4">
         <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
-          <h2 class="font-bold text-white text-sm">Anteprima Grafica "Stabilicum"</h2>
+          <h2 class="font-bold text-white text-sm">Anteprima Post Blogger</h2>
           <button onclick="downloadImage()" class="bg-green-600 hover:bg-green-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5">
             <i class="fa-solid fa-camera"></i> Scarica PNG HD
           </button>
         </div>
 
-        <!-- AREA GRAFICA DA ESPORTARE -->
+        <!-- DASHBOARD EDITORIALE COMPLETA -->
         <div id="captureArea" class="corriere-card">
           
           <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #111827; padding-bottom: 6px;">
@@ -238,14 +221,19 @@ NOI MODERATI	6,43</textarea>
             <div class="corriere-header-sub">Camera dei Deputati</div>
           </div>
 
-          <!-- GRIGLIA PARAMETRI -->
+          <!-- COPERTINA FISSA -->
+          <div class="cover-img-box">
+            <img src="https://static.brunorachiele.it/sfondo.png" alt="Scenari Legge Elettorale Bruno Rachiele">
+          </div>
+
+          <!-- PARAMETRI DI LEGGE -->
           <div class="param-grid">
             <div class="param-card">Seggi totali: <b>400</b></div>
-            <div class="param-card">Seggi assegnati con quota proporzionale: <b>319</b></div>
-            <div class="param-card">Seggi riservati all'Estero o min. linguistiche: <b>11</b></div>
-            <div class="param-card">Premio maggioranza (prima coalizione &gt;42%): <b>70</b></div>
-            <div class="param-card">Seggi massimi assegnati alla vincente: <b>230</b></div>
-            <div class="param-card">Soglia di Maggioranza: <b>201 seggi</b></div>
+            <div class="param-card">Quota proporzionale: <b>319</b></div>
+            <div class="param-card">Estero / Minoranze: <b>11</b></div>
+            <div class="param-card">Premio maggioranza (&gt;42%): <b>70</b></div>
+            <div class="param-card">Tetto max vincente: <b>230</b></div>
+            <div class="param-card">Soglia Maggioranza: <b>201 seggi</b></div>
           </div>
 
           <div class="legenda-row">
@@ -254,42 +242,13 @@ NOI MODERATI	6,43</textarea>
             <span class="tag-border">% seggi ottenuti</span>
           </div>
 
-          <!-- SCENARIO A -->
-          <div class="scenario-section">
-            <div class="scenario-heading">SIMULAZIONE - SCENARIO A (Centrodestra Tradizionale vs Campo Largo)</div>
-            
-            <div class="coalition-box-row" id="scenario-a-boxes">
-              <!-- Popolato JS -->
-            </div>
-
-            <div class="chart-wrapper">
-              <svg id="svg-scenario-a" viewBox="0 0 500 270" style="width: 100%; height: auto; display: block;"></svg>
-              <div class="center-seats-label">
-                <div class="num">400</div>
-                <div class="sub">Totale seggi</div>
-              </div>
-            </div>
+          <!-- CONTENITORE DINAMICO DEGLI SCENARI E COMMENTI -->
+          <div id="preview-scenarios-container">
+            <!-- Generato JS -->
           </div>
 
-          <!-- SCENARIO B -->
-          <div class="scenario-section">
-            <div class="scenario-heading">SIMULAZIONE - SCENARIO B (Centrodestra con Futuro Nazionale)</div>
-
-            <div class="coalition-box-row" id="scenario-b-boxes">
-              <!-- Popolato JS -->
-            </div>
-
-            <div class="chart-wrapper">
-              <svg id="svg-scenario-b" viewBox="0 0 500 270" style="width: 100%; height: auto; display: block;"></svg>
-              <div class="center-seats-label">
-                <div class="num">400</div>
-                <div class="sub">Totale seggi</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="footer-note-text">
-            Simulazione elaborata in applicazione della nuova proposta di legge elettorale presentata per la Camera dei Deputati (400 seggi). L'assegnazione dei seggi e del premio di maggioranza al 42% è calcolata proporzionalmente sulle intenzioni di voto inserite. Elaborazione a cura di Bruno Rachiele • brunorachiele.it
+          <div style="font-size: 9px; color: #6b7280; margin-top: 24px; border-top: 1px solid #e5e7eb; padding-top: 8px;">
+            *Simulazione effettuata in applicazione della proposta di legge elettorale per la Camera dei Deputati (400 seggi). Elaborazione a cura di Bruno Rachiele • brunorachiele.it
           </div>
 
         </div>
@@ -315,17 +274,38 @@ NOI MODERATI	6,43</textarea>
 
   <script>
     let PARTITI_DATI = [
-      { nome: "FRATELLI D'ITALIA", voto: 28.33, colore: "#0b3c5d" },
-      { nome: "PARTITO DEMOCRATICO", voto: 20.23, colore: "#e63946" },
-      { nome: "MOVIMENTO 5 STELLE", voto: 12.83, colore: "#ffb703" },
-      { nome: "FUTURO NAZIONALE", voto: 5.37, colore: "#202125" },
-      { nome: "FORZA ITALIA", voto: 7.17, colore: "#0364ab" },
-      { nome: "ALLEANZA VERDI-SINISTRA", voto: 3.07, colore: "#10b981" },
-      { nome: "LEGA", voto: 2.40, colore: "#27713a" },
-      { nome: "AZIONE", voto: 1.17, colore: "#9d4edd" },
-      { nome: "ITALIA VIVA", voto: 6.13, colore: "#e8467f" },
-      { nome: "+EUROPA", voto: 1.30, colore: "#ff9f1c" },
-      { nome: "NOI MODERATI", voto: 6.43, colore: "#1d3557" }
+      { nome: "FRATELLI D'ITALIA", voto: 28.33 },
+      { nome: "PARTITO DEMOCRATICO", voto: 20.23 },
+      { nome: "MOVIMENTO 5 STELLE", voto: 12.83 },
+      { nome: "FUTURO NAZIONALE", voto: 5.37 },
+      { nome: "FORZA ITALIA", voto: 7.17 },
+      { nome: "ALLEANZA VERDI-SINISTRA", voto: 3.07 },
+      { nome: "LEGA", voto: 2.40 },
+      { nome: "AZIONE", voto: 1.17 },
+      { nome: "ITALIA VIVA", voto: 6.13 },
+      { nome: "+EUROPA", voto: 1.30 },
+      { nome: "NOI MODERATI", voto: 6.43 }
+    ];
+
+    // Struttura personalizzabile degli Scenari
+    let SCENARI_CONFIG = [
+      {
+        titolo: "SIMULAZIONE - SCENARIO A (Centrodestra Tradizionale vs Campo Largo)",
+        coalizioni: [
+          { nome: "CENTRODESTRA tradizionale", colore: "#0b3c5d", partiti: ["FRATELLI D'ITALIA", "FORZA ITALIA", "LEGA", "NOI MODERATI"] },
+          { nome: "CAMPO LARGO", colore: "#e63946", partiti: ["PARTITO DEMOCRATICO", "MOVIMENTO 5 STELLE", "ALLEANZA VERDI-SINISTRA", "+EUROPA", "ITALIA VIVA"] },
+          { nome: "Futuro Nazionale", colore: "#202125", partiti: ["FUTURO NAZIONALE"] },
+          { nome: "Azione", colore: "#9d4edd", partiti: ["AZIONE"] }
+        ]
+      },
+      {
+        titolo: "SIMULAZIONE - SCENARIO B (Centrodestra con Futuro Nazionale)",
+        coalizioni: [
+          { nome: "CENTRODESTRA con Futuro Nazionale", colore: "#0b3c5d", partiti: ["FRATELLI D'ITALIA", "FORZA ITALIA", "LEGA", "NOI MODERATI", "FUTURO NAZIONALE"] },
+          { nome: "CAMPO LARGO", colore: "#e63946", partiti: ["PARTITO DEMOCRATICO", "MOVIMENTO 5 STELLE", "ALLEANZA VERDI-SINISTRA", "+EUROPA", "ITALIA VIVA"] },
+          { nome: "Azione", colore: "#9d4edd", partiti: ["AZIONE"] }
+        ]
+      }
     ];
 
     function switchTab(tab) {
@@ -348,17 +328,87 @@ NOI MODERATI	6,43</textarea>
       }
     }
 
-    function renderPartiesList() {
-      const container = document.getElementById('parties-list-container');
+    function renderScenariosEditor() {
+      const container = document.getElementById('scenarios-config-list');
       container.innerHTML = '';
-      PARTITI_DATI.forEach(p => {
+
+      SCENARI_CONFIG.forEach((sc, sIdx) => {
+        let coalHtml = '';
+        sc.coalizioni.forEach((c, cIdx) => {
+          let partitiCheckboxes = PARTITI_DATI.map(p => {
+            let isChecked = c.partiti.includes(p.nome) ? 'checked' : '';
+            return `
+              <label class="inline-flex items-center gap-1 bg-slate-900 px-2 py-1 rounded text-[11px] text-slate-300">
+                <input type="checkbox" ${isChecked} onchange="togglePartyInCoalition(${sIdx}, ${cIdx}, '${p.nome}')" class="rounded border-slate-700 text-blue-600 focus:ring-0">
+                ${p.nome}
+              </label>
+            `;
+          }).join('');
+
+          coalHtml += `
+            <div class="bg-slate-950 p-3 rounded border border-slate-800 space-y-2">
+              <div class="flex gap-2">
+                <input type="text" value="${c.nome}" oninput="SCENARI_CONFIG[${sIdx}].coalizioni[${cIdx}].nome=this.value" class="flex-1 bg-slate-900 text-white text-xs px-2 py-1 rounded border border-slate-700 font-bold" placeholder="Nome Coalizione">
+                <input type="color" value="${c.colore}" onchange="SCENARI_CONFIG[${sIdx}].coalizioni[${cIdx}].colore=this.value" class="w-8 h-7 bg-slate-900 border border-slate-700 rounded cursor-pointer">
+                <button onclick="removeCoalition(${sIdx}, ${cIdx})" class="text-red-400 hover:text-red-300 text-xs px-2"><i class="fa-solid fa-trash"></i></button>
+              </div>
+              <div class="flex flex-wrap gap-1.5 pt-1">
+                ${partitiCheckboxes}
+              </div>
+            </div>
+          `;
+        });
+
         container.innerHTML += `
-          <div class="bg-slate-900 p-2.5 rounded border border-slate-700 flex justify-between items-center text-xs">
-            <span class="font-bold text-white">${p.nome}</span>
-            <span class="font-mono text-blue-400">${p.voto.toFixed(2)}%</span>
+          <div class="bg-slate-900 p-4 rounded-lg border border-slate-700 space-y-3">
+            <div class="flex justify-between items-center">
+              <input type="text" value="${sc.titolo}" oninput="SCENARI_CONFIG[${sIdx}].titolo=this.value" class="w-full bg-slate-800 text-blue-400 font-bold text-xs px-3 py-1.5 rounded border border-slate-600" placeholder="Titolo Scenario">
+              <button onclick="removeScenario(${sIdx})" class="text-red-400 hover:text-red-300 text-xs ml-2"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+            <div class="space-y-2">
+              ${coalHtml}
+            </div>
+            <button onclick="addCoalition(${sIdx})" class="bg-slate-800 hover:bg-slate-700 text-blue-400 text-xs font-bold px-3 py-1 rounded border border-slate-700">
+              + Aggiungi Coalizione / Blocco
+            </button>
           </div>
         `;
       });
+    }
+
+    function togglePartyInCoalition(sIdx, cIdx, partyName) {
+      let coal = SCENARI_CONFIG[sIdx].coalizioni[cIdx];
+      if (coal.partiti.includes(partyName)) {
+        coal.partiti = coal.partiti.filter(p => p !== partyName);
+      } else {
+        coal.partiti.push(partyName);
+      }
+    }
+
+    function addScenarioConfig() {
+      SCENARI_CONFIG.push({
+        titolo: `SIMULAZIONE - SCENARIO ${SCENARI_CONFIG.length + 1}`,
+        coalizioni: [
+          { nome: "COALIZIONE 1", colore: "#0b3c5d", partiti: [] },
+          { nome: "COALIZIONE 2", colore: "#e63946", partiti: [] }
+        ]
+      });
+      renderScenariosEditor();
+    }
+
+    function removeScenario(sIdx) {
+      SCENARI_CONFIG.splice(sIdx, 1);
+      renderScenariosEditor();
+    }
+
+    function addCoalition(sIdx) {
+      SCENARI_CONFIG[sIdx].coalizioni.push({ nome: "NUOVA COALIZIONE", colore: "#3b82f6", partiti: [] });
+      renderScenariosEditor();
+    }
+
+    function removeCoalition(sIdx, cIdx) {
+      SCENARI_CONFIG[sIdx].coalizioni.splice(cIdx, 1);
+      renderScenariosEditor();
     }
 
     function importFromSpreadsheet() {
@@ -374,95 +424,19 @@ NOI MODERATI	6,43</textarea>
           let rawName = cols[0].toUpperCase();
           let rawVote = cols[cols.length - 1].replace(',', '.');
           let voteVal = parseFloat(rawVote);
-
-          if (!isNaN(voteVal) && rawName) {
-            newParties.push({ nome: rawName, voto: voteVal, colore: "#3b82f6" });
-          }
+          if (!isNaN(voteVal) && rawName) newParties.push({ nome: rawName, voto: voteVal });
         }
       });
 
       if (newParties.length > 0) {
         PARTITI_DATI = newParties;
-        renderPartiesList();
+        renderScenariosEditor();
         updateAll();
-        alert(`Importati ${newParties.length} partiti!`);
+        alert(`Aggiornate le percentuali di ${newParties.length} partiti!`);
       }
     }
 
-    // CALCOLO DEGLI SCENARI STABILICUM
-    function calculateScenarios() {
-      let getVoto = (name) => {
-        let p = PARTITI_DATI.find(x => x.nome.includes(name));
-        return p ? p.voto : 0;
-      };
-
-      // Voti dei singoli blocchi
-      let cdxTradVoto = getVoto("FRATELLI") + getVoto("FORZA") + getVoto("LEGA") + getVoto("MODERATI");
-      let fnvVoto = getVoto("FUTURO NAZIONALE");
-      let campoLargoVoto = getVoto("DEMOCRATICO") + getVoto("5 STELLE") + getVoto("VERDI") + getVoto("+EUROPA") + getVoto("ITALIA VIVA");
-      let azioneVoto = getVoto("AZIONE");
-      let altriVoto = 4.0; // Esteri / min. linguistiche
-
-      // --- SCENARIO A ---
-      let scA = {
-        cdx: { voto: cdxTradVoto, seggi: 0, pctSeggi: 0 },
-        campoLargo: { voto: campoLargoVoto, seggi: 0, pctSeggi: 0 },
-        fnv: { voto: fnvVoto, seggi: 0, pctSeggi: 0 },
-        azione: { voto: azioneVoto, seggi: 0, pctSeggi: 0 },
-        altri: { voto: altriVoto, seggi: 11, pctSeggi: 2.8 }
-      };
-
-      // Regola del Premio di Maggioranza: se una coalizione supera il 42% prende 220 seggi (55%)
-      if (scA.campoLargo.voto >= 42.0 && scA.campoLargo.voto > scA.cdx.voto) {
-        scA.campoLargo.seggi = 220;
-        scA.campoLargo.pctSeggi = 55.0;
-        scA.cdx.seggi = Math.round((scA.cdx.voto / 100) * 319);
-        scA.cdx.pctSeggi = parseFloat(((scA.cdx.seggi / 400) * 100).toFixed(1));
-      } else if (scA.cdx.voto >= 42.0) {
-        scA.cdx.seggi = 220;
-        scA.cdx.pctSeggi = 55.0;
-        scA.campoLargo.seggi = Math.round((scA.campoLargo.voto / 100) * 319);
-        scA.campoLargo.pctSeggi = parseFloat(((scA.campoLargo.seggi / 400) * 100).toFixed(1));
-      } else {
-        scA.cdx.seggi = Math.round((scA.cdx.voto / 100) * 389);
-        scA.cdx.pctSeggi = parseFloat(((scA.cdx.seggi / 400) * 100).toFixed(1));
-        scA.campoLargo.seggi = Math.round((scA.campoLargo.voto / 100) * 389);
-        scA.campoLargo.pctSeggi = parseFloat(((scA.campoLargo.seggi / 400) * 100).toFixed(1));
-      }
-
-      scA.fnv.seggi = Math.round((scA.fnv.voto / 100) * 319);
-      scA.fnv.pctSeggi = parseFloat(((scA.fnv.seggi / 400) * 100).toFixed(1));
-      scA.azione.seggi = Math.round((scA.azione.voto / 100) * 319);
-      scA.azione.pctSeggi = parseFloat(((scA.azione.seggi / 400) * 100).toFixed(1));
-
-      // --- SCENARIO B ---
-      let cdxEstesoVoto = cdxTradVoto + fnvVoto;
-      let scB = {
-        cdxEsteso: { voto: cdxEstesoVoto, seggi: 0, pctSeggi: 0 },
-        campoLargo: { voto: campoLargoVoto, seggi: 0, pctSeggi: 0 },
-        azione: { voto: azioneVoto, seggi: 0, pctSeggi: 0 },
-        altri: { voto: altriVoto, seggi: 11, pctSeggi: 2.8 }
-      };
-
-      if (scB.cdxEsteso.voto >= 42.0) {
-        scB.cdxEsteso.seggi = 220;
-        scB.cdxEsteso.pctSeggi = 55.0;
-        scB.campoLargo.seggi = Math.round((scB.campoLargo.voto / 100) * 319);
-        scB.campoLargo.pctSeggi = parseFloat(((scB.campoLargo.seggi / 400) * 100).toFixed(1));
-      } else {
-        scB.cdxEsteso.seggi = Math.round((scB.cdxEsteso.voto / 100) * 389);
-        scB.cdxEsteso.pctSeggi = parseFloat(((scB.cdxEsteso.seggi / 400) * 100).toFixed(1));
-        scB.campoLargo.seggi = Math.round((scB.campoLargo.voto / 100) * 389);
-        scB.campoLargo.pctSeggi = parseFloat(((scB.campoLargo.seggi / 400) * 100).toFixed(1));
-      }
-
-      scB.azione.seggi = Math.round((scB.azione.voto / 100) * 319);
-      scB.azione.pctSeggi = parseFloat(((scB.azione.seggi / 400) * 100).toFixed(1));
-
-      return { scA, scB };
-    }
-
-    // RENDER EMICICLO SVG A PALLINI COMPATTO E PERFETTO
+    // DRAW EMICICLO SVG A PALLINI
     function drawHemicycle(svgId, dataGroups) {
       const svg = document.getElementById(svgId);
       svg.innerHTML = '';
@@ -478,12 +452,7 @@ NOI MODERATI	6,43</textarea>
         const radius = radii[rIndex];
         for (let i = 0; i < count; i++) {
           const angle = Math.PI - (i * Math.PI / (count - 1));
-          points.push({
-            x: centerX + radius * Math.cos(angle),
-            y: centerY - radius * Math.sin(angle),
-            angle: angle,
-            radius: radius
-          });
+          points.push({ x: centerX + radius * Math.cos(angle), y: centerY - radius * Math.sin(angle), angle, radius });
         }
       });
 
@@ -512,107 +481,111 @@ NOI MODERATI	6,43</textarea>
     }
 
     function updateAll() {
-      const { scA, scB } = calculateScenarios();
+      const container = document.getElementById('preview-scenarios-container');
+      container.innerHTML = '';
 
-      // RENDER BOXES SCENARIO A
-      const boxA = document.getElementById('scenario-a-boxes');
-      boxA.innerHTML = `
-        <div class="coalition-box ${scA.cdx.seggi >= 220 ? 'active-winner' : ''}">
-          <div class="coalition-name">CENTRODESTRA tradizionale</div>
-          <div class="coalition-parties">(FdI, FI, Lega, Nm)</div>
-          <div class="coalition-stats">
-            <span class="coalition-seats-num">${scA.cdx.seggi}</span>
-            <span class="tag-black">${scA.cdx.voto.toFixed(1).replace('.', ',')}%</span>
-            <span class="tag-border">${scA.cdx.pctSeggi}%</span>
+      const commentText = document.getElementById('editor-comment-input').value.trim();
+
+      SCENARI_CONFIG.forEach((sc, sIdx) => {
+        // Calcolo seggi per ciascuna coalizione nello scenario
+        let totalVotoScenario = 0;
+        let evaluatedCoalitions = sc.coalizioni.map(c => {
+          let sumVoto = 0;
+          c.partiti.forEach(pName => {
+            let found = PARTITI_DATI.find(x => x.nome.includes(pName) || pName.includes(x.nome));
+            if (found) sumVoto += found.voto;
+          });
+          totalVotoScenario += sumVoto;
+          return { ...c, votoSum: sumVoto, seggi: 0, pctSeggi: 0 };
+        });
+
+        // Trova vincitore premio maggioranza (>= 42%)
+        let winner = evaluatedCoalitions.reduce((prev, current) => (prev.votoSum > current.votoSum) ? prev : current, { votoSum: 0 });
+        let isWinnerBonus = winner.votoSum >= 42.0;
+
+        evaluatedCoalitions.forEach(c => {
+          if (isWinnerBonus && c.nome === winner.nome) {
+            c.seggi = 220;
+            c.pctSeggi = 55.0;
+          } else {
+            let poolSeggi = isWinnerBonus ? 319 : 389;
+            c.seggi = Math.round((c.votoSum / 100) * poolSeggi);
+            c.pctSeggi = parseFloat(((c.seggi / 400) * 100).toFixed(1));
+          }
+        });
+
+        // Genera Box Coalizioni
+        let boxesHtml = evaluatedCoalitions.map(c => `
+          <div class="coalition-box ${isWinnerBonus && c.nome === winner.nome ? 'active-winner' : ''}">
+            <div class="coalition-name" style="color:${c.colore};">${c.nome}</div>
+            <div class="coalition-parties">(${c.partiti.join(', ') || 'Liste minori'})</div>
+            <div class="coalition-stats">
+              <span class="coalition-seats-num">${c.seggi}</span>
+              <span class="tag-black">${c.votoSum.toFixed(1).replace('.', ',')}%</span>
+              <span class="tag-border">${c.pctSeggi}%</span>
+            </div>
           </div>
-        </div>
+        `).join('');
 
-        <div class="coalition-box ${scA.campoLargo.seggi >= 220 ? 'active-winner' : ''}">
-          <div class="coalition-name">CAMPO LARGO</div>
-          <div class="coalition-parties">(Pd, M5S, Avs, +Europa, Iv)</div>
-          <div class="coalition-stats">
-            <span class="coalition-seats-num">${scA.campoLargo.seggi}</span>
-            <span class="tag-black">${scA.campoLargo.voto.toFixed(1).replace('.', ',')}%</span>
-            <span class="tag-border">${scA.campoLargo.pctSeggi}%</span>
+        let svgId = `svg-scenario-dynamic-${sIdx}`;
+
+        container.innerHTML += `
+          <div class="scenario-section">
+            <div class="scenario-heading">${sc.titolo}</div>
+            <div class="coalition-box-row">${boxesHtml}</div>
+            <div class="chart-wrapper">
+              <svg id="${svgId}" viewBox="0 0 500 270" style="width: 100%; height: auto; display: block;"></svg>
+              <div class="center-seats-label">
+                <div class="num">400</div>
+                <div class="sub">Totale seggi</div>
+              </div>
+            </div>
           </div>
-        </div>
+        `;
 
-        <div class="coalition-box">
-          <div class="coalition-name">Futuro Nazionale</div>
-          <div class="coalition-stats">
-            <span class="coalition-seats-num">${scA.fnv.seggi}</span>
-            <span class="tag-black">${scA.fnv.voto.toFixed(1).replace('.', ',')}%</span>
-            <span class="tag-border">${scA.fnv.pctSeggi}%</span>
-          </div>
-        </div>
+        // Se siamo al primo scenario e c'è un commento, inseriscilo subito dopo
+        if (sIdx === 0 && commentText) {
+          container.innerHTML += `
+            <div class="editor-comment-box">
+              <b>Analisi dell'Esperto:</b> ${commentText}
+            </div>
+          `;
+        }
+      });
 
-        <div class="coalition-box">
-          <div class="coalition-name">Azione</div>
-          <div class="coalition-stats">
-            <span class="coalition-seats-num">${scA.azione.seggi}</span>
-            <span class="tag-black">${scA.azione.voto.toFixed(1).replace('.', ',')}%</span>
-            <span class="tag-border">${scA.azione.pctSeggi}%</span>
-          </div>
-        </div>
-      `;
+      // Disegna gli emicicli SVG
+      SCENARI_CONFIG.forEach((sc, sIdx) => {
+        let svgId = `svg-scenario-dynamic-${sIdx}`;
+        let dataGroups = sc.coalizioni.map(c => {
+          let sumVoto = 0;
+          c.partiti.forEach(pName => {
+            let found = PARTITI_DATI.find(x => x.nome.includes(pName) || pName.includes(x.nome));
+            if (found) sumVoto += found.voto;
+          });
+          return { colore: c.colore, votoSum: sumVoto };
+        });
 
-      // RENDER BOXES SCENARIO B
-      const boxB = document.getElementById('scenario-b-boxes');
-      boxB.innerHTML = `
-        <div class="coalition-box ${scB.cdxEsteso.seggi >= 220 ? 'active-winner' : ''}">
-          <div class="coalition-name">CENTRODESTRA con Futuro Nazionale</div>
-          <div class="coalition-parties">(FdI, FI, Lega, Nm, FnV)</div>
-          <div class="coalition-stats">
-            <span class="coalition-seats-num">${scB.cdxEsteso.seggi}</span>
-            <span class="tag-black">${scB.cdxEsteso.voto.toFixed(1).replace('.', ',')}%</span>
-            <span class="tag-border">${scB.cdxEsteso.pctSeggi}%</span>
-          </div>
-        </div>
+        let winner = dataGroups.reduce((prev, curr) => (prev.votoSum > curr.votoSum) ? prev : curr, { votoSum: 0 });
+        let isWinnerBonus = winner.votoSum >= 42.0;
 
-        <div class="coalition-box ${scB.campoLargo.seggi >= 220 ? 'active-winner' : ''}">
-          <div class="coalition-name">CAMPO LARGO</div>
-          <div class="coalition-parties">(Pd, M5S, Avs, +Europa, Iv)</div>
-          <div class="coalition-stats">
-            <span class="coalition-seats-num">${scB.campoLargo.seggi}</span>
-            <span class="tag-black">${scB.campoLargo.voto.toFixed(1).replace('.', ',')}%</span>
-            <span class="tag-border">${scB.campoLargo.pctSeggi}%</span>
-          </div>
-        </div>
+        let groupsWithSeggi = dataGroups.map(g => {
+          let seggi = 0;
+          if (isWinnerBonus && g.votoSum === winner.votoSum) {
+            seggi = 220;
+          } else {
+            seggi = Math.round((g.votoSum / 100) * (isWinnerBonus ? 319 : 389));
+          }
+          return { seggi, colore: g.colore };
+        });
 
-        <div class="coalition-box">
-          <div class="coalition-name">Azione</div>
-          <div class="coalition-stats">
-            <span class="coalition-seats-num">${scB.azione.seggi}</span>
-            <span class="tag-black">${scB.azione.voto.toFixed(1).replace('.', ',')}%</span>
-            <span class="tag-border">${scB.azione.pctSeggi}%</span>
-          </div>
-        </div>
-      `;
-
-      // EMICICLI SVG
-      drawHemicycle("svg-scenario-a", [
-        { seggi: scA.cdx.seggi, colore: "#0b3c5d" },
-        { seggi: scA.fnv.seggi, colore: "#202125" },
-        { seggi: scA.azione.seggi, colore: "#9d4edd" },
-        { seggi: scA.altri.seggi, colore: "#708090" },
-        { seggi: scA.campoLargo.seggi, colore: "#e63946" }
-      ]);
-
-      drawHemicycle("svg-scenario-b", [
-        { seggi: scB.cdxEsteso.seggi, colore: "#0b3c5d" },
-        { seggi: scB.azione.seggi, colore: "#9d4edd" },
-        { seggi: scB.altri.seggi, colore: "#708090" },
-        { seggi: scB.campoLargo.seggi, colore: "#e63946" }
-      ]);
+        drawHemicycle(svgId, groupsWithSeggi);
+      });
 
       generateFinalHtmlCode();
     }
 
     function generateFinalHtmlCode() {
-      const dateVal = document.getElementById('input-date').value || "09 Novembre 2026";
-      const postUrl = document.getElementById('input-post-url').value || "https://www.brunorachiele.it";
       const now = new Date().toISOString();
-
       const code = `<!-- METADATI SCHEMA.ORG (NEWSARTICLE) -->
 <script type="application/ld+json">
 {
@@ -620,12 +593,11 @@ NOI MODERATI	6,43</textarea>
   "@type": "NewsArticle",
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "${postUrl}"
+    "@id": "https://www.brunorachiele.it"
   },
-  "url": "${postUrl}",
-  "headline": "Scenari Nuova Legge Elettorale Stabilicum - ${dateVal}",
+  "headline": "Scenari Nuova Legge Elettorale Stabilicum",
   "image": [
-    "https://static.brunorachiele.it/supermedie_2027.png"
+    "https://static.brunorachiele.it/sfondo.png"
   ],
   "datePublished": "${now}",
   "dateModified": "${now}",
@@ -637,13 +609,8 @@ NOI MODERATI	6,43</textarea>
   "publisher": {
     "@type": "Organization",
     "name": "brunorachiele.it",
-    "url": "https://www.brunorachiele.it",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://static.brunorachiele.it/logo.png"
-    }
-  },
-  "description": "Simulazione degli scenari elettorali alla Camera dei Deputati con la nuova legge elettorale Stabilicum aggiornata al ${dateVal}."
+    "url": "https://www.brunorachiele.it"
+  }
 }
 <\/script>`;
 
@@ -664,10 +631,10 @@ NOI MODERATI	6,43</textarea>
       const codeArea = document.getElementById('output-code');
       codeArea.select();
       document.execCommand('copy');
-      alert("Codice HTML per Blogger copiato negli appunti!");
+      alert("Codice HTML copiato negli appunti!");
     }
 
-    renderPartiesList();
+    renderScenariosEditor();
     updateAll();
   </script>
 </body>
