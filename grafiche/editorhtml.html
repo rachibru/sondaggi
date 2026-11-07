@@ -11,13 +11,20 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     body { font-family: 'Inter', sans-serif; }
 
-    /* STILI ANTEPRIMA / BLOGGER */
+    /* LAYOUT MOBILE-FIRST AD ALTO IMPATTO VISIVO */
     .party-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 14px;
+      /* 1 colonna su mobile (< 640px), 2 colonne su schermi più grandi */
+      grid-template-columns: 1fr;
+      gap: 12px;
       margin: 20px 0;
     }
+    @media (min-width: 640px) {
+      .party-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
     .party-card {
       background: #ffffff;
       border: 1px solid #e2e8f0;
@@ -26,29 +33,58 @@
       display: flex;
       align-items: center;
       gap: 14px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+      position: relative;
+      overflow: hidden;
+      /* Bordo colorato dinamico a sinistra */
+      border-left: 6px solid #0056b3;
     }
+
     .party-logo {
-      width: 52px;
-      height: 52px;
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
       object-fit: contain;
-      background: #f8fafc;
-      border: 2px solid #e2e8f0;
-      padding: 2px;
+      background: #ffffff;
+      border: 2px solid #f1f5f9;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+      padding: 3px;
       flex-shrink: 0;
     }
+
     .party-info { flex: 1; min-width: 0; }
-    .party-name { font-size: 14px; font-weight: 800; color: #0f172a; text-transform: uppercase; line-height: 1.2; }
-    .party-coalition { font-size: 11px; color: #64748b; font-weight: 600; }
-    .party-metrics { display: flex; align-items: baseline; gap: 8px; margin-top: 4px; }
-    .party-pct { font-size: 20px; font-weight: 900; color: #0056b3; }
     
+    .party-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .party-name { font-size: 15px; font-weight: 800; color: #0f172a; text-transform: uppercase; line-height: 1.2; }
+    .party-coalition { font-size: 11px; color: #64748b; font-weight: 600; }
+
+    .party-metrics { display: flex; align-items: baseline; justify-content: space-between; margin-top: 4px; }
+    .party-pct { font-size: 24px; font-weight: 900; color: #0f172a; }
+
+    /* BARRA DI PROGRESSO DINAMICA */
+    .progress-bar-bg {
+      width: 100%;
+      height: 6px;
+      background: #f1f5f9;
+      border-radius: 3px;
+      margin-top: 6px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+    }
+
     .trend-badge {
       font-size: 11px;
       font-weight: 800;
-      padding: 2px 7px;
-      border-radius: 10px;
+      padding: 3px 8px;
+      border-radius: 12px;
       display: inline-flex;
       align-items: center;
       gap: 3px;
@@ -98,7 +134,6 @@
       font-size: 13.5px;
     }
     .related-item:last-child { border-bottom: none; }
-    .related-item:hover { color: #0056b3; }
   </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen pb-12">
@@ -111,8 +146,8 @@
           <i class="fa-solid fa-square-poll-vertical text-xl"></i>
         </div>
         <div>
-          <h1 class="font-bold text-lg leading-tight">Generatore Supermedia Partiti</h1>
-          <p class="text-xs text-slate-400">Card Responsive + Sintesi SEO per brunorachiele.it</p>
+          <h1 class="font-bold text-lg leading-tight">Generatore Supermedia Partiti (Mobile-First)</h1>
+          <p class="text-xs text-slate-400">Card ad alto impatto per brunorachiele.it</p>
         </div>
       </div>
       <div class="flex bg-slate-900 p-1 rounded-lg text-sm">
@@ -131,81 +166,62 @@
     <!-- PANNELLO EDITOR -->
     <div id="view-editor" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-      <!-- COLONNA SINISTRA: IMPORT & CONFIGURAZIONI -->
+      <!-- COLONNA SINISTRA -->
       <div class="lg:col-span-5 space-y-6">
-
-        <!-- PASTE BOX GOOGLE SHEETS -->
         <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg">
           <h2 class="text-base font-bold text-blue-400 mb-2 flex items-center gap-2">
             <i class="fa-solid fa-file-csv"></i> 1. Incolla Dati da Sheets
           </h2>
-          <p class="text-xs text-slate-400 mb-3">
-            Incolla la tabella con Partito, Immagine, Coalizione, Stima e Trend.
-          </p>
           <textarea id="pasteInput" rows="7" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-slate-200 focus:outline-none mb-3">FRATELLI D'ITALIA	../img/fdi.png	Centrodestra	28	28	29,00	28,33	28,65	-0,32
 PARTITO DEMOCRATICO	../img/pd.png	Centrosinistra	20	20,1	20,60	20,23	20,30	-0,07
 MOVIMENTO 5 STELLE	../img/m5s.png	Centrosinistra	13	12,9	12,60	12,83	11,90	0,93
-LEGA	../img/lega.png	Centrodestra	5	5,6	5,50	5,37	5,90	-0,53
 FORZA ITALIA	../img/fi.png	Centrodestra	7,5	6,8	7,20	7,17	7,45	-0,28
-ALLEANZA VERDI-SINISTRA	../img/avs.png	Centrosinistra	6,5	5,7	6,2	6,13	6,40	-0,27
 FUTURO NAZIONALE	../img/iv.png	Destra Indipendente	6,5	7	5,8	6,43	6,20	0,23
+ALLEANZA VERDI-SINISTRA	../img/avs.png	Centrosinistra	6,5	5,7	6,2	6,13	6,40	-0,27
+LEGA	../img/lega.png	Centrodestra	5	5,6	5,50	5,37	5,90	-0,53
 AZIONE	../img/azione.png	Terzo Polo	3	3,1	3,10	3,07	3,10	-0,03
 ITALIA VIVA	../img/iv.png	Terzo Polo	2,5	2,5	2,20	2,40	2,35	0,05
 .+EUROPA	../img/europa.png	Centrosinistra	1,5	1,1	1,31	1,30	1,50	-0,20
 NOI MODERATI	../img/nm.png	Centrodestra	1,5	0,9	1,1	1,17	1,00	0,17</textarea>
-          <button onclick="importFromSpreadsheet()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition flex items-center justify-center gap-2">
+          <button onclick="importFromSpreadsheet()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition">
             <i class="fa-solid fa-arrows-rotate"></i> Importa & Ordina Partiti
           </button>
         </div>
 
-        <!-- 3 LINK CONSIGLIATI -->
         <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg space-y-3">
-          <h2 class="text-base font-bold text-blue-400 border-b border-slate-700 pb-2 flex items-center gap-2">
-            <i class="fa-solid fa-link"></i> 2. Tre Articoli Consigliati (SEO)
-          </h2>
+          <h2 class="text-base font-bold text-blue-400 border-b border-slate-700 pb-2">2. Tre Articoli Consigliati</h2>
           <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1">Link 1 (Titolo | URL)</label>
             <input type="text" id="link1-title" value="Scenari nuova legge elettorale Stabilicum" class="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded text-xs text-white mb-1">
             <input type="text" id="link1-url" value="https://www.brunorachiele.it/p/scenari.html" class="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded text-xs font-mono text-slate-400">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1">Link 2 (Titolo | URL)</label>
             <input type="text" id="link2-title" value="Supermedia gradimento dei leader politici" class="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded text-xs text-white mb-1">
             <input type="text" id="link2-url" value="https://www.brunorachiele.it/p/leader.html" class="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded text-xs font-mono text-slate-400">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-400 mb-1">Link 3 (Titolo | URL)</label>
             <input type="text" id="link3-title" value="Iscriviti al canale ufficiale su Google News" class="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded text-xs text-white mb-1">
             <input type="text" id="link3-url" value="https://news.google.com/publications/CAAqLAgKIiZDQklTRmdnTWFoSUtFR0p5ZFc1dmNtRmphR2xsYkdVdWFYUW9BQVAB?hl=it&gl=IT&ceid=IT:it" class="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded text-xs font-mono text-slate-400">
           </div>
         </div>
 
-        <!-- METADATI ARTICLE -->
         <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg space-y-3">
           <h2 class="text-base font-bold text-blue-400 border-b border-slate-700 pb-2">Metadati Articolo</h2>
           <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Data Sondaggio</label>
             <input type="text" id="input-date" value="06 Novembre 2026" oninput="updateAll()" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">URL Post Articolo</label>
             <input type="text" id="input-post-url" value="https://www.brunorachiele.it/2026/11/supermedia-sondaggi-politici-06-novembre-2026.html" oninput="updateAll()" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-white">
           </div>
         </div>
-
       </div>
 
-      <!-- COLONNA DESTRA: ELENCO PARTITI ORDINATI -->
+      <!-- COLONNA DESTRA -->
       <div class="lg:col-span-7 bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg">
         <div class="flex justify-between items-center border-b border-slate-700 pb-3 mb-4">
-          <h2 class="text-base font-bold text-blue-400 flex items-center gap-2">
-            <i class="fa-solid fa-list-ol"></i> Partiti Inseriti (Ordinati per %)
-          </h2>
+          <h2 class="text-base font-bold text-blue-400">Partiti Inseriti</h2>
           <span class="text-xs bg-slate-700 text-slate-300 px-2.5 py-1 rounded-full font-medium" id="parties-count">0 partiti</span>
         </div>
-        <div id="parties-editor-list" class="space-y-2 max-h-[600px] overflow-y-auto pr-2">
-          <!-- Popolato JS -->
-        </div>
+        <div id="parties-editor-list" class="space-y-2 max-h-[600px] overflow-y-auto pr-2"></div>
       </div>
 
     </div>
@@ -213,11 +229,10 @@ NOI MODERATI	../img/nm.png	Centrodestra	1,5	0,9	1,1	1,17	1,00	0,17</textarea>
     <!-- PANNELLO ANTEPRIMA & CODICE -->
     <div id="view-preview" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-      <!-- ANTEPRIMA VISIVA (7 COLONNE) -->
       <div class="lg:col-span-7 space-y-4">
         <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
           <h2 class="font-bold text-white text-sm">Anteprima Post Blogger</h2>
-          <span class="text-xs bg-emerald-600 text-white px-2.5 py-1 rounded-full font-bold">Mobile Ready</span>
+          <span class="text-xs bg-emerald-600 text-white px-2.5 py-1 rounded-full font-bold">1 Box/Riga su Mobile</span>
         </div>
 
         <div id="captureArea" class="bg-white text-slate-800 p-6 rounded-xl shadow-2xl max-w-[800px] mx-auto">
@@ -239,7 +254,7 @@ NOI MODERATI	../img/nm.png	Centrodestra	1,5	0,9	1,1	1,17	1,00	0,17</textarea>
             </a>
           </div>
 
-          <!-- COPERTINA FISSA SONDAGGI -->
+          <!-- COPERTINA FISSA -->
           <div style="margin-bottom: 20px;">
             <img src="https://static.brunorachiele.it/supermedie_2027.png" alt="Supermedia Sondaggi Politici Bruno Rachiele" style="width: 100%; height: auto; border-radius: 8px; display: block;">
           </div>
@@ -247,16 +262,15 @@ NOI MODERATI	../img/nm.png	Centrodestra	1,5	0,9	1,1	1,17	1,00	0,17</textarea>
           <!-- GRID BANNER PARTITI -->
           <div id="pv-party-cards" class="party-grid"></div>
 
-          <!-- TESTO DI RIEPILOGO AUTOMATICO SEO -->
+          <!-- SINTESI TEXT SEO -->
           <div id="pv-seo-summary" class="seo-summary-box"></div>
 
-          <!-- BOX 3 ARTICOLI CONSIGLIATI -->
+          <!-- 3 ARTICOLI CONSIGLIATI -->
           <div id="pv-related-box" class="related-links-box"></div>
 
         </div>
       </div>
 
-      <!-- CODICE HTML BLOGGER (5 COLONNE) -->
       <div class="lg:col-span-5 space-y-4">
         <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
           <h2 class="font-bold text-white text-sm">Codice HTML Finale Blogger</h2>
@@ -275,6 +289,21 @@ NOI MODERATI	../img/nm.png	Centrodestra	1,5	0,9	1,1	1,17	1,00	0,17</textarea>
   </main>
 
   <script>
+    // MAPPATURA COLORI BRAND PER BORDO CARD E BARRA DI PROGRESSO
+    const COLOR_MAP = {
+      "FRATELLI D'ITALIA": "#0b3c5d",
+      "PARTITO DEMOCRATICO": "#ef4444",
+      "MOVIMENTO 5 STELLE": "#f59e0b",
+      "FORZA ITALIA": "#0284c7",
+      "LEGA": "#15803d",
+      "ALLEANZA VERDI-SINISTRA": "#10b981",
+      "FUTURO NAZIONALE": "#1e293b",
+      "AZIONE": "#9333ea",
+      "ITALIA VIVA": "#ec4899",
+      "+EUROPA": "#f97316",
+      "NOI MODERATI": "#3b82f6"
+    };
+
     let partiesData = [
       { nome: "FRATELLI D'ITALIA", img: "../img/fdi.png", coalizione: "Centrodestra", val: "28.33", trend: -0.32 },
       { nome: "PARTITO DEMOCRATICO", img: "../img/pd.png", coalizione: "Centrosinistra", val: "20.23", trend: -0.07 },
@@ -390,7 +419,7 @@ NOI MODERATI	../img/nm.png	Centrodestra	1,5	0,9	1,1	1,17	1,00	0,17</textarea>
 
       document.getElementById('pv-date').innerText = dateVal;
 
-      // 1. RENDER CARDS PARTITI
+      // 1. RENDER CARDS PARTITI AD ALTO IMPATTO
       const cardsBox = document.getElementById('pv-party-cards');
       cardsBox.innerHTML = '';
       let cardsHtmlForExport = '';
@@ -409,15 +438,23 @@ NOI MODERATI	../img/nm.png	Centrodestra	1,5	0,9	1,1	1,17	1,00	0,17</textarea>
           symbol = '▼ ' + trendFormatted;
         }
 
+        let pctVal = parseFloat(p.val.replace(',', '.')) || 0;
+        let brandColor = COLOR_MAP[p.nome] || "#0056b3";
+
         const cardSnippet = `
-          <div class="party-card">
+          <div class="party-card" style="border-left-color: ${brandColor};">
             <img src="${p.img}" class="party-logo" alt="${p.nome}" onerror="this.src='https://placehold.co/100x100/0056b3/ffffff?text=Logo'">
             <div class="party-info">
-              <div class="party-name">${p.nome}</div>
+              <div class="party-header-row">
+                <div class="party-name">${p.nome}</div>
+                <span class="trend-badge ${badgeClass}">${symbol}</span>
+              </div>
               <div class="party-coalition">${p.coalizione}</div>
               <div class="party-metrics">
                 <span class="party-pct">${p.val}%</span>
-                <span class="trend-badge ${badgeClass}">${symbol}</span>
+              </div>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" style="width: ${Math.min(pctVal * 2.5, 100)}%; background-color: ${brandColor};"></div>
               </div>
             </div>
           </div>
@@ -426,7 +463,7 @@ NOI MODERATI	../img/nm.png	Centrodestra	1,5	0,9	1,1	1,17	1,00	0,17</textarea>
         cardsHtmlForExport += cardSnippet;
       });
 
-      // 2. GENERAZIONE AUTOMATICA SINTESI TEXT SEO
+      // 2. GENERAZIONE AUTOMATICA SINTESI SEO
       let topParty = partiesData[0] || { nome: "Fratelli d'Italia", val: "28.33" };
       let secondParty = partiesData[1] || { nome: "Partito Democratico", val: "20.23" };
       let thirdParty = partiesData[2] || { nome: "Movimento 5 Stelle", val: "12.83" };
@@ -496,7 +533,7 @@ NOI MODERATI	../img/nm.png	Centrodestra	1,5	0,9	1,1	1,17	1,00	0,17</textarea>
 }
 <\/script>
 
-<!-- STILI CSS DEDICATI BLOGGER -->
+<!-- STILI CSS DEDICATI BLOGGER (MOBILE-FIRST) -->
 <style>
   .sondaggi-container {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -542,12 +579,17 @@ NOI MODERATI	../img/nm.png	Centrodestra	1,5	0,9	1,1	1,17	1,00	0,17</textarea>
     display: block;
     margin-bottom: 20px;
   }
+
   .party-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 14px;
+    grid-template-columns: 1fr;
+    gap: 12px;
     margin: 20px 0;
   }
+  @media (min-width: 640px) {
+    .party-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
   .party-card {
     background: #ffffff;
     border: 1px solid #e2e8f0;
@@ -556,24 +598,33 @@ NOI MODERATI	../img/nm.png	Centrodestra	1,5	0,9	1,1	1,17	1,00	0,17</textarea>
     display: flex;
     align-items: center;
     gap: 14px;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+    position: relative;
+    overflow: hidden;
+    border-left: 6px solid #0056b3;
   }
   .party-logo {
-    width: 52px;
-    height: 52px;
+    width: 56px;
+    height: 56px;
     border-radius: 50%;
     object-fit: contain;
-    background: #f8fafc;
-    border: 2px solid #e2e8f0;
-    padding: 2px;
+    background: #ffffff;
+    border: 2px solid #f1f5f9;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+    padding: 3px;
     flex-shrink: 0;
   }
   .party-info { flex: 1; min-width: 0; }
-  .party-name { font-size: 14px; font-weight: 800; color: #0f172a; text-transform: uppercase; line-height: 1.2; }
+  .party-header-row { display: flex; justify-content: space-between; align-items: center; }
+  .party-name { font-size: 15px; font-weight: 800; color: #0f172a; text-transform: uppercase; line-height: 1.2; }
   .party-coalition { font-size: 11px; color: #64748b; font-weight: 600; }
-  .party-metrics { display: flex; align-items: baseline; gap: 8px; margin-top: 4px; }
-  .party-pct { font-size: 20px; font-weight: 900; color: #0056b3; }
-  .trend-badge { font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 10px; display: inline-flex; align-items: center; gap: 3px; }
+  .party-metrics { display: flex; align-items: baseline; justify-content: space-between; margin-top: 4px; }
+  .party-pct { font-size: 24px; font-weight: 900; color: #0f172a; }
+
+  .progress-bar-bg { width: 100%; height: 6px; background: #f1f5f9; border-radius: 3px; margin-top: 6px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; border-radius: 3px; }
+
+  .trend-badge { font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 12px; display: inline-flex; align-items: center; gap: 3px; }
   .trend-up { background-color: #dcfce7; color: #15803d; }
   .trend-down { background-color: #fee2e2; color: #b91c1c; }
   .trend-eq { background-color: #f1f5f9; color: #475569; }
@@ -596,25 +647,8 @@ NOI MODERATI	../img/nm.png	Centrodestra	1,5	0,9	1,1	1,17	1,00	0,17</textarea>
     padding: 18px;
     margin-top: 25px;
   }
-  .related-title {
-    font-size: 13px;
-    font-weight: 800;
-    text-transform: uppercase;
-    color: #0056b3;
-    letter-spacing: 0.5px;
-    margin-bottom: 12px;
-  }
-  .related-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 0;
-    border-bottom: 1px dashed #e2e8f0;
-    color: #1e293b;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 13.5px;
-  }
+  .related-title { font-size: 13px; font-weight: 800; text-transform: uppercase; color: #0056b3; letter-spacing: 0.5px; margin-bottom: 12px; }
+  .related-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px dashed #e2e8f0; color: #1e293b; text-decoration: none; font-weight: 600; font-size: 13.5px; }
 </style>
 
 <div class="sondaggi-container">
