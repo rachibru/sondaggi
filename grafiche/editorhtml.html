@@ -3,360 +3,269 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generatore Supermedia Sondaggi Politici - Bruno Rachiele</title>
-  <!-- Tailwind CSS -->
+  <title>Generatore Supermedia Sondaggi Partiti - Bruno Rachiele</title>
+  <!-- Tailwind CSS per l'Editor -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- FontAwesome Icone -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
     body { font-family: 'Inter', sans-serif; }
-    
-    .blogger-preview-box {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      color: #2c3e50;
-      line-height: 1.6;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 15px;
+
+    /* STILI ANTEPRIMA / BLOGGER */
+    .party-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 14px;
+      margin: 20px 0;
+    }
+    .party-card {
       background: #ffffff;
       border: 1px solid #e2e8f0;
       border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.04);
     }
-    .sondaggi-header {
-      background-color: #f8f9fa;
-      border-left: 5px solid #0056b3;
-      padding: 15px 20px;
-      margin-bottom: 20px;
-      border-radius: 0 8px 8px 0;
+    .party-logo {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      object-fit: contain;
+      background: #f8fafc;
+      border: 2px solid #e2e8f0;
+      padding: 2px;
+      flex-shrink: 0;
     }
-    .sondaggi-credit {
-      font-size: 0.9rem;
-      color: #6c757d;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .discover-btn-wrapper {
-      text-align: center;
-      margin: 20px 0;
-    }
-    .discover-btn {
+    .party-info { flex: 1; min-width: 0; }
+    .party-name { font-size: 14px; font-weight: 800; color: #0f172a; text-transform: uppercase; line-height: 1.2; }
+    .party-coalition { font-size: 11px; color: #64748b; font-weight: 600; }
+    .party-metrics { display: flex; align-items: baseline; gap: 8px; margin-top: 4px; }
+    .party-pct { font-size: 20px; font-weight: 900; color: #0056b3; }
+    
+    .trend-badge {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 10px;
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      background-color: #ffffff;
-      color: #3c4043;
-      border: 1px solid #dadce0;
-      padding: 10px 20px;
-      border-radius: 24px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      text-decoration: none;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      gap: 3px;
     }
-    .sondaggio-card {
-      background: #ffffff;
-      border: 1px solid #e9ecef;
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 25px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    }
-    .sondaggio-card img {
-      width: 100%;
-      height: auto;
-      border-radius: 8px;
-      display: block;
-      margin-bottom: 15px;
-    }
-    .ad-slot-preview {
+    .trend-up { background-color: #dcfce7; color: #15803d; }
+    .trend-down { background-color: #fee2e2; color: #b91c1c; }
+    .trend-eq { background-color: #f1f5f9; color: #475569; }
+
+    .seo-summary-box {
       background: #f8fafc;
-      border: 2px dashed #cbd5e1;
-      text-align: center;
-      padding: 15px;
-      margin: 20px 0;
-      border-radius: 8px;
-      color: #64748b;
-      font-size: 0.85rem;
-      font-weight: 500;
+      border-left: 4px solid #0056b3;
+      padding: 16px;
+      border-radius: 0 8px 8px 0;
+      margin: 25px 0;
+      font-size: 14px;
+      color: #334155;
+      line-height: 1.6;
     }
+
+    .related-links-box {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 18px;
+      margin-top: 25px;
+    }
+    .related-title {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: #0056b3;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .related-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px dashed #e2e8f0;
+      color: #1e293b;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 13.5px;
+    }
+    .related-item:last-child { border-bottom: none; }
+    .related-item:hover { color: #0056b3; }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen pb-12">
+<body class="bg-slate-900 text-slate-100 min-h-screen pb-12">
 
   <!-- HEADER -->
-  <header class="bg-slate-900 text-white shadow-lg sticky top-0 z-50">
+  <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
       <div class="flex items-center gap-3">
-        <div class="bg-blue-600 p-2.5 rounded-xl shadow-md">
-          <i class="fa-solid fa-chart-line text-xl text-white"></i>
+        <div class="bg-blue-600 p-2.5 rounded-xl text-white">
+          <i class="fa-solid fa-square-poll-vertical text-xl"></i>
         </div>
         <div>
-          <h1 class="font-bold text-lg leading-tight">Supermedia Sondaggi Generator</h1>
-          <p class="text-xs text-slate-400">Strumento editoriale per brunorachiele.it</p>
+          <h1 class="font-bold text-lg leading-tight">Generatore Supermedia Partiti</h1>
+          <p class="text-xs text-slate-400">Card Responsive + Sintesi SEO per brunorachiele.it</p>
         </div>
       </div>
-      <!-- TABS SWITCHER -->
-      <div class="flex bg-slate-800 p-1 rounded-lg text-sm w-full sm:w-auto justify-center">
-        <button id="tab-btn-editor" onclick="switchTab('editor')" class="px-4 py-1.5 rounded-md font-medium text-white bg-blue-600 shadow transition-all">
-          <i class="fa-solid fa-pen-to-square mr-1.5"></i> Compilazione & Analisi
+      <div class="flex bg-slate-900 p-1 rounded-lg text-sm">
+        <button id="tab-btn-editor" onclick="switchTab('editor')" class="px-4 py-1.5 rounded-md font-medium text-white bg-blue-600 shadow">
+          <i class="fa-solid fa-pen-to-square mr-1.5"></i> Editor Dati
         </button>
-        <button id="tab-btn-preview" onclick="switchTab('preview')" class="px-4 py-1.5 rounded-md font-medium text-slate-300 hover:text-white transition-all">
-          <i class="fa-solid fa-eye mr-1.5"></i> Anteprima & Codice HTML
+        <button id="tab-btn-preview" onclick="switchTab('preview')" class="px-4 py-1.5 rounded-md font-medium text-slate-400 hover:text-white">
+          <i class="fa-solid fa-code mr-1.5"></i> Anteprima & HTML Blogger
         </button>
       </div>
     </div>
   </header>
 
-  <!-- MAIN -->
   <main class="max-w-7xl mx-auto px-4 mt-6">
-    
-    <!-- EDITOR -->
+
+    <!-- PANNELLO EDITOR -->
     <div id="view-editor" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      
-      <!-- CONFIGURAZIONE METADATI -->
-      <div class="lg:col-span-4 space-y-6">
-        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-          <h2 class="text-base font-bold text-slate-900 border-b pb-3 mb-4 flex items-center gap-2">
-            <i class="fa-solid fa-sliders text-blue-600"></i> Informazioni Post & SEO
+
+      <!-- COLONNA SINISTRA: IMPORT & CONFIGURAZIONI -->
+      <div class="lg:col-span-5 space-y-6">
+
+        <!-- PASTE BOX GOOGLE SHEETS -->
+        <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg">
+          <h2 class="text-base font-bold text-blue-400 mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-file-csv"></i> 1. Incolla Dati da Sheets
           </h2>
-          
-          <div class="space-y-4">
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Data del Sondaggio</label>
-              <input type="text" id="input-date" value="07 novembre 2026" oninput="onDateInput()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-            </div>
-
-            <div>
-              <div class="flex justify-between items-center mb-1">
-                <label class="block text-xs font-semibold text-slate-600 uppercase">URL Post (Schema.org)</label>
-                <button onclick="autoGeneratePostUrl()" class="text-[10px] text-blue-600 hover:underline font-semibold"><i class="fa-solid fa-wand-magic-sparkles"></i> Genera URL</button>
-              </div>
-              <input type="text" id="input-post-url" value="https://www.brunorachiele.it/2026/11/sondaggio-politico-07-novembre-2026.html" oninput="updateAll()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none">
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Autore Supermedia</label>
-              <input type="text" id="input-author" value="Bruno Rachiele" oninput="updateAll()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Link Bio Autore</label>
-              <input type="text" id="input-author-bio" value="https://bio.brunorachiele.it" oninput="updateAll()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Link Google News</label>
-              <input type="text" id="input-gnews-link" value="https://news.google.com/publications/CAAqLAgKIiZDQklTRmdnTWFoSUtFR0p5ZFc1dmNtRmphR2xsYkdVdWFYUW9BQVAB?hl=it&gl=IT&ceid=IT:it" oninput="updateAll()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none">
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">URL Logo Blog</label>
-              <input type="text" id="input-logo-url" value="https://static.brunorachiele.it/logo.png" oninput="updateAll()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none">
-            </div>
-
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">URL Immagine Copertina</label>
-              <input type="text" id="input-cover-url" value="https://static.brunorachiele.it/supermedie_2027.png" oninput="updateAll()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none">
-            </div>
-          </div>
+          <p class="text-xs text-slate-400 mb-3">
+            Incolla la tabella con Partito, Immagine, Coalizione, Stima e Trend.
+          </p>
+          <textarea id="pasteInput" rows="7" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-slate-200 focus:outline-none mb-3">FRATELLI D'ITALIA	../img/fdi.png	Centrodestra	28	28	29,00	28,33	28,65	-0,32
+PARTITO DEMOCRATICO	../img/pd.png	Centrosinistra	20	20,1	20,60	20,23	20,30	-0,07
+MOVIMENTO 5 STELLE	../img/m5s.png	Centrosinistra	13	12,9	12,60	12,83	11,90	0,93
+LEGA	../img/lega.png	Centrodestra	5	5,6	5,50	5,37	5,90	-0,53
+FORZA ITALIA	../img/fi.png	Centrodestra	7,5	6,8	7,20	7,17	7,45	-0,28
+ALLEANZA VERDI-SINISTRA	../img/avs.png	Centrosinistra	6,5	5,7	6,2	6,13	6,40	-0,27
+FUTURO NAZIONALE	../img/iv.png	Destra Indipendente	6,5	7	5,8	6,43	6,20	0,23
+AZIONE	../img/azione.png	Terzo Polo	3	3,1	3,10	3,07	3,10	-0,03
+ITALIA VIVA	../img/iv.png	Terzo Polo	2,5	2,5	2,20	2,40	2,35	0,05
+.+EUROPA	../img/europa.png	Centrosinistra	1,5	1,1	1,31	1,30	1,50	-0,20
+NOI MODERATI	../img/nm.png	Centrodestra	1,5	0,9	1,1	1,17	1,00	0,17</textarea>
+          <button onclick="importFromSpreadsheet()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-arrows-rotate"></i> Importa & Ordina Partiti
+          </button>
         </div>
 
-        <!-- SCHEDA ADS -->
-        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-          <h2 class="text-base font-bold text-slate-900 border-b pb-3 mb-4 flex items-center justify-between">
-            <span class="flex items-center gap-2"><i class="fa-solid fa-rectangle-ad text-amber-500"></i> Gestione Pubblicità</span>
+        <!-- 3 LINK CONSIGLIATI -->
+        <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg space-y-3">
+          <h2 class="text-base font-bold text-blue-400 border-b border-slate-700 pb-2 flex items-center gap-2">
+            <i class="fa-solid fa-link"></i> 2. Tre Articoli Consigliati (SEO)
           </h2>
-          <div class="space-y-4">
-            <!-- SLOT 1 -->
-            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
-              <div class="flex justify-between items-center">
-                <span class="text-xs font-bold text-slate-700">Slot Pubblicitario 1</span>
-                <select id="ad-type-1" onchange="toggleAdType(1)" class="text-xs border border-slate-300 rounded px-2 py-1 bg-white font-medium">
-                  <option value="mgid" selected>MGID Widget</option>
-                  <option value="adsense">Google AdSense</option>
-                  <option value="placeholder">Nessuna Pubblicità</option>
-                </select>
-              </div>
-              <textarea id="ad-code-1" rows="3" oninput="updateAll()" class="w-full px-2.5 py-1.5 border border-slate-300 rounded text-xs font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none"><div data-type="_mgwidget" data-widget-id="2107383"></div>&#10;<script>(function(w,q){w[q]=w[q]||[];w[q].push(["_mgc.load"])})(window,"_mgq");</script></textarea>
-            </div>
-
-            <!-- SLOT 2 -->
-            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-2">
-              <div class="flex justify-between items-center">
-                <span class="text-xs font-bold text-slate-700">Slot Pubblicitario 2</span>
-                <select id="ad-type-2" onchange="toggleAdType(2)" class="text-xs border border-slate-300 rounded px-2 py-1 bg-white font-medium">
-                  <option value="mgid" selected>MGID Widget</option>
-                  <option value="adsense">Google AdSense</option>
-                  <option value="placeholder">Nessuna Pubblicità</option>
-                </select>
-              </div>
-              <textarea id="ad-code-2" rows="3" oninput="updateAll()" class="w-full px-2.5 py-1.5 border border-slate-300 rounded text-xs font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none"><div data-type="_mgwidget" data-widget-id="2107383"></div>&#10;<script>(function(w,q){w[q]=w[q]||[];w[q].push(["_mgc.load"])})(window,"_mgq");</script></textarea>
-            </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Link 1 (Titolo | URL)</label>
+            <input type="text" id="link1-title" value="Scenari nuova legge elettorale Stabilicum" class="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded text-xs text-white mb-1">
+            <input type="text" id="link1-url" value="https://www.brunorachiele.it/p/scenari.html" class="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded text-xs font-mono text-slate-400">
           </div>
-        </div>
-      </div>
-
-      <!-- IMMAGINI E TESTI -->
-      <div class="lg:col-span-8 space-y-6">
-
-        <!-- GRAFICO 1 -->
-        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-          <h3 class="font-bold text-slate-900 border-b pb-3 mb-4 flex items-center gap-2">
-            <span class="bg-blue-100 text-blue-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">1</span> 
-            Grafica 1: Copertina Supermedia
-          </h3>
-
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-            <div class="md:col-span-5">
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Immagine Copertina</label>
-              <div class="border-2 border-dashed border-slate-300 rounded-lg p-3 text-center bg-slate-50 relative cursor-pointer">
-                <input type="file" accept="image/*" onchange="handleImageUpload(event, 1)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
-                <img id="img-preview-1" src="https://static.brunorachiele.it/supermedie_2027.png" class="max-h-36 mx-auto rounded shadow-sm object-cover">
-                <p class="text-[11px] text-slate-500 mt-2 font-medium">Clicca per cambiare copertina</p>
-              </div>
-              <input type="text" id="img-url-1" placeholder="Oppure URL immagine..." oninput="onUrlChange(1)" class="mt-2 w-full px-2.5 py-1.5 border border-slate-300 rounded text-xs font-mono">
-            </div>
-            <div class="md:col-span-7 flex flex-col justify-center bg-blue-50/50 p-4 rounded-lg border border-blue-100">
-              <p class="text-xs text-slate-600 leading-relaxed">
-                <i class="fa-solid fa-circle-info text-blue-600 mr-1"></i>
-                L'immagine di copertina fissa compare all'inizio dell'articolo subito prima dei blocchi dei grafici.
-              </p>
-            </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Link 2 (Titolo | URL)</label>
+            <input type="text" id="link2-title" value="Supermedia gradimento dei leader politici" class="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded text-xs text-white mb-1">
+            <input type="text" id="link2-url" value="https://www.brunorachiele.it/p/leader.html" class="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded text-xs font-mono text-slate-400">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Link 3 (Titolo | URL)</label>
+            <input type="text" id="link3-title" value="Iscriviti al canale ufficiale su Google News" class="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded text-xs text-white mb-1">
+            <input type="text" id="link3-url" value="https://news.google.com/publications/CAAqLAgKIiZDQklTRmdnTWFoSUtFR0p5ZFc1dmNtRmphR2xsYkdVdWFYUW9BQVAB?hl=it&gl=IT&ceid=IT:it" class="w-full px-2.5 py-1.5 bg-slate-900 border border-slate-700 rounded text-xs font-mono text-slate-400">
           </div>
         </div>
 
-        <!-- GRAFICO 2 -->
-        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-          <div class="flex justify-between items-center border-b pb-3 mb-4">
-            <h3 class="font-bold text-slate-900 flex items-center gap-2">
-              <span class="bg-blue-100 text-blue-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">2</span> 
-              Grafica 2: Tabella Partiti
-            </h3>
-            <button onclick="autoGenerateComment(2)" class="text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-semibold px-2.5 py-1.5 rounded-lg border border-indigo-200 flex items-center gap-1">
-              <i class="fa-solid fa-wand-magic-sparkles"></i> Suggerisci Testo
-            </button>
+        <!-- METADATI ARTICLE -->
+        <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg space-y-3">
+          <h2 class="text-base font-bold text-blue-400 border-b border-slate-700 pb-2">Metadati Articolo</h2>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Data Sondaggio</label>
+            <input type="text" id="input-date" value="06 Novembre 2026" oninput="updateAll()" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white">
           </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-            <div class="md:col-span-5">
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Tabella Partiti</label>
-              <div class="border-2 border-dashed border-slate-300 rounded-lg p-3 text-center bg-slate-50 relative cursor-pointer">
-                <input type="file" accept="image/*" onchange="handleImageUpload(event, 2)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
-                <img id="img-preview-2" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhidf8ZO3klNEFhsk6eF1HLkAHs3F1A7PRkt-BHgbmGnH7KhF7AgAAR3q4f79GR4MockH5QYybuSybGCxOgucGJgWLLZBLbr2aTrgIqywZhz8IvHXpJZlyuNQcmYneg9cXuJRje8QvIHbkwH1Lk20BbuDoGOKnmhlKvqjblLd9zXXkGtYtyTPiXZEu8KiQ/s1600/supermedia-sondaggi-06_NOVEMBRE_2026.png" class="max-h-36 mx-auto rounded shadow-sm object-cover">
-                <p class="text-[11px] text-slate-500 mt-2 font-medium">Clicca per caricare l'immagine</p>
-              </div>
-              <input type="text" id="img-url-2" placeholder="Oppure URL Blogger..." oninput="onUrlChange(2)" class="mt-2 w-full px-2.5 py-1.5 border border-slate-300 rounded text-xs font-mono">
-            </div>
-
-            <div class="md:col-span-7">
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Analisi Partiti</label>
-              <textarea id="comment-2" rows="5" oninput="updateAll()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
-            </div>
-          </div>
-        </div>
-
-        <!-- GRAFICO 3 -->
-        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-          <div class="flex justify-between items-center border-b pb-3 mb-4">
-            <h3 class="font-bold text-slate-900 flex items-center gap-2">
-              <span class="bg-blue-100 text-blue-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">3</span> 
-              Grafica 3: Coalizioni & Emiciclo
-            </h3>
-            <button onclick="autoGenerateComment(3)" class="text-xs bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-semibold px-2.5 py-1.5 rounded-lg border border-indigo-200 flex items-center gap-1">
-              <i class="fa-solid fa-wand-magic-sparkles"></i> Suggerisci Testo
-            </button>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-            <div class="md:col-span-5">
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Grafico Coalizioni</label>
-              <div class="border-2 border-dashed border-slate-300 rounded-lg p-3 text-center bg-slate-50 relative cursor-pointer">
-                <input type="file" accept="image/*" onchange="handleImageUpload(event, 3)" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full">
-                <img id="img-preview-3" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhao_x8_IADO1SYN0fcEnJjwo4KdLzTSG2oWB4ROrY4IfARMoi5OhjzUx3WXSS9-4y383uaxI07Z6mx8GJzy7zFGAJgFNT6ILgQk6a4GPJnHEhmGrLUf9fGWnMaOIPzCK4wNtBRAoRP3ScucgnH-3LFDj5yLE-QoEAoB8bN7NBZyqBfDj78gNXjZV46sn8/s1600/stima-seggi-coalizioni-2026-11-06%20%284%29.png" class="max-h-36 mx-auto rounded shadow-sm object-cover">
-                <p class="text-[11px] text-slate-500 mt-2 font-medium">Clicca per caricare l'immagine</p>
-              </div>
-              <input type="text" id="img-url-3" placeholder="Oppure URL Blogger..." oninput="onUrlChange(3)" class="mt-2 w-full px-2.5 py-1.5 border border-slate-300 rounded text-xs font-mono">
-            </div>
-
-            <div class="md:col-span-7">
-              <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Analisi Coalizioni</label>
-              <textarea id="comment-3" rows="5" oninput="updateAll()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
-            </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">URL Post Articolo</label>
+            <input type="text" id="input-post-url" value="https://www.brunorachiele.it/2026/11/supermedia-sondaggi-politici-06-novembre-2026.html" oninput="updateAll()" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-white">
           </div>
         </div>
 
       </div>
+
+      <!-- COLONNA DESTRA: ELENCO PARTITI ORDINATI -->
+      <div class="lg:col-span-7 bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg">
+        <div class="flex justify-between items-center border-b border-slate-700 pb-3 mb-4">
+          <h2 class="text-base font-bold text-blue-400 flex items-center gap-2">
+            <i class="fa-solid fa-list-ol"></i> Partiti Inseriti (Ordinati per %)
+          </h2>
+          <span class="text-xs bg-slate-700 text-slate-300 px-2.5 py-1 rounded-full font-medium" id="parties-count">0 partiti</span>
+        </div>
+        <div id="parties-editor-list" class="space-y-2 max-h-[600px] overflow-y-auto pr-2">
+          <!-- Popolato JS -->
+        </div>
+      </div>
+
     </div>
 
-    <!-- ANTEPRIMA VISIVA E CODICE -->
+    <!-- PANNELLO ANTEPRIMA & CODICE -->
     <div id="view-preview" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
-      
-      <!-- ANTEPRIMA (7 COLONNE) -->
+
+      <!-- ANTEPRIMA VISIVA (7 COLONNE) -->
       <div class="lg:col-span-7 space-y-4">
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
-          <h2 class="font-bold text-slate-900 flex items-center gap-2">
-            <i class="fa-solid fa-mobile-screen-button text-blue-600"></i> Anteprima Risultato Post
-          </h2>
-          <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full font-medium">Mobile-Friendly</span>
+        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
+          <h2 class="font-bold text-white text-sm">Anteprima Post Blogger</h2>
+          <span class="text-xs bg-emerald-600 text-white px-2.5 py-1 rounded-full font-bold">Mobile Ready</span>
         </div>
 
-        <div class="bg-slate-200 p-3 sm:p-6 rounded-xl border border-slate-300">
-          <div class="blogger-preview-box shadow-md">
-
-            <div class="sondaggi-header">
-              <p>Di seguito la supermedia dei sondaggi politici italiani aggiornata al <strong id="pv-date">07 novembre 2026</strong>, con il dettaglio sulle intenzioni di voto e i trend delle coalizioni.</p>
-              <div class="sondaggi-credit">Supermedia a cura di <span id="pv-author">Bruno Rachiele</span></div>
-            </div>
-
-            <div class="discover-btn-wrapper">
-              <a class="discover-btn" id="pv-gnews-link" href="#" target="_blank">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z" fill="#4285F4"/>
-                </svg>
-                Segui il Blog su Google News
-              </a>
-            </div>
-
-            <div class="sondaggio-card">
-              <img id="pv-img-1" src="" alt="Copertina Supermedia">
-            </div>
-
-            <div id="pv-ad-1" class="ad-slot-preview">
-              <i class="fa-solid fa-rectangle-ad mr-1"></i> Spazio Pubblicitario 1
-            </div>
-
-            <div class="sondaggio-card">
-              <img id="pv-img-2" src="" alt="Tabella Partiti">
-              <p id="pv-comment-2" class="text-slate-700 font-normal"></p>
-            </div>
-
-            <div id="pv-ad-2" class="ad-slot-preview">
-              <i class="fa-solid fa-rectangle-ad mr-1"></i> Spazio Pubblicitario 2
-            </div>
-
-            <div class="sondaggio-card">
-              <img id="pv-img-3" src="" alt="Grafico Coalizioni">
-              <p id="pv-comment-3" class="text-slate-700 font-normal"></p>
-            </div>
-
+        <div id="captureArea" class="bg-white text-slate-800 p-6 rounded-xl shadow-2xl max-w-[800px] mx-auto">
+          
+          <div style="background-color: #f8f9fa; border-left: 5px solid #0056b3; padding: 15px 20px; margin-bottom: 20px; border-radius: 0 8px 8px 0;">
+            <p style="margin: 0 0 10px 0; font-size: 1.05rem;">
+              Di seguito la supermedia dei sondaggi politici italiani aggiornata al <strong id="pv-date">06 Novembre 2026</strong>, con le intenzioni di voto partito per partito ed i trend di variazione.
+            </p>
+            <div style="font-size: 0.9rem; color: #6c757d; font-weight: bold; text-transform: uppercase;">Supermedia a cura di Bruno Rachiele</div>
           </div>
+
+          <!-- BOTTONE GOOGLE NEWS -->
+          <div style="text-align: center; margin: 20px 0;">
+            <a href="https://news.google.com/publications/CAAqLAgKIiZDQklTRmdnTWFoSUtFR0p5ZFc1dmNtRmphR2xsYkdVdWFYUW9BQVAB?hl=it&gl=IT&ceid=IT:it" target="_blank" style="display: inline-flex; align-items: center; gap: 10px; background-color: #ffffff; color: #3c4043; border: 1px solid #dadce0; padding: 10px 20px; border-radius: 24px; font-size: 0.95rem; font-weight: 600; text-decoration: none;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z" fill="#4285F4"/>
+              </svg>
+              Segui il Blog su Google News
+            </a>
+          </div>
+
+          <!-- COPERTINA FISSA SONDAGGI -->
+          <div style="margin-bottom: 20px;">
+            <img src="https://static.brunorachiele.it/supermedie_2027.png" alt="Supermedia Sondaggi Politici Bruno Rachiele" style="width: 100%; height: auto; border-radius: 8px; display: block;">
+          </div>
+
+          <!-- GRID BANNER PARTITI -->
+          <div id="pv-party-cards" class="party-grid"></div>
+
+          <!-- TESTO DI RIEPILOGO AUTOMATICO SEO -->
+          <div id="pv-seo-summary" class="seo-summary-box"></div>
+
+          <!-- BOX 3 ARTICOLI CONSIGLIATI -->
+          <div id="pv-related-box" class="related-links-box"></div>
+
         </div>
       </div>
 
-      <!-- CODICE HTML (5 COLONNE) -->
+      <!-- CODICE HTML BLOGGER (5 COLONNE) -->
       <div class="lg:col-span-5 space-y-4">
-        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center">
-          <h2 class="font-bold text-slate-900 flex items-center gap-2">
-            <i class="fa-solid fa-code text-emerald-600"></i> Codice HTML Finale
-          </h2>
-          <button onclick="copyGeneratedCode()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs px-3 py-1.5 rounded-lg shadow flex items-center gap-1.5 transition-all">
+        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
+          <h2 class="font-bold text-white text-sm">Codice HTML Finale Blogger</h2>
+          <button onclick="copyGeneratedCode()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow">
             <i class="fa-solid fa-copy"></i> Copia Codice
           </button>
         </div>
 
-        <div class="bg-slate-900 rounded-xl p-4 shadow-inner">
+        <div class="bg-slate-950 rounded-xl p-4 border border-slate-800">
           <textarea id="output-code" readonly rows="28" class="w-full bg-transparent text-emerald-400 font-mono text-xs leading-relaxed focus:outline-none resize-none"></textarea>
         </div>
       </div>
@@ -365,81 +274,27 @@
 
   </main>
 
-  <!-- TOAST -->
-  <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
-    <div class="bg-emerald-500 text-white p-1.5 rounded-full">
-      <i class="fa-solid fa-check text-sm"></i>
-    </div>
-    <div>
-      <h4 class="font-bold text-sm">Codice Copiato!</h4>
-      <p class="text-xs text-slate-300">Incollalo nell'editor HTML del post su Blogger.</p>
-    </div>
-  </div>
-
   <script>
-    const appState = {
-      date: "07 novembre 2026",
-      postUrl: "https://www.brunorachiele.it/2026/11/sondaggio-politico-07-novembre-2026.html",
-      author: "Bruno Rachiele",
-      authorBio: "https://bio.brunorachiele.it",
-      gnewsLink: "https://news.google.com/publications/CAAqLAgKIiZDQklTRmdnTWFoSUtFR0p5ZFc1dmNtRmphR2xsYkdVdWFYUW9BQVAB?hl=it&gl=IT&ceid=IT:it",
-      logoUrl: "https://static.brunorachiele.it/logo.png",
-      coverUrl: "https://static.brunorachiele.it/supermedie_2027.png",
-      adCodes: [
-        '<div data-type="_mgwidget" data-widget-id="2107383"></div>\n<script>(function(w,q){w[q]=w[q]||[];w[q].push(["_mgc.load"])})(window,"_mgq");<\/script>',
-        '<div data-type="_mgwidget" data-widget-id="2107383"></div>\n<script>(function(w,q){w[q]=w[q]||[];w[q].push(["_mgc.load"])})(window,"_mgq");<\/script>'
-      ],
-      images: [
-        "https://static.brunorachiele.it/supermedie_2027.png",
-        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhidf8ZO3klNEFhsk6eF1HLkAHs3F1A7PRkt-BHgbmGnH7KhF7AgAAR3q4f79GR4MockH5QYybuSybGCxOgucGJgWLLZBLbr2aTrgIqywZhz8IvHXpJZlyuNQcmYneg9cXuJRje8QvIHbkwH1Lk20BbuDoGOKnmhlKvqjblLd9zXXkGtYtyTPiXZEu8KiQ/s1600/supermedia-sondaggi-06_NOVEMBRE_2026.png",
-        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhao_x8_IADO1SYN0fcEnJjwo4KdLzTSG2oWB4ROrY4IfARMoi5OhjzUx3WXSS9-4y383uaxI07Z6mx8GJzy7zFGAJgFNT6ILgQk6a4GPJnHEhmGrLUf9fGWnMaOIPzCK4wNtBRAoRP3ScucgnH-3LFDj5yLE-QoEAoB8bN7NBZyqBfDj78gNXjZV46sn8/s1600/stima-seggi-coalizioni-2026-11-06%20%284%29.png"
-      ],
-      comments: [
-        "",
-        "Nella tabella partiti aggiornata al 07 novembre 2026, si evidenzia la sostanziale tenuta delle prime forze politiche nazionali con leggeri assestamenti decimali.",
-        "Sul fronte delle coalizioni al 07 novembre 2026, il blocco di Centrodestra conferma la sua solidità numerica complessiva rispetto allo schieramento progressista."
-      ]
-    };
+    let partiesData = [
+      { nome: "FRATELLI D'ITALIA", img: "../img/fdi.png", coalizione: "Centrodestra", val: "28.33", trend: -0.32 },
+      { nome: "PARTITO DEMOCRATICO", img: "../img/pd.png", coalizione: "Centrosinistra", val: "20.23", trend: -0.07 },
+      { nome: "MOVIMENTO 5 STELLE", img: "../img/m5s.png", coalizione: "Centrosinistra", val: "12.83", trend: 0.93 },
+      { nome: "FORZA ITALIA", img: "../img/fi.png", coalizione: "Centrodestra", val: "7.17", trend: -0.28 },
+      { nome: "FUTURO NAZIONALE", img: "../img/iv.png", coalizione: "Destra Indipendente", val: "6.43", trend: 0.23 },
+      { nome: "ALLEANZA VERDI-SINISTRA", img: "../img/avs.png", coalizione: "Centrosinistra", val: "6.13", trend: -0.27 },
+      { nome: "LEGA", img: "../img/lega.png", coalizione: "Centrodestra", val: "5.37", trend: -0.53 },
+      { nome: "AZIONE", img: "../img/azione.png", coalizione: "Terzo Polo", val: "3.07", trend: -0.03 },
+      { nome: "ITALIA VIVA", img: "../img/iv.png", coalizione: "Terzo Polo", val: "2.40", trend: 0.05 },
+      { nome: "+EUROPA", img: "../img/europa.png", coalizione: "Centrosinistra", val: "1.30", trend: -0.20 },
+      { nome: "NOI MODERATI", img: "../img/nm.png", coalizione: "Centrodestra", val: "1.17", trend: 0.17 }
+    ];
 
-    window.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('comment-2').value = appState.comments[1];
-      document.getElementById('comment-3').value = appState.comments[2];
-      document.getElementById('img-preview-1').src = appState.images[0];
-      document.getElementById('img-preview-2').src = appState.images[1];
-      document.getElementById('img-preview-3').src = appState.images[2];
-      updateAll();
-    });
-
-    function onDateInput() {
-      appState.date = document.getElementById('input-date').value;
-      autoGeneratePostUrl();
-    }
-
-    function autoGeneratePostUrl() {
-      const dateStr = document.getElementById('input-date').value.trim();
-      const slug = dateStr.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      
-      const generatedUrl = `https://www.brunorachiele.it/${year}/${month}/sondaggio-politico-${slug}.html`;
-      document.getElementById('input-post-url').value = generatedUrl;
-      appState.postUrl = generatedUrl;
-      updateAll();
-    }
-
-    function toggleAdType(slotIndex) {
-      const type = document.getElementById(`ad-type-${slotIndex}`).value;
-      const textarea = document.getElementById(`ad-code-${slotIndex}`);
-      
-      if (type === 'mgid') {
-        textarea.value = `<div data-type="_mgwidget" data-widget-id="2107383"></div>\n<script>(function(w,q){w[q]=w[q]||[];w[q].push(["_mgc.load"])})(window,"_mgq");<\/script>`;
-      } else if (type === 'adsense') {
-        textarea.value = `<!-- Google AdSense -->\n<ins class="adsbygoogle"\n     style="display:block"\n     data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"\n     data-ad-slot="1234567890"\n     data-ad-format="auto"\n     data-full-width-responsive="true"></ins>\n<script>(adsbygoogle = window.adsbygoogle || []).push({});<\/script>`;
-      } else if (type === 'placeholder') {
-        textarea.value = '';
-      }
-      updateAll();
+    function sortParties() {
+      partiesData.sort((a, b) => {
+        let valA = parseFloat(String(a.val).replace(',', '.')) || 0;
+        let valB = parseFloat(String(b.val).replace(',', '.')) || 0;
+        return valB - valA;
+      });
     }
 
     function switchTab(tab) {
@@ -449,116 +304,184 @@
       const viewPreview = document.getElementById('view-preview');
 
       if (tab === 'editor') {
-        btnEditor.className = "px-4 py-1.5 rounded-md font-medium text-white bg-blue-600 shadow transition-all";
-        btnPreview.className = "px-4 py-1.5 rounded-md font-medium text-slate-300 hover:text-white transition-all";
+        btnEditor.className = "px-4 py-1.5 rounded-md font-medium text-white bg-blue-600 shadow";
+        btnPreview.className = "px-4 py-1.5 rounded-md font-medium text-slate-400 hover:text-white";
         viewEditor.classList.remove('hidden');
         viewPreview.classList.add('hidden');
       } else {
-        btnPreview.className = "px-4 py-1.5 rounded-md font-medium text-white bg-blue-600 shadow transition-all";
-        btnEditor.className = "px-4 py-1.5 rounded-md font-medium text-slate-300 hover:text-white transition-all";
+        btnPreview.className = "px-4 py-1.5 rounded-md font-medium text-white bg-blue-600 shadow";
+        btnEditor.className = "px-4 py-1.5 rounded-md font-medium text-slate-400 hover:text-white";
         viewPreview.classList.remove('hidden');
         viewEditor.classList.add('hidden');
         updateAll();
       }
     }
 
-    function handleImageUpload(event, index) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const result = e.target.result;
-          appState.images[index - 1] = result;
-          document.getElementById(`img-preview-${index}`).src = result;
-          document.getElementById(`img-url-${index}`).value = "";
-          updateAll();
-        };
-        reader.readAsDataURL(file);
-      }
+    function renderPartiesEditor() {
+      const list = document.getElementById('parties-editor-list');
+      document.getElementById('parties-count').innerText = `${partiesData.length} partiti`;
+      list.innerHTML = '';
+
+      partiesData.forEach((item, index) => {
+        list.innerHTML += `
+          <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-700 grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+            <div class="sm:col-span-3">
+              <input type="text" value="${item.nome}" oninput="partiesData[${index}].nome=this.value; updateAll();" class="w-full bg-slate-800 text-white text-xs px-2 py-1 rounded border border-slate-600 font-bold">
+            </div>
+            <div class="sm:col-span-3">
+              <input type="text" value="${item.coalizione}" oninput="partiesData[${index}].coalizione=this.value; updateAll();" class="w-full bg-slate-800 text-slate-300 text-xs px-2 py-1 rounded border border-slate-600">
+            </div>
+            <div class="sm:col-span-2">
+              <input type="text" value="${item.val}" oninput="partiesData[${index}].val=this.value; sortParties(); updateAll();" class="w-full bg-slate-800 text-blue-400 font-bold text-xs px-2 py-1 rounded border border-slate-600 text-center">
+            </div>
+            <div class="sm:col-span-2">
+              <input type="number" step="0.01" value="${item.trend}" oninput="partiesData[${index}].trend=parseFloat(this.value)||0; updateAll();" class="w-full bg-slate-800 text-emerald-400 font-bold text-xs px-2 py-1 rounded border border-slate-600 text-center">
+            </div>
+            <div class="sm:col-span-2 flex justify-end">
+              <button onclick="partiesData.splice(${index},1); renderPartiesEditor(); updateAll();" class="text-red-400 text-xs hover:text-red-300"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+        `;
+      });
     }
 
-    function onUrlChange(index) {
-      const url = document.getElementById(`img-url-${index}`).value.trim();
-      if (url) {
-        appState.images[index - 1] = url;
-        document.getElementById(`img-preview-${index}`).src = url;
-      }
-      updateAll();
-    }
+    function importFromSpreadsheet() {
+      const rawText = document.getElementById('pasteInput').value.trim();
+      if (!rawText) return;
 
-    function autoGenerateComment(index) {
-      const date = document.getElementById('input-date').value || "questa settimana";
-      const autoPhrases = {
-        2: `Nella tabella partiti aggiornata al ${date}, si evidenzia la sostanziale tenuta delle prime forze politiche nazionali con leggeri assestamenti decimali.`,
-        3: `Sul fronte delle coalizioni al ${date}, il blocco di Centrodestra conferma la sua solidità numerica complessiva rispetto allo schieramento progressista.`
-      };
+      const lines = rawText.split('\n');
+      let newParties = [];
 
-      document.getElementById(`comment-${index}`).value = autoPhrases[index];
-      updateAll();
-    }
+      lines.forEach(line => {
+        const cols = line.split('\t').map(c => c.trim()).filter(c => c !== "");
+        if (cols.length >= 3) {
+          let rawName = cols[0].replace(/^\./, '').toUpperCase();
+          if (rawName.includes("PARTITI") || rawName.includes("STIMA")) return;
 
-    function updateAll() {
-      appState.date = document.getElementById('input-date').value || "07 novembre 2026";
-      appState.postUrl = document.getElementById('input-post-url').value || "https://www.brunorachiele.it";
-      appState.author = document.getElementById('input-author').value || "Bruno Rachiele";
-      appState.authorBio = document.getElementById('input-author-bio').value || "https://bio.brunorachiele.it";
-      appState.gnewsLink = document.getElementById('input-gnews-link').value || "#";
-      appState.logoUrl = document.getElementById('input-logo-url').value || "https://static.brunorachiele.it/logo.png";
-      appState.coverUrl = document.getElementById('input-cover-url').value || "https://static.brunorachiele.it/supermedie_2027.png";
-      
-      appState.adCodes[0] = document.getElementById('ad-code-1').value.trim();
-      appState.adCodes[1] = document.getElementById('ad-code-2').value.trim();
+          let rawImg = cols[1] || "../img/party.png";
+          let rawCoalizione = cols[2] || "Indipendente";
+          let rawVal = cols[cols.length - 3] ? cols[cols.length - 3].replace(',', '.') : (cols[3] ? cols[3].replace(',', '.') : "0.0");
+          let rawTrend = cols[cols.length - 1] ? parseFloat(cols[cols.length - 1].replace(',', '.')) : 0;
 
-      appState.comments[1] = document.getElementById('comment-2').value;
-      appState.comments[2] = document.getElementById('comment-3').value;
-
-      document.getElementById('pv-date').innerText = appState.date;
-      document.getElementById('pv-author').innerText = appState.author;
-      document.getElementById('pv-gnews-link').href = appState.gnewsLink;
-
-      document.getElementById('pv-img-1').src = appState.images[0];
-      document.getElementById('pv-img-2').src = appState.images[1];
-      document.getElementById('pv-img-3').src = appState.images[2];
-
-      document.getElementById('pv-comment-2').innerText = appState.comments[1];
-      document.getElementById('pv-comment-3').innerText = appState.comments[2];
-
-      [1, 2].forEach(i => {
-        const adSlot = document.getElementById(`pv-ad-${i}`);
-        const code = appState.adCodes[i - 1];
-        if (code) {
-          const typeName = document.getElementById(`ad-type-${i}`).selectedOptions[0].text;
-          adSlot.innerHTML = `<div class="p-2 border border-amber-300 bg-amber-50 rounded text-amber-800 text-xs font-mono"><i class="fa-solid fa-check-circle mr-1"></i> ${typeName} Attivo</div>`;
-        } else {
-          adSlot.innerHTML = `<i class="fa-solid fa-rectangle-ad mr-1"></i> Spazio Pubblicitario ${i}`;
+          newParties.push({
+            nome: rawName,
+            img: rawImg,
+            coalizione: rawCoalizione,
+            val: rawVal,
+            trend: isNaN(rawTrend) ? 0 : rawTrend
+          });
         }
       });
 
-      generateFinalHtmlCode();
+      if (newParties.length > 0) {
+        partiesData = newParties;
+        sortParties();
+        renderPartiesEditor();
+        updateAll();
+        alert(`Importati ed ordinati per gradimento ${newParties.length} partiti!`);
+      }
     }
 
-    function generateFinalHtmlCode() {
+    function updateAll() {
+      sortParties();
+      
+      const dateVal = document.getElementById('input-date').value || "06 Novembre 2026";
+      const postUrl = document.getElementById('input-post-url').value || "https://www.brunorachiele.it";
+
+      document.getElementById('pv-date').innerText = dateVal;
+
+      // 1. RENDER CARDS PARTITI
+      const cardsBox = document.getElementById('pv-party-cards');
+      cardsBox.innerHTML = '';
+      let cardsHtmlForExport = '';
+
+      partiesData.forEach(p => {
+        let trendVal = parseFloat(p.trend) || 0;
+        let badgeClass = 'trend-eq';
+        let symbol = '= 0,00';
+        let trendFormatted = trendVal.toFixed(2).replace('.', ',');
+
+        if (trendVal > 0) {
+          badgeClass = 'trend-up';
+          symbol = '▲ +' + trendFormatted;
+        } else if (trendVal < 0) {
+          badgeClass = 'trend-down';
+          symbol = '▼ ' + trendFormatted;
+        }
+
+        const cardSnippet = `
+          <div class="party-card">
+            <img src="${p.img}" class="party-logo" alt="${p.nome}" onerror="this.src='https://placehold.co/100x100/0056b3/ffffff?text=Logo'">
+            <div class="party-info">
+              <div class="party-name">${p.nome}</div>
+              <div class="party-coalition">${p.coalizione}</div>
+              <div class="party-metrics">
+                <span class="party-pct">${p.val}%</span>
+                <span class="trend-badge ${badgeClass}">${symbol}</span>
+              </div>
+            </div>
+          </div>
+        `;
+        cardsBox.innerHTML += cardSnippet;
+        cardsHtmlForExport += cardSnippet;
+      });
+
+      // 2. GENERAZIONE AUTOMATICA SINTESI TEXT SEO
+      let topParty = partiesData[0] || { nome: "Fratelli d'Italia", val: "28.33" };
+      let secondParty = partiesData[1] || { nome: "Partito Democratico", val: "20.23" };
+      let thirdParty = partiesData[2] || { nome: "Movimento 5 Stelle", val: "12.83" };
+
+      let summaryHtml = `
+        <p style="margin:0 0 8px 0;"><strong>Analisi dei dati alla data del ${dateVal}:</strong></p>
+        <p style="margin:0;">
+          In base alla supermedia aggiornata, <strong>${topParty.nome}</strong> si conferma prima forza politica con il <strong>${topParty.val}%</strong> delle preferenze. 
+          Al secondo posto si colloca il <strong>${secondParty.nome}</strong> attestato al <strong>${secondParty.val}%</strong>, seguito dal <strong>${thirdParty.nome}</strong> al <strong>${thirdParty.val}%</strong>. 
+          Di seguito il dettaglio completo delle altre forze politiche registrate nell'ultima rilevazione nazionale.
+        </p>
+      `;
+      document.getElementById('pv-seo-summary').innerHTML = summaryHtml;
+
+      // 3. RENDER 3 LINK CONSIGLIATI
+      let l1T = document.getElementById('link1-title').value;
+      let l1U = document.getElementById('link1-url').value;
+      let l2T = document.getElementById('link2-title').value;
+      let l2U = document.getElementById('link2-url').value;
+      let l3T = document.getElementById('link3-title').value;
+      let l3U = document.getElementById('link3-url').value;
+
+      let relatedHtml = `
+        <div class="related-title"><i class="fa-solid fa-newspaper"></i> Potrebbe interessarti anche:</div>
+        <a class="related-item" href="${l1U}" target="_blank"><i class="fa-solid fa-chevron-right text-xs text-blue-600"></i> ${l1T}</a>
+        <a class="related-item" href="${l2U}" target="_blank"><i class="fa-solid fa-chevron-right text-xs text-blue-600"></i> ${l2T}</a>
+        <a class="related-item" href="${l3U}" target="_blank"><i class="fa-solid fa-chevron-right text-xs text-blue-600"></i> ${l3T}</a>
+      `;
+      document.getElementById('pv-related-box').innerHTML = relatedHtml;
+
+      generateFinalHtmlCode(dateVal, postUrl, cardsHtmlForExport, summaryHtml, relatedHtml);
+    }
+
+    function generateFinalHtmlCode(dateVal, postUrl, cardsHtml, summaryHtml, relatedHtml) {
       const now = new Date().toISOString();
-      const code = `<!-- METADATI E DATI STRUTTURATI (SCHEMA.ORG) -->
+      const code = `<!-- METADATI SCHEMA.ORG (NEWSARTICLE) -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "NewsArticle",
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "${appState.postUrl}"
+    "@id": "${postUrl}"
   },
-  "url": "${appState.postUrl}",
-  "headline": "Supermedia Sondaggi Politici - ${appState.date}",
+  "url": "${postUrl}",
+  "headline": "Supermedia Sondaggi Politici - ${dateVal}",
   "image": [
-    "${appState.coverUrl}"
+    "https://static.brunorachiele.it/supermedie_2027.png"
   ],
   "datePublished": "${now}",
   "dateModified": "${now}",
   "author": {
     "@type": "Person",
-    "name": "${appState.author}",
-    "url": "${appState.authorBio}"
+    "name": "Bruno Rachiele",
+    "url": "https://bio.brunorachiele.it"
   },
   "publisher": {
     "@type": "Organization",
@@ -566,14 +489,14 @@
     "url": "https://www.brunorachiele.it",
     "logo": {
       "@type": "ImageObject",
-      "url": "${appState.logoUrl}"
+      "url": "https://static.brunorachiele.it/logo.png"
     }
   },
-  "description": "Supermedia dei sondaggi politici italiani aggiornata al ${appState.date} con il dettaglio sulle intenzioni di voto e i trend delle coalizioni."
+  "description": "Supermedia sondaggi politici aggiornata al ${dateVal}: intenzioni di voto dei partiti, trend e dati di preferenza."
 }
 <\/script>
 
-<!-- STILI CSS DEDICATI AL TEMPLATE SONDAGGI -->
+<!-- STILI CSS DEDICATI BLOGGER -->
 <style>
   .sondaggi-container {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -590,10 +513,6 @@
     margin-bottom: 20px;
     border-radius: 0 8px 8px 0;
   }
-  .sondaggi-header p {
-    margin: 0 0 10px 0;
-    font-size: 1.05rem;
-  }
   .sondaggi-credit {
     font-size: 0.9rem;
     color: #6c757d;
@@ -601,10 +520,7 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
-  .discover-btn-wrapper {
-    text-align: center;
-    margin: 20px 0;
-  }
+  .discover-btn-wrapper { text-align: center; margin: 20px 0; }
   .discover-btn {
     display: inline-flex;
     align-items: center;
@@ -618,38 +534,86 @@
     font-weight: 600;
     text-decoration: none;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    transition: background-color 0.2s, box-shadow 0.2s;
-  }
-  .discover-btn:hover {
-    background-color: #f8f9fa;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    color: #1a73e8;
-  }
-  .sondaggio-card {
-    background: #ffffff;
-    border: 1px solid #e9ecef;
-    border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 25px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   }
   .sondaggio-card img {
     width: 100%;
     height: auto;
     border-radius: 8px;
     display: block;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
   }
-  .ad-slot {
-    background: #fafafa;
-    border: 1px dashed #cccccc;
-    text-align: center;
-    padding: 10px;
-    margin: 25px 0;
-    min-height: 250px;
+  .party-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+    margin: 20px 0;
+  }
+  .party-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px 16px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 14px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+  }
+  .party-logo {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    object-fit: contain;
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    padding: 2px;
+    flex-shrink: 0;
+  }
+  .party-info { flex: 1; min-width: 0; }
+  .party-name { font-size: 14px; font-weight: 800; color: #0f172a; text-transform: uppercase; line-height: 1.2; }
+  .party-coalition { font-size: 11px; color: #64748b; font-weight: 600; }
+  .party-metrics { display: flex; align-items: baseline; gap: 8px; margin-top: 4px; }
+  .party-pct { font-size: 20px; font-weight: 900; color: #0056b3; }
+  .trend-badge { font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 10px; display: inline-flex; align-items: center; gap: 3px; }
+  .trend-up { background-color: #dcfce7; color: #15803d; }
+  .trend-down { background-color: #fee2e2; color: #b91c1c; }
+  .trend-eq { background-color: #f1f5f9; color: #475569; }
+
+  .seo-summary-box {
+    background: #f8fafc;
+    border-left: 4px solid #0056b3;
+    padding: 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 25px 0;
+    font-size: 14px;
+    color: #334155;
+    line-height: 1.6;
+  }
+
+  .related-links-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 18px;
+    margin-top: 25px;
+  }
+  .related-title {
+    font-size: 13px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #0056b3;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+  .related-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px dashed #e2e8f0;
+    color: #1e293b;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13.5px;
   }
 </style>
 
@@ -657,13 +621,13 @@
 
   <!-- INTRODUZIONE E CREDIT -->
   <div class="sondaggi-header">
-    <p>Di seguito la supermedia dei sondaggi politici italiani aggiornata al <strong>${appState.date}</strong>, con il dettaglio sulle intenzioni di voto e i trend delle coalizioni.</p>
-    <div class="sondaggi-credit">Supermedia a cura di ${appState.author}</div>
+    <p>Di seguito la supermedia dei sondaggi politici italiani aggiornata al <strong>${dateVal}</strong>, con le intenzioni di voto ed i trend di variazione.</p>
+    <div class="sondaggi-credit">Supermedia a cura di Bruno Rachiele</div>
   </div>
 
-  <!-- PULSANTE GOOGLE NEWS / DISCOVER -->
+  <!-- GOOGLE NEWS BUTTON -->
   <div class="discover-btn-wrapper">
-    <a class="discover-btn" href="${appState.gnewsLink}" target="_blank" rel="noopener">
+    <a class="discover-btn" href="https://news.google.com/publications/CAAqLAgKIiZDQklTRmdnTWFoSUtFR0p5ZFc1dmNtRmphR2xsYkdVdWFYUW9BQVAB?hl=it&gl=IT&ceid=IT:it" target="_blank" rel="noopener">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z" fill="#4285F4"/>
       </svg>
@@ -671,31 +635,24 @@
     </a>
   </div>
 
-  <!-- 1. GRAFICA COPERTINA -->
+  <!-- COPERTINA SONDAGGI -->
   <div class="sondaggio-card">
-    <img src="${appState.images[0]}" alt="Supermedia Sondaggi Politici ${appState.author} ${appState.date}" width="1200" height="675">
+    <img src="https://static.brunorachiele.it/supermedie_2027.png" alt="Supermedia Sondaggi Politici Bruno Rachiele" width="1200" height="675">
   </div>
 
-  <!-- PRIMO BLOCCO PUBBLICITARIO -->
-  <div class="ad-slot">
-    ${appState.adCodes[0] || '<!-- Ad Slot 1 -->'}
+  <!-- CARD PARTITI -->
+  <div class="party-grid">
+    ${cardsHtml}
   </div>
 
-  <!-- 2. TABELLA PARTITI -->
-  <div class="sondaggio-card">
-    <img src="${appState.images[1]}" alt="Tabella Partiti Intenzioni di Voto ${appState.date}" width="1200" height="675">
-    <p>${appState.comments[1]}</p>
+  <!-- SINTESI TESTUALE AUTOMATICA PER GOOGLE -->
+  <div class="seo-summary-box">
+    ${summaryHtml}
   </div>
 
-  <!-- SECONDO BLOCCO PUBBLICITARIO -->
-  <div class="ad-slot">
-    ${appState.adCodes[1] || '<!-- Ad Slot 2 -->'}
-  </div>
-
-  <!-- 3. COALIZIONI -->
-  <div class="sondaggio-card">
-    <img src="${appState.images[2]}" alt="Trend Coalizioni Politiche ${appState.date}" width="1200" height="675">
-    <p>${appState.comments[2]}</p>
+  <!-- 3 ARTICOLI CONSIGLIATI -->
+  <div class="related-links-box">
+    ${relatedHtml}
   </div>
 
 </div>`;
@@ -707,16 +664,11 @@
       const codeArea = document.getElementById('output-code');
       codeArea.select();
       document.execCommand('copy');
-
-      const toast = document.getElementById('toast');
-      toast.classList.remove('translate-y-20', 'opacity-0');
-      toast.classList.add('translate-y-0', 'opacity-100');
-
-      setTimeout(() => {
-        toast.classList.remove('translate-y-0', 'opacity-100');
-        toast.classList.add('translate-y-20', 'opacity-0');
-      }, 3000);
+      alert("Codice HTML copiato negli appunti!");
     }
+
+    renderPartiesEditor();
+    updateAll();
   </script>
 </body>
 </html>
