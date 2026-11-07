@@ -160,11 +160,11 @@
             <i class="fa-solid fa-file-csv"></i> 1. Incolla da Google Sheets
           </h2>
           <p class="text-xs text-slate-400 mb-3 leading-relaxed">
-            Seleziona le righe dei leader nel tuo foglio di calcolo (compresa la colonna con il link/foto), copiale (<kbd class="bg-slate-700 px-1 rounded">Ctrl+C</kbd>) e incollale qui sotto.
+            Seleziona le righe dei leader nel tuo foglio di calcolo, copiale (<kbd class="bg-slate-700 px-1 rounded">Ctrl+C</kbd>) e incollale qui sotto. Il sistema li ordinerà automaticamente dal più alto al più basso.
           </p>
           <textarea id="pasteInput" rows="6" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-slate-200 focus:outline-none focus:border-blue-500 mb-3" placeholder="Incolla qui i dati dal foglio di calcolo..."></textarea>
           <button onclick="importFromSpreadsheet()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition flex items-center justify-center gap-2">
-            <i class="fa-solid fa-file-import"></i> Elabora & Importa Dati
+            <i class="fa-solid fa-file-import"></i> Elabora, Ordina & Importa Dati
           </button>
         </div>
 
@@ -201,11 +201,16 @@
       <div class="lg:col-span-7 bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg">
         <div class="flex justify-between items-center border-b border-slate-700 pb-3 mb-4">
           <h2 class="text-base font-bold text-blue-400 flex items-center gap-2">
-            <i class="fa-solid fa-users"></i> Leader Inseriti (<span id="leaders-count">0</span>)
+            <i class="fa-solid fa-users"></i> Leader Inseriti (Ordinati per % Gradimento)
           </h2>
-          <button onclick="addLeaderRow()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1">
-            <i class="fa-solid fa-plus"></i> Aggiungi Leader
-          </button>
+          <div class="flex gap-2">
+            <button onclick="sortLeaders(); renderLeaderEditorList(); updateAll();" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1" title="Riordina dal più alto al più basso">
+              <i class="fa-solid fa-arrow-down-9-1"></i> Riordina
+            </button>
+            <button onclick="addLeaderRow()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1">
+              <i class="fa-solid fa-plus"></i> Aggiungi
+            </button>
+          </div>
         </div>
 
         <div id="leaders-list" class="space-y-3 max-h-[600px] overflow-y-auto pr-2">
@@ -224,7 +229,7 @@
           <h2 class="font-bold text-white text-sm flex items-center gap-2">
             <i class="fa-solid fa-eye text-blue-400"></i> Anteprima Articolo Blogger
           </h2>
-          <span class="text-xs bg-slate-700 text-slate-300 px-2.5 py-1 rounded-full font-medium">Responsive Layout</span>
+          <span class="text-xs bg-slate-700 text-slate-300 px-2.5 py-1 rounded-full font-medium">Ordinati per Gradimento</span>
         </div>
 
         <!-- CONTENITORE CHE SIMULA IL BLOG -->
@@ -292,6 +297,15 @@
       { foto: "../img/renzi.png", nome: "Matteo Renzi", ruolo: "Leader Italia Viva", val: "14.2", trend: -0.05 }
     ];
 
+    // Funzione per ordinare l'array dal gradimento più alto al più basso
+    function sortLeaders() {
+      leaderData.sort((a, b) => {
+        let valA = parseFloat(String(a.val).replace(',', '.')) || 0;
+        let valB = parseFloat(String(b.val).replace(',', '.')) || 0;
+        return valB - valA;
+      });
+    }
+
     function switchTab(tab) {
       const btnEditor = document.getElementById('tab-btn-editor');
       const btnPreview = document.getElementById('tab-btn-preview');
@@ -314,7 +328,6 @@
 
     function renderLeaderEditorList() {
       const list = document.getElementById('leaders-list');
-      document.getElementById('leaders-count').innerText = leaderData.length;
       list.innerHTML = '';
 
       leaderData.forEach((item, index) => {
@@ -330,7 +343,7 @@
               <input type="text" value="${item.foto}" oninput="leaderData[${index}].foto=this.value; updateAll();" class="w-full bg-slate-800 text-slate-300 text-xs px-2 py-1.5 rounded border border-slate-600" placeholder="URL Foto">
             </div>
             <div class="sm:col-span-1">
-              <input type="text" value="${item.val}" oninput="leaderData[${index}].val=this.value; updateAll();" class="w-full bg-slate-800 text-blue-400 font-bold text-xs px-2 py-1.5 rounded border border-slate-600 text-center" placeholder="%">
+              <input type="text" value="${item.val}" oninput="leaderData[${index}].val=this.value; sortLeaders(); updateAll();" class="w-full bg-slate-800 text-blue-400 font-bold text-xs px-2 py-1.5 rounded border border-slate-600 text-center" placeholder="%">
             </div>
             <div class="sm:col-span-2">
               <input type="number" step="0.01" value="${item.trend}" oninput="leaderData[${index}].trend=parseFloat(this.value)||0; updateAll();" class="w-full bg-slate-800 text-emerald-400 font-bold text-xs px-2 py-1.5 rounded border border-slate-600 text-center" placeholder="Trend">
@@ -347,6 +360,7 @@
 
     function addLeaderRow() {
       leaderData.push({ foto: "../img/leader.png", nome: "NUOVO LEADER", ruolo: "Ruolo Politico", val: "20.0", trend: 0.00 });
+      sortLeaders();
       renderLeaderEditorList();
       updateAll();
     }
@@ -387,15 +401,18 @@
 
       if (newLeaders.length > 0) {
         leaderData = newLeaders;
+        sortLeaders();
         renderLeaderEditorList();
         updateAll();
-        alert(`Importati con successo ${newLeaders.length} leader politici!`);
+        alert(`Importati ed ordinati per gradimento ${newLeaders.length} leader politici!`);
       } else {
         alert("Nessun dato valido trovato. Seleziona e incolla le righe dal tuo foglio Google.");
       }
     }
 
     function updateAll() {
+      sortLeaders();
+      
       const dateVal = document.getElementById('input-date').value || "09 Novembre 2026";
       const gnewsLink = document.getElementById('input-gnews-link').value || "#";
       const postUrl = document.getElementById('input-post-url').value || "https://www.brunorachiele.it";
@@ -622,6 +639,7 @@
     }
 
     // Inizializzazione
+    sortLeaders();
     renderLeaderEditorList();
     updateAll();
   </script>
