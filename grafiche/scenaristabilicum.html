@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generatore Scenari Legge Elettorale (Stabilicum) - Bruno Rachiele</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+
+    /* LAYOUT GRAFICA STABILICUM */
+    .scenario-card {
+      background: #ffffff;
+      color: #0f172a;
+      border-radius: 12px;
+      padding: 25px;
+      max-width: 800px;
+      margin: 0 auto;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    .grid-parameters {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .param-box {
+      background: #f1f5f9;
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #334155;
+    }
+    .param-box span { font-size: 16px; font-weight: 900; display: block; color: #0f172a; }
+    
+    .scenario-block {
+      border-top: 2px solid #0f172a;
+      padding-top: 15px;
+      margin-top: 20px;
+    }
+    .scenario-title {
+      font-size: 14px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .legend-box {
+      display: inline-flex;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      margin-bottom: 15px;
+    }
+    .tag-black { background: #000; color: #fff; padding: 2px 6px; border-radius: 3px; }
+    .tag-white { background: #fff; border: 1px solid #cbd5e1; color: #000; padding: 2px 6px; border-radius: 3px; }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body class="pb-12">
+
+  <!-- HEADER APPLICAZIONE -->
+  <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+      <div class="flex items-center gap-3">
+        <div class="bg-blue-600 p-2.5 rounded-xl text-white">
+          <i class="fa-solid fa-scale-balanced text-xl"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg leading-tight">Generatore Scenari Legge Elettorale</h1>
+          <p class="text-xs text-slate-400">Simulatore legge "Stabilicum" per brunorachiele.it</p>
+        </div>
+      </div>
+      <div class="flex bg-slate-900 p-1 rounded-lg text-sm">
+        <button id="tab-btn-editor" onclick="switchTab('editor')" class="px-4 py-1.5 rounded-md font-medium text-white bg-blue-600 shadow">
+          <i class="fa-solid fa-pen-to-square mr-1.5"></i> Editor Dati
+        </button>
+        <button id="tab-btn-preview" onclick="switchTab('preview')" class="px-4 py-1.5 rounded-md font-medium text-slate-400 hover:text-white">
+          <i class="fa-solid fa-eye mr-1.5"></i> Anteprima & Codice HTML
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 mt-6">
+    
+    <!-- PANNELLO EDITOR -->
+    <div id="view-editor" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- COLONNA SINISTRA: IMPORT DA FOGLIO GOOGLE -->
+      <div class="lg:col-span-5 space-y-6">
+        <div class="bg-slate-800 p-5 rounded-xl border border-slate-700">
+          <h2 class="text-base font-bold text-blue-400 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-file-csv"></i> Incolla Dati Partiti da Foglio
+          </h2>
+          <p class="text-xs text-slate-400 mb-3">
+            Incolla la tabella dal foglio di calcolo con Partiti e % Voto.
+          </p>
+          <textarea id="pasteInput" rows="8" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-slate-200 focus:outline-none mb-3" placeholder="FRATELLI D'ITALIA	28.33&#10;PARTITO DEMOCRATICO	20.23&#10;MOVIMENTO 5 STELLE	12.83..."></textarea>
+          <button onclick="importFromSpreadsheet()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition flex items-center justify-center gap-2">
+            <i class="fa-solid fa-calculator"></i> Importa & Calcola Scenari
+          </button>
+        </div>
+
+        <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3">
+          <h2 class="text-base font-bold text-blue-400 mb-2">Metadati Articolo Blogger</h2>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Data Simulazione</label>
+            <input type="text" id="input-date" value="09 Novembre 2026" oninput="updateAll()" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">URL Post Articolo</label>
+            <input type="text" id="input-post-url" value="https://www.brunorachiele.it/2026/11/scenari-legge-elettorale-stabilicum-09-novembre-2026.html" oninput="updateAll()" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-white">
+          </div>
+        </div>
+      </div>
+
+      <!-- COLONNA DESTRA: TABELLA DEI PARTITI ELABORATI -->
+      <div class="lg:col-span-7 bg-slate-800 p-5 rounded-xl border border-slate-700">
+        <h2 class="text-base font-bold text-blue-400 mb-4 border-b border-slate-700 pb-2">
+          Intenzioni di Voto Caricate
+        </h2>
+        <div id="parties-list" class="space-y-2 max-h-[500px] overflow-y-auto pr-2">
+          <!-- Elenco Partiti -->
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PANNELLO ANTEPRIMA & CODICE -->
+    <div id="view-preview" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- VISUAL ANTEPRIMA GRAFICA (7 COLONNE) -->
+      <div class="lg:col-span-7 space-y-4">
+        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
+          <h2 class="font-bold text-white text-sm">Anteprima Grafica "Stabilicum"</h2>
+          <button onclick="downloadImage()" class="bg-green-600 hover:bg-green-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+            <i class="fa-solid fa-camera"></i> Scarica PNG HD
+          </button>
+        </div>
+
+        <!-- DASHBOARD GRAFICA ESPORTABILE -->
+        <div id="captureArea" class="scenario-card">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #0f172a; padding-bottom: 8px; margin-bottom: 15px;">
+            <h1 style="font-size: 26px; font-weight: 900; margin: 0;">Stabilicum</h1>
+            <span style="font-size: 14px; font-weight: 700; color: #475569;">Camera dei Deputati</span>
+          </div>
+
+          <!-- PARAMETRI DI LEGGE -->
+          <div class="grid-parameters">
+            <div class="param-box">Seggi totali: <span id="param-total">400</span></div>
+            <div class="param-box">Seggi quota proporzionale: <span>319</span></div>
+            <div class="param-box">Seggi Estero / Minoranze: <span>11</span></div>
+            <div class="param-box">Premio maggioranza (&gt;42%): <span>70</span></div>
+            <div class="param-box">Tetto max seggi vincente: <span>230</span></div>
+            <div class="param-box">Soglia Maggioranza: <span>201</span></div>
+          </div>
+
+          <div style="margin-top: 15px;">
+            <span class="legend-box"><span class="tag-black">% consensi ottenuti</span> <span class="tag-white">% seggi ottenuti</span></span>
+          </div>
+
+          <!-- SCENARIO A -->
+          <div class="scenario-block">
+            <div class="scenario-title">Simulazione - Scenario A (Centrodestra Tradizionale vs Campo Largo)</div>
+            <div class="chart-container">
+              <svg id="svg-scenario-a" viewBox="0 0 400 220" style="width: 100%; height: auto;"></svg>
+            </div>
+          </div>
+
+          <!-- SCENARIO B -->
+          <div class="scenario-block">
+            <div class="scenario-title">Simulazione - Scenario B (Centrodestra con Futuro Nazionale)</div>
+            <div class="chart-container">
+              <svg id="svg-scenario-b" viewBox="0 0 400 220" style="width: 100%; height: auto;"></svg>
+            </div>
+          </div>
+
+          <div style="font-size: 9px; color: #64748b; margin-top: 20px; line-height: 1.3; border-top: 1px solid #e2e8f0; padding-top: 8px;">
+            *Simulazione effettuata in applicazione della proposta di legge elettorale per la Camera dei Deputati (400 seggi). Elaborazione a cura di Bruno Rachiele • brunorachiele.it
+          </div>
+        </div>
+      </div>
+
+      <!-- CODICE HTML BLOGGER (5 COLONNE) -->
+      <div class="lg:col-span-5 space-y-4">
+        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
+          <h2 class="font-bold text-white text-sm">Codice HTML Finale Blogger</h2>
+          <button onclick="copyGeneratedCode()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+            <i class="fa-solid fa-copy"></i> Copia Codice
+          </button>
+        </div>
+
+        <div class="bg-slate-950 rounded-xl p-4 border border-slate-800">
+          <textarea id="output-code" readonly rows="26" class="w-full bg-transparent text-emerald-400 font-mono text-xs leading-relaxed focus:outline-none resize-none"></textarea>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    let rawParties = [
+      { nome: "FRATELLI D'ITALIA", voto: 28.33, colore: "#0b3c5d" },
+      { nome: "PARTITO DEMOCRATICO", voto: 20.23, colore: "#e63946" },
+      { nome: "MOVIMENTO 5 STELLE", voto: 12.83, colore: "#ffb703" },
+      { nome: "FUTURO NAZIONALE", voto: 5.37, colore: "#202125" },
+      { nome: "FORZA ITALIA", voto: 7.17, colore: "#0364ab" },
+      { nome: "ALLEANZA VERDI-SINISTRA", voto: 3.07, colore: "#10b981" },
+      { nome: "LEGA", voto: 2.40, colore: "#27713a" },
+      { nome: "AZIONE", voto: 1.17, colore: "#9d4edd" },
+      { nome: "ITALIA VIVA", voto: 6.13, colore: "#e8467f" },
+      { nome: "+EUROPA", voto: 1.30, colore: "#ff9f1c" },
+      { nome: "NOI MODERATI", voto: 6.43, colore: "#1d3557" }
+    ];
+
+    function switchTab(tab) {
+      const btnEditor = document.getElementById('tab-btn-editor');
+      const btnPreview = document.getElementById('tab-btn-preview');
+      const viewEditor = document.getElementById('view-editor');
+      const viewPreview = document.getElementById('view-preview');
+
+      if (tab === 'editor') {
+        btnEditor.className = "px-4 py-1.5 rounded-md font-medium text-white bg-blue-600 shadow";
+        btnPreview.className = "px-4 py-1.5 rounded-md font-medium text-slate-400 hover:text-white";
+        viewEditor.classList.remove('hidden');
+        viewPreview.classList.add('hidden');
+      } else {
+        btnPreview.className = "px-4 py-1.5 rounded-md font-medium text-white bg-blue-600 shadow";
+        btnEditor.className = "px-4 py-1.5 rounded-md font-medium text-slate-400 hover:text-white";
+        viewPreview.classList.remove('hidden');
+        viewEditor.classList.add('hidden');
+        updateAll();
+      }
+    }
+
+    function renderPartiesList() {
+      const container = document.getElementById('parties-list');
+      container.innerHTML = '';
+      rawParties.forEach((p, idx) => {
+        container.innerHTML += `
+          <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-700 flex justify-between items-center text-xs">
+            <span class="font-bold text-white">${p.nome}</span>
+            <span class="font-mono text-blue-400">${p.voto.toFixed(2)}%</span>
+          </div>
+        `;
+      });
+    }
+
+    function importFromSpreadsheet() {
+      const rawText = document.getElementById('pasteInput').value.trim();
+      if (!rawText) return;
+
+      const lines = rawText.split('\n');
+      let newParties = [];
+
+      lines.forEach(line => {
+        const cols = line.split('\t').map(c => c.trim()).filter(c => c !== "");
+        if (cols.length >= 2) {
+          let rawName = cols[0];
+          let rawVote = cols[cols.length - 1].replace(',', '.');
+          let voteVal = parseFloat(rawVote);
+
+          if (!isNaN(voteVal) && rawName) {
+            newParties.push({
+              nome: rawName.toUpperCase(),
+              voto: voteVal,
+              colore: "#3b82f6"
+            });
+          }
+        }
+      });
+
+      if (newParties.length > 0) {
+        rawParties = newParties;
+        renderPartiesList();
+        updateAll();
+        alert(`Importati ${newParties.length} partiti!`);
+      }
+    }
+
+    function renderSemiDonut(svgId, slices) {
+      const svg = document.getElementById(svgId);
+      svg.innerHTML = '';
+
+      const cx = 200;
+      const cy = 180;
+      const radiusOuter = 140;
+      const radiusInner = 80;
+
+      let totalPct = slices.reduce((sum, s) => sum + s.pct, 0);
+      let currentAngle = Math.PI; // Da 180° a 0°
+
+      slices.forEach(slice => {
+        let sliceAngle = (slice.pct / totalPct) * Math.PI;
+        let endAngle = currentAngle - sliceAngle;
+
+        let x1_out = cx + radiusOuter * Math.cos(currentAngle);
+        let y1_out = cy - radiusOuter * Math.sin(currentAngle);
+        let x2_out = cx + radiusOuter * Math.cos(endAngle);
+        let y2_out = cy - radiusOuter * Math.sin(endAngle);
+
+        let x1_in = cx + radiusInner * Math.cos(currentAngle);
+        let y1_in = cy - radiusInner * Math.sin(currentAngle);
+        let x2_in = cx + radiusInner * Math.cos(endAngle);
+        let y2_in = cy - radiusInner * Math.sin(endAngle);
+
+        let pathData = `
+          M ${x1_out} ${y1_out}
+          A ${radiusOuter} ${radiusOuter} 0 0 0 ${x2_out} ${y2_out}
+          L ${x2_in} ${y2_in}
+          A ${radiusInner} ${radiusInner} 0 0 1 ${x1_in} ${y1_in}
+          Z
+        `;
+
+        let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", pathData);
+        path.setAttribute("fill", slice.color);
+        svg.appendChild(path);
+
+        currentAngle = endAngle;
+      });
+
+      // Testo Seggi Totali al centro
+      const numText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      numText.setAttribute("x", cx);
+      numText.setAttribute("y", cy - 15);
+      numText.setAttribute("text-anchor", "middle");
+      numText.setAttribute("fill", "#0f172a");
+      numText.setAttribute("font-size", "24px");
+      numText.setAttribute("font-weight", "900");
+      numText.textContent = "400";
+
+      const labelText = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      labelText.setAttribute("x", cx);
+      labelText.setAttribute("y", cy + 5);
+      labelText.setAttribute("text-anchor", "middle");
+      labelText.setAttribute("fill", "#64748b");
+      labelText.setAttribute("font-size", "10px");
+      labelText.setAttribute("font-weight", "700");
+      labelText.textContent = "Totale seggi";
+
+      svg.appendChild(numText);
+      svg.appendChild(labelText);
+    }
+
+    function updateAll() {
+      const dateVal = document.getElementById('input-date').value || "09 Novembre 2026";
+      const postUrl = document.getElementById('input-post-url').value || "https://www.brunorachiele.it";
+
+      // Simulazione Scenario A: Centrodestra (42.3%), Campo Largo (44.9%), FnV (4.8%), Azione (3.1%), Altri (4.9%)
+      const slicesA = [
+        { name: "Centrodestra", pct: 42.3, color: "#5499c7" },
+        { name: "Campo Largo", pct: 44.9, color: "#d98880" },
+        { name: "Futuro Nazionale", pct: 4.8, color: "#1b2631" },
+        { name: "Azione", pct: 3.1, color: "#2471a3" },
+        { name: "Altri", pct: 4.9, color: "#795548" }
+      ];
+
+      // Simulazione Scenario B: Centrodestra + FnV (47.1%), Campo Largo (44.9%), Azione (3.1%), Altri (4.9%)
+      const slicesB = [
+        { name: "Centrodestra + FnV", pct: 47.1, color: "#5499c7" },
+        { name: "Campo Largo", pct: 44.9, color: "#d98880" },
+        { name: "Azione", pct: 3.1, color: "#2471a3" },
+        { name: "Altri", pct: 4.9, color: "#795548" }
+      ];
+
+      renderSemiDonut('svg-scenario-a', slicesA);
+      renderSemiDonut('svg-scenario-b', slicesB);
+
+      generateFinalHtmlCode(dateVal, postUrl);
+    }
+
+    function generateFinalHtmlCode(dateVal, postUrl) {
+      const now = new Date().toISOString();
+      const code = `<!-- METADATI SCHEMA.ORG (NEWSARTICLE) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "${postUrl}"
+  },
+  "url": "${postUrl}",
+  "headline": "Scenari Nuova Legge Elettorale Stabilicum - ${dateVal}",
+  "image": [
+    "https://static.brunorachiele.it/supermedie_2027.png"
+  ],
+  "datePublished": "${now}",
+  "dateModified": "${now}",
+  "author": {
+    "@type": "Person",
+    "name": "Bruno Rachiele",
+    "url": "https://bio.brunorachiele.it"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "brunorachiele.it",
+    "url": "https://www.brunorachiele.it",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://static.brunorachiele.it/logo.png"
+    }
+  },
+  "description": "Simulazione degli scenari elettorali alla Camera dei Deputati con la nuova legge elettorale Stabilicum aggiornata al ${dateVal}."
+}
+<\/script>`;
+
+      document.getElementById('output-code').value = code;
+    }
+
+    function downloadImage() {
+      const captureArea = document.getElementById('captureArea');
+      html2canvas(captureArea, { scale: 2.5, backgroundColor: '#ffffff' }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `scenari-legge-elettorale-${new Date().toISOString().slice(0,10)}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+    }
+
+    function copyGeneratedCode() {
+      const codeArea = document.getElementById('output-code');
+      codeArea.select();
+      document.execCommand('copy');
+      alert("Codice HTML per Blogger copiato negli appunti!");
+    }
+
+    renderPartiesList();
+    updateAll();
+  </script>
+</body>
+</html>
