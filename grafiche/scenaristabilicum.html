@@ -161,7 +161,8 @@
           <h2 class="text-base font-bold text-blue-400 mb-2 flex items-center gap-2">
             <i class="fa-solid fa-file-csv"></i> 1. Incolla Voti da Sheets
           </h2>
-          <textarea id="pasteInput" rows="7" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-slate-200 focus:outline-none mb-3">FRATELLI D'ITALIA	28,33
+          <textarea id="pasteInput" rows="7" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-slate-200 focus:outline-none mb-3">09/11/2026
+FRATELLI D'ITALIA	28,33
 PARTITO DEMOCRATICO	20,23
 MOVIMENTO 5 STELLE	12,83
 FUTURO NAZIONALE	5,37
@@ -173,7 +174,7 @@ ITALIA VIVA	6,13
 +EUROPA	1,30
 NOI MODERATI	6,43</textarea>
           <button onclick="importFromSpreadsheet()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition">
-            <i class="fa-solid fa-calculator"></i> Aggiorna Voti Partiti
+            <i class="fa-solid fa-calculator"></i> Aggiorna Voti e Data
           </button>
         </div>
 
@@ -182,7 +183,7 @@ NOI MODERATI	6,43</textarea>
             <i class="fa-solid fa-comment-dots"></i> 2. Commento Editoriale
           </h2>
           <div>
-            <textarea id="editor-comment-input" rows="4" oninput="updateAll()" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white">L'elemento chiave di questa simulazione è il superamento della soglia del 42%: nello Scenario B l'ingresso di Futuro Nazionale permette alla coalizione di far scattare il premio di maggioranza portandola a 220 seggi.</textarea>
+            <textarea id="editor-comment-input" rows="4" oninput="updateAll()" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white">L'elemento chiave di questa simulazione è il superamento della soglia del 42%: negli Scenari B e C l'ingresso di Futuro Nazionale permette alla coalizione di far scattare il premio di maggioranza portandola a 220 seggi.</textarea>
           </div>
         </div>
 
@@ -202,10 +203,10 @@ NOI MODERATI	6,43</textarea>
       <div class="lg:col-span-7 bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4">
         <div class="flex justify-between items-center border-b border-slate-700 pb-3">
           <h2 class="text-base font-bold text-blue-400">
-            <i class="fa-solid fa-diagram-project"></i> 3. Componi gli Scenari
+            <i class="fa-solid fa-diagram-project"></i> 3. I 3 Scenari Preimpostati
           </h2>
-          <button onclick="addScenarioConfig()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg">
-            <i class="fa-solid fa-plus"></i> Nuovo Scenario
+          <button onclick="resetDefaultScenarios()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold px-3 py-1.5 rounded-lg">
+            <i class="fa-solid fa-rotate-left"></i> Ripristina 3 Scenari
           </button>
         </div>
 
@@ -220,7 +221,7 @@ NOI MODERATI	6,43</textarea>
       <div class="lg:col-span-7 space-y-4">
         <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
           <h2 class="font-bold text-white text-sm">Anteprima HTML Responsive (Chart.js)</h2>
-          <span class="text-xs bg-emerald-600 text-white px-2.5 py-1 rounded-full font-bold">Senza Duplicati</span>
+          <span class="text-xs bg-emerald-600 text-white px-2.5 py-1 rounded-full font-bold">3 Scenari Fissi</span>
         </div>
 
         <div id="captureArea" class="corriere-card">
@@ -276,10 +277,15 @@ NOI MODERATI	6,43</textarea>
   </main>
 
   <script>
-    // Funzione helper per pulire e normalizzare le stringhe dei nomi partiti
     function cleanName(str) {
       return str.toUpperCase().replace(/[’`.]/g, "'").replace(/^\+/, "").trim();
     }
+
+    const MESI_MAP = {
+      "01": "Gennaio", "02": "Febbraio", "03": "Marzo", "04": "Aprile",
+      "05": "Maggio", "06": "Giugno", "07": "Luglio", "08": "Agosto",
+      "09": "Settembre", "10": "Ottobre", "11": "Novembre", "12": "Dicembre"
+    };
 
     let PARTITI_DATI = [
       { nome: "FRATELLI D'ITALIA", voto: 28.33 },
@@ -295,27 +301,42 @@ NOI MODERATI	6,43</textarea>
       { nome: "NOI MODERATI", voto: 6.43 }
     ];
 
-    let SCENARI_CONFIG = [
+    // 3 SCENARI FISSI PRE-CONFIGURATI
+    const DEFAULT_SCENARI = [
       {
-        titolo: "SIMULAZIONE - SCENARIO A (Centrodestra Tradizionale vs Campo Largo)",
+        titolo: "SCENARIO 1: CENTRODESTRA VS CAMPO LARGO, FUTURO NAZIONALE E TERZO POLO SEPARATI",
         coalizioni: [
-          { nome: "CENTRODESTRA tradizionale", colore: "#0b3c5d", partiti: ["FRATELLI D'ITALIA", "FORZA ITALIA", "LEGA", "NOI MODERATI"] },
-          { nome: "CAMPO LARGO", colore: "#e63946", partiti: ["PARTITO DEMOCRATICO", "MOVIMENTO 5 STELLE", "ALLEANZA VERDI-SINISTRA", "+EUROPA", "ITALIA VIVA"] },
-          { nome: "Futuro Nazionale", colore: "#202125", partiti: ["FUTURO NAZIONALE"] },
-          { nome: "Azione", colore: "#9d4edd", partiti: ["AZIONE"] }
+          { nome: "CAMPO LARGO", colore: "#e63946", partiti: ["PARTITO DEMOCRATICO", "MOVIMENTO 5 STELLE", "ALLEANZA VERDI-SINISTRA", "+EUROPA"] },
+          { nome: "CENTRODESTRA", colore: "#0b3c5d", partiti: ["FRATELLI D'ITALIA", "FORZA ITALIA", "LEGA", "NOI MODERATI"] },
+          { nome: "FUTURO NAZIONALE", colore: "#202125", partiti: ["FUTURO NAZIONALE"] },
+          { nome: "TERZO POLO", colore: "#9d4edd", partiti: ["AZIONE", "ITALIA VIVA"] }
         ]
       },
       {
-        titolo: "SIMULAZIONE - SCENARIO B (Centrodestra con Futuro Nazionale)",
+        titolo: "SCENARIO 2: CENTRODESTRA CON FUTURO NAZIONALE VS CAMPO LARGO E TERZO POLO SEPARATI",
         coalizioni: [
-          { nome: "CENTRODESTRA con Futuro Nazionale", colore: "#0b3c5d", partiti: ["FRATELLI D'ITALIA", "FORZA ITALIA", "LEGA", "NOI MODERATI", "FUTURO NAZIONALE"] },
-          { nome: "CAMPO LARGO", colore: "#e63946", partiti: ["PARTITO DEMOCRATICO", "MOVIMENTO 5 STELLE", "ALLEANZA VERDI-SINISTRA", "+EUROPA", "ITALIA VIVA"] },
-          { nome: "Azione", colore: "#9d4edd", partiti: ["AZIONE"] }
+          { nome: "CENTRODESTRA CON FUTURO NAZIONALE", colore: "#0b3c5d", partiti: ["FRATELLI D'ITALIA", "FORZA ITALIA", "LEGA", "NOI MODERATI", "FUTURO NAZIONALE"] },
+          { nome: "CAMPO LARGO", colore: "#e63946", partiti: ["PARTITO DEMOCRATICO", "MOVIMENTO 5 STELLE", "ALLEANZA VERDI-SINISTRA", "+EUROPA"] },
+          { nome: "TERZO POLO", colore: "#9d4edd", partiti: ["AZIONE", "ITALIA VIVA"] }
+        ]
+      },
+      {
+        titolo: "SCENARIO 3: CENTRODESTRA CON FUTURO NAZIONALE VS CAMPO LARGO UNITO AL TERZO POLO",
+        coalizioni: [
+          { nome: "CENTRODESTRA CON FUTURO NAZIONALE", colore: "#0b3c5d", partiti: ["FRATELLI D'ITALIA", "FUTURO NAZIONALE", "FORZA ITALIA", "LEGA", "NOI MODERATI"] },
+          { nome: "CAMPO LARGO CON TERZO POLO", colore: "#e63946", partiti: ["PARTITO DEMOCRATICO", "MOVIMENTO 5 STELLE", "ALLEANZA VERDI-SINISTRA", "AZIONE", "ITALIA VIVA", "+EUROPA"] }
         ]
       }
     ];
 
+    let SCENARI_CONFIG = JSON.parse(JSON.stringify(DEFAULT_SCENARI));
     let chartInstances = {};
+
+    function resetDefaultScenarios() {
+      SCENARI_CONFIG = JSON.parse(JSON.stringify(DEFAULT_SCENARI));
+      renderScenariosEditor();
+      updateAll();
+    }
 
     function switchTab(tab) {
       const btnEditor = document.getElementById('tab-btn-editor');
@@ -359,7 +380,6 @@ NOI MODERATI	6,43</textarea>
               <div class="flex gap-2">
                 <input type="text" value="${c.nome}" oninput="SCENARI_CONFIG[${sIdx}].coalizioni[${cIdx}].nome=this.value" class="flex-1 bg-slate-900 text-white text-xs px-2 py-1 rounded border border-slate-700 font-bold">
                 <input type="color" value="${c.colore}" onchange="SCENARI_CONFIG[${sIdx}].coalizioni[${cIdx}].colore=this.value" class="w-8 h-7 bg-slate-900 border border-slate-700 rounded cursor-pointer">
-                <button onclick="removeCoalition(${sIdx}, ${cIdx})" class="text-red-400 text-xs px-2"><i class="fa-solid fa-trash"></i></button>
               </div>
               <div class="flex flex-wrap gap-1.5 pt-1">${partitiCheckboxes}</div>
             </div>
@@ -370,12 +390,8 @@ NOI MODERATI	6,43</textarea>
           <div class="bg-slate-900 p-4 rounded-lg border border-slate-700 space-y-3">
             <div class="flex justify-between items-center">
               <input type="text" value="${sc.titolo}" oninput="SCENARI_CONFIG[${sIdx}].titolo=this.value" class="w-full bg-slate-800 text-blue-400 font-bold text-xs px-3 py-1.5 rounded border border-slate-600">
-              <button onclick="removeScenario(${sIdx})" class="text-red-400 text-xs ml-2"><i class="fa-solid fa-trash-can"></i></button>
             </div>
             <div class="space-y-2">${coalHtml}</div>
-            <button onclick="addCoalition(${sIdx})" class="bg-slate-800 hover:bg-slate-700 text-blue-400 text-xs font-bold px-3 py-1 rounded border border-slate-700">
-              + Aggiungi Coalizione / Blocco
-            </button>
           </div>
         `;
       });
@@ -393,35 +409,24 @@ NOI MODERATI	6,43</textarea>
       }
     }
 
-    function addScenarioConfig() {
-      SCENARI_CONFIG.push({
-        titolo: `SIMULAZIONE - SCENARIO ${SCENARI_CONFIG.length + 1}`,
-        coalizioni: [
-          { nome: "COALIZIONE 1", colore: "#0b3c5d", partiti: [] },
-          { nome: "COALIZIONE 2", colore: "#e63946", partiti: [] }
-        ]
-      });
-      renderScenariosEditor();
-    }
-
-    function removeScenario(sIdx) {
-      SCENARI_CONFIG.splice(sIdx, 1);
-      renderScenariosEditor();
-    }
-
-    function addCoalition(sIdx) {
-      SCENARI_CONFIG[sIdx].coalizioni.push({ nome: "NUOVA COALIZIONE", colore: "#3b82f6", partiti: [] });
-      renderScenariosEditor();
-    }
-
-    function removeCoalition(sIdx, cIdx) {
-      SCENARI_CONFIG[sIdx].coalizioni.splice(cIdx, 1);
-      renderScenariosEditor();
-    }
-
     function importFromSpreadsheet() {
       const rawText = document.getElementById('pasteInput').value.trim();
       if (!rawText) return;
+
+      // PARSING DATA AUTOMATICO
+      const dateMatch = rawText.match(/(\d{2})[\/\-](\d{2})[\/\-](\d{4})/);
+      if (dateMatch) {
+        const dd = dateMatch[1];
+        const mm = dateMatch[2];
+        const yyyy = dateMatch[3];
+        const nomeMese = MESI_MAP[mm] || "Novembre";
+        
+        const dataFormatted = `${dd} ${nomeMese} ${yyyy}`;
+        const urlSlug = `https://www.brunorachiele.it/${yyyy}/${mm}/scenari-legge-elettorale-stabilicum-${dd}-${nomeMese.toLowerCase()}-${yyyy}.html`;
+
+        document.getElementById('input-date').value = dataFormatted;
+        document.getElementById('input-post-url').value = urlSlug;
+      }
 
       const lines = rawText.split('\n');
       let newParties = [];
@@ -432,7 +437,9 @@ NOI MODERATI	6,43</textarea>
           let rawName = cols[0].toUpperCase();
           let rawVote = cols[cols.length - 1].replace(',', '.');
           let voteVal = parseFloat(rawVote);
-          if (!isNaN(voteVal) && rawName) newParties.push({ nome: rawName, voto: voteVal });
+          if (!isNaN(voteVal) && rawName && !rawName.match(/\d{2}[\/\-]\d{2}/)) {
+            newParties.push({ nome: rawName, voto: voteVal });
+          }
         }
       });
 
@@ -440,7 +447,7 @@ NOI MODERATI	6,43</textarea>
         PARTITI_DATI = newParties;
         renderScenariosEditor();
         updateAll();
-        alert(`Aggiornate le percentuali di ${newParties.length} partiti!`);
+        alert(`Aggiornate le percentuali di ${newParties.length} partiti ed estratta la data!`);
       }
     }
 
