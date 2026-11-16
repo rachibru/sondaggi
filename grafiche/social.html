@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>brunorachiele.it — Generatore Messaggi Social & WhatsApp</title>
+  <style>
+    :root {
+      --primary: #0f2942;
+      --accent: #1d6fa5;
+      --whatsapp: #25D366;
+      --bg: #f4f6f9;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+    }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { margin: 0; padding: 20px; background: var(--bg); color: var(--text); }
+    .container { max-width: 820px; margin: 0 auto; }
+    header { background: var(--primary); color: #fff; padding: 20px 24px; border-radius: 12px; margin-bottom: 20px; }
+    header h1 { margin: 0 0 6px; font-size: 1.35rem; }
+    header p { margin: 0; font-size: 0.9rem; opacity: 0.85; }
+    .card { background: var(--card); padding: 20px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
+    label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 0.95rem; }
+    textarea, select, input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; margin-bottom: 14px; }
+    textarea:focus, select:focus { outline: none; border-color: var(--accent); }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 600px) { .row { grid-template-columns: 1fr; } }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 18px; border: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: 0.2s; width: 100%; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #155682; }
+    .btn-secondary { background: #e2e8f0; color: var(--text); margin-bottom: 14px; }
+    .btn-secondary:hover { background: #cbd5e1; }
+    .btn-wa { background: var(--whatsapp); color: #062e16; }
+    .btn-wa:hover { filter: brightness(0.95); }
+    .feed-list { max-height: 220px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 14px; display: none; }
+    .feed-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px; border-bottom: 1px solid #f1f5f9; }
+    .feed-item:last-child { border-bottom: none; }
+    .feed-item input { width: auto; margin-top: 4px; }
+    .status { font-size: 0.85rem; color: var(--muted); margin-bottom: 10px; }
+    .output-box { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px; white-space: pre-wrap; font-size: 0.95rem; line-height: 1.5; min-height: 160px; margin-bottom: 12px; }
+    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>brunorachiele.it — Generatore Post Social & WhatsApp</h1>
+    <p>Incolla uno o più link di articoli (oppure pescali dal feed del blog) per generare subito un messaggio pronto da condividere.</p>
+  </header>
+
+  <div class="card">
+    <button class="btn btn-secondary" onclick="caricaDalBlog()">🔄 Pesca gli ultimi articoli pubblicati su brunorachiele.it</button>
+    <div id="feedStatus" class="status"></div>
+    <div id="feedList" class="feed-list"></div>
+
+    <label for="urlsInput">Incolla qui uno o più link di articoli (uno per riga):</label>
+    <textarea id="urlsInput" rows="4" placeholder="https://www.brunorachiele.it/2026/11/esempio-articolo-1.html&#10;https://www.brunorachiele.it/2026/11/esempio-articolo-2.html"></textarea>
+
+    <div class="row">
+      <div>
+        <label for="formato">Stile del messaggio:</label>
+        <select id="formato">
+          <option value="whatsapp">📱 WhatsApp / Canale (Emoji + Grassetti)</option>
+          <option value="rassegna">🗞️ Rassegna / Selezione Giornaliera (Multi-link)</option>
+          <option value="substack">✉️ Substack / Newsletter (Anti-duplicato SEO)</option>
+        </select>
+      </div>
+      <div>
+        <label for="tema">Tono ed Emoji:</label>
+        <select id="tema">
+          <option value="politica">🏛️ Politica & Sondaggi</option>
+          <option value="economia">📊 Economia & Mercati</option>
+          <option value="edicola">📰 Rassegna Stampa / Edicola</option>
+          <option value="breaking">🚨 Ultim'ora / Primo Piano</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="generaMessaggio()">✨ Genera Messaggio Pronto</button>
+  </div>
+
+  <div class="card">
+    <label>Anteprima messaggio (puoi anche modificarlo a mano prima di copiare):</label>
+    <div id="output" class="output-box" contenteditable="true">Il messaggio generato apparirà qui...</div>
+    <div class="actions">
+      <button class="btn btn-primary" onclick="copiaTesto()">📋 Copia Testo</button>
+      <button class="btn btn-wa" onclick="apriWhatsApp()">💬 Invia su WhatsApp</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const BLOG_RSS = "https://www.brunorachiele.it/feeds/posts/default?alt=json-in-script&max-results=10&callback=onFeedLoaded";
+  let articoliFeed = [];
+
+  function caricaDalBlog() {
+    document.getElementById("feedStatus").textContent = "Caricamento ultimi articoli da brunorachiele.it...";
+    const oldScript = document.getElementById("blogger-feed-script");
+    if (oldScript) oldScript.remove();
+    const s = document.createElement("script");
+    s.id = "blogger-feed-script";
+    s.src = BLOG_RSS;
+    document.body.appendChild(s);
+  }
+
+  function onFeedLoaded(data) {
+    const entries = (data.feed && data.feed.entry) || [];
+    articoliFeed = entries.map(entry => {
+      const title = entry.title.$t;
+      const linkObj = entry.link.find(l => l.rel === "alternate");
+      const url = linkObj ? linkObj.href : "";
+      const rawHtml = (entry.summary && entry.summary.$t) || (entry.content && entry.content.$t) || "";
+      const div = document.createElement("div");
+      div.innerHTML = rawHtml;
+      const cleanText = (div.textContent || div.innerText || "").replace(/\s+/g, " ").trim();
+      const snippet = cleanText.length > 150 ? cleanText.substring(0, 147) + "..." : cleanText;
+      return { title, url, snippet };
+    });
+
+    const listEl = document.getElementById("feedList");
+    listEl.innerHTML = "";
+    articoliFeed.forEach((art, idx) => {
+      const row = document.createElement("div");
+      row.className = "feed-item";
+      row.innerHTML = `<input type="checkbox" id="chk_${idx}" onchange="aggiornaTextareaDaFeed()">
+                       <label for="chk_${idx}" style="font-weight:400;margin:0;cursor:pointer;"><strong>${art.title}</strong></label>`;
+      listEl.appendChild(row);
+    });
+    listEl.style.display = "block";
+    document.getElementById("feedStatus").textContent = `Trovati ${articoliFeed.length} articoli recenti. Spunta quelli che vuoi inserire:`;
+  }
+
+  function aggiornaTextareaDaFeed() {
+    const selezionati = [];
+    articoliFeed.forEach((art, idx) => {
+      const chk = document.getElementById(`chk_${idx}`);
+      if (chk && chk.checked) selezionati.push(art.url);
+    });
+    document.getElementById("urlsInput").value = selezionati.join("\n");
+  }
+
+  async function estraiMetadati(url) {
+    const trovato = articoliFeed.find(a => a.url === url);
+    if (trovato) return trovato;
+
+    try {
+      const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+      const res = await fetch(proxy);
+      const data = await res.json();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(data.contents, "text/html");
+      const ogTitle = doc.querySelector('meta[property="og:title"]')?.content || doc.title || url;
+      const ogDesc = doc.querySelector('meta[property="og:description"]')?.content ||
+                     doc.querySelector('meta[name="description"]')?.content || "";
+      const title = ogTitle.replace(/\s*[-|]\s*brunorachiele\.it.*/i, "").trim();
+      const snippet = ogDesc.length > 160 ? ogDesc.substring(0, 157) + "..." : ogDesc.trim();
+      return { title, url, snippet };
+    } catch (e) {
+      const slug = url.split("/").pop().replace(".html", "").replace(/-/g, " ");
+      const title = slug ? slug.charAt(0).toUpperCase() + slug.slice(1) : "Approfondimento su brunorachiele.it";
+      return { title, url, snippet: "" };
+    }
+  }
+
+  async function generaMessaggio() {
+    const raw = document.getElementById("urlsInput").value.trim();
+    if (!raw) {
+      alert("Incolla almeno un link oppure seleziona un articolo dal blog.");
+      return;
+    }
+    const urls = raw.split(/\n+/).map(u => u.trim()).filter(u => u.startsWith("http"));
+    const formato = document.getElementById("formato").value;
+    const tema = document.getElementById("tema").value;
+
+    const outputEl = document.getElementById("output");
+    outputEl.textContent = "⏳ Lettura titoli e preparazione del messaggio in corso...";
+
+    const articoli = [];
+    for (const u of urls) {
+      articoli.push(await estraiMetadati(u));
+    }
+
+    const intestazioni = {
+      politica: "🏛️ *POLITICA & SONDAGGI — Il punto di oggi*",
+      economia: "📊 *ECONOMIA & MERCATI — I dati da conoscere*",
+      edicola: "📰 *RASSEGNA STAMPA — Le notizie principali*",
+      breaking: "🚨 *PRIMO PIANO — Approfondimento su brunorachiele.it*"
+    };
+
+    const bulletEmoji = ["🔹", "📌", "📊", "🗞️", "⚡"];
+    let testo = "";
+
+    if (formato === "whatsapp") {
+      if (articoli.length === 1) {
+        const a = articoli[0];
+        testo += `${intestazioni[tema]}\n\n`;
+        testo += `👉 *${a.title}*\n\n`;
+        if (a.snippet) testo += `${a.snippet}\n\n`;
+        testo += `📲 *Leggi l'analisi completa e i dati qui:*\n${a.url}`;
+      } else {
+        testo += `${intestazioni[tema]}\n\n`;
+        articoli.forEach((a, i) => {
+          const ico = bulletEmoji[i % bulletEmoji.length];
+          testo += `${ico} *${a.title}*\n`;
+          if (a.snippet) testo += `_${a.snippet}_\n`;
+          testo += `🔗 ${a.url}\n\n`;
+        });
+        testo += `📲 Seguici su *brunorachiele.it* per tutti gli aggiornamenti in tempo reale.`;
+      }
+    } else if (formato === "rassegna") {
+      const oggi = new Date().toLocaleDateString("it-IT", { weekday: "long", day: "numeric", month: "long" });
+      testo += `☕ *Buongiorno da brunorachiele.it* (${oggi})\nEcco i temi selezionati per te:\n\n`;
+      articoli.forEach((a, i) => {
+        testo += `*${i + 1}. ${a.title}*\n`;
+        if (a.snippet) testo += `${a.snippet}\n`;
+        testo += `👉 Leggi tutto: ${a.url}\n\n`;
+      });
+    } else if (formato === "substack") {
+      testo += `Sintesi degli approfondimenti pubblicati oggi su brunorachiele.it:\n\n`;
+      articoli.forEach(a => {
+        testo += `• ${a.title}\n`;
+        if (a.snippet) testo += `  ${a.snippet}\n`;
+        testo += `  Leggi l'articolo completo e i grafici su brunorachiele.it: ${a.url}\n\n`;
+      });
+    }
+
+    outputEl.textContent = testo.trim();
+  }
+
+  function copiaTesto() {
+    const testo = document.getElementById("output").innerText;
+    navigator.clipboard.writeText(testo).then(() => {
+      alert("✅ Messaggio copiato! Ora puoi incollarlo su WhatsApp, Telegram o Substack.");
+    });
+  }
+
+  function apriWhatsApp() {
+    const testo = document.getElementById("output").innerText;
+    const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(testo)}`;
+    window.open(waUrl, "_blank");
+  }
+</script>
+</body>
+</html>
