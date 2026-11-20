@@ -14,12 +14,15 @@
     body { font-family: 'Inter', sans-serif; }
 
     /* LAYOUT EDITORIALE RESPONSIVE */
+    .corriere-card, .corriere-card * {
+      box-sizing: border-box;
+    }
     .corriere-card {
       background: #ffffff;
       color: #111827;
       border: 1px solid #d1d5db;
       border-radius: 8px;
-      padding: 22px;
+      padding: 20px;
       max-width: 800px;
       margin: 0 auto;
       box-shadow: 0 4px 12px rgba(0,0,0,0.06);
@@ -50,102 +53,124 @@
       margin-top: 26px;
     }
     .scenario-heading {
-      font-size: 15px;
+      font-size: 14.5px;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.3px;
       color: #111827;
       margin: 0 0 14px 0;
-      line-height: 1.3;
+      line-height: 1.35;
     }
 
-    /* TABELLA COALIZIONI SEO & VISUAL DATA */
+    /* TABELLA COALIZIONI MOBILE-PROOF */
     .coalition-table-wrap {
       width: 100%;
-      overflow-x: auto;
       margin-bottom: 16px;
-      border: 1px solid #e5e7eb;
+      border: 1px solid #cbd5e1;
       border-radius: 6px;
+      overflow: hidden;
+      background: #ffffff;
     }
     .coalition-table {
       width: 100%;
+      table-layout: fixed;
       border-collapse: collapse;
       text-align: left;
       font-size: 13px;
     }
     .coalition-table thead {
-      background: #f8fafc;
-      border-bottom: 2px solid #cbd5e1;
+      background: #0f172a;
+      color: #ffffff;
     }
     .coalition-table th {
-      padding: 10px 12px;
+      padding: 10px 10px;
       font-size: 11px;
       font-weight: 800;
       text-transform: uppercase;
-      color: #475569;
-      letter-spacing: 0.4px;
+      letter-spacing: 0.3px;
+      border-right: 1px solid #334155;
     }
+    .coalition-table th:last-child {
+      border-right: none;
+    }
+    .coalition-table th.col-coal { width: 54%; }
+    .coalition-table th.col-voti { width: 18%; text-align: center; }
+    .coalition-table th.col-seggi { width: 28%; text-align: right; }
+
     .coalition-table td {
-      padding: 11px 12px;
-      border-bottom: 1px solid #e5e7eb;
+      padding: 11px 10px;
+      border-bottom: 1px solid #e2e8f0;
+      border-right: 1px solid #e2e8f0;
       vertical-align: middle;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    .coalition-table td:last-child {
+      border-right: none;
     }
     .coalition-table tbody tr:last-child td {
       border-bottom: none;
     }
-    .coalition-table tbody tr.row-majority {
-      background: #f0fdf4;
+    .coalition-table tbody tr:nth-child(even) {
+      background: #f8fafc;
     }
+    .coalition-table tbody tr.row-majority {
+      background: #ecfdf5;
+    }
+
     .coal-title-line {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       font-weight: 800;
-      font-size: 13px;
+      font-size: 12.5px;
+      line-height: 1.25;
     }
     .coal-dot {
       display: inline-block;
-      width: 10px;
-      height: 10px;
+      width: 9px;
+      height: 9px;
       border-radius: 50%;
       flex-shrink: 0;
     }
     .coal-parties-list {
-      font-size: 11.5px;
-      color: #4b5563;
-      margin-top: 3px;
+      font-size: 11px;
+      color: #475569;
+      margin-top: 4px;
       line-height: 1.35;
     }
     .verified-majority-badge {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
       background: #16a34a;
       color: #ffffff;
-      font-size: 10px;
+      font-size: 9.5px;
       font-weight: 800;
-      padding: 2px 7px;
+      padding: 2px 6px;
       border-radius: 999px;
-      letter-spacing: 0.3px;
+      letter-spacing: 0.2px;
       text-transform: uppercase;
       white-space: nowrap;
-      box-shadow: 0 1px 2px rgba(22, 163, 74, 0.25);
     }
     .verified-majority-badge svg {
-      width: 11px;
-      height: 11px;
+      width: 10px;
+      height: 10px;
       fill: currentColor;
     }
     .solo-tag {
       display: inline-block;
       background: #e2e8f0;
       color: #334155;
-      font-size: 9.5px;
+      font-size: 9px;
       font-weight: 700;
-      padding: 1px 6px;
-      border-radius: 4px;
+      padding: 1px 5px;
+      border-radius: 3px;
       text-transform: uppercase;
+    }
+    .td-voti {
+      text-align: center;
     }
     .vote-pill {
       display: inline-block;
@@ -153,29 +178,38 @@
       color: #ffffff;
       font-weight: 800;
       font-size: 12px;
-      padding: 2px 7px;
+      padding: 3px 6px;
       border-radius: 4px;
       white-space: nowrap;
+    }
+    .td-seggi {
+      text-align: right;
     }
     .seats-cell {
       font-weight: 900;
       font-size: 16px;
       color: #0f172a;
+      line-height: 1.1;
       white-space: nowrap;
+    }
+    .seats-unit {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #475569;
     }
     .seats-pct-sub {
       display: block;
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 600;
       color: #64748b;
+      margin-top: 1px;
     }
 
     /* MICRO BARRA PROGRESSO CON SOGLIA 201 SEGGI */
     .seat-bar-bg {
       position: relative;
       width: 100%;
-      min-width: 75px;
-      height: 8px;
+      height: 7px;
       background: #e2e8f0;
       border-radius: 4px;
       margin-top: 5px;
@@ -188,8 +222,8 @@
     .seat-bar-threshold {
       position: absolute;
       left: 50.25%;
-      top: -3px;
-      bottom: -3px;
+      top: -2px;
+      bottom: -2px;
       width: 2px;
       background: #dc2626;
     }
@@ -218,7 +252,7 @@
     .editor-comment-box {
       background: #f8fafc;
       border-left: 4px solid #0284c7;
-      padding: 14px 18px;
+      padding: 14px 16px;
       margin: 22px 0;
       font-size: 13.5px;
       color: #334155;
@@ -244,10 +278,25 @@
       text-decoration: underline;
     }
 
+    /* OTTIMIZZAZIONE SCHERMI SMARTPHONE */
     @media (max-width: 600px) {
-      .corriere-card { padding: 15px; }
-      .coalition-table th, .coalition-table td { padding: 8px 8px; font-size: 12px; }
-      .seats-cell { font-size: 14px; }
+      .corriere-card { padding: 12px; border-radius: 6px; }
+      .corriere-header-title { font-size: 22px; }
+      .corriere-header-sub { font-size: 11px; }
+      .scenario-heading { font-size: 13px; }
+      .coalition-table th { padding: 8px 6px; font-size: 9.5px; letter-spacing: 0; }
+      .coalition-table th.col-coal { width: 51%; }
+      .coalition-table th.col-voti { width: 21%; }
+      .coalition-table th.col-seggi { width: 28%; }
+      .coalition-table td { padding: 9px 6px; }
+      .coal-title-line { font-size: 11.5px; gap: 4px; }
+      .coal-parties-list { font-size: 10px; line-height: 1.3; }
+      .verified-majority-badge { font-size: 8.5px; padding: 1.5px 5px; }
+      .vote-pill { font-size: 11px; padding: 2px 5px; }
+      .seats-cell { font-size: 14.5px; }
+      .seats-unit { display: none; }
+      .seats-pct-sub { font-size: 9.5px; }
+      .chart-wrapper { height: 205px; }
     }
   </style>
 </head>
@@ -367,15 +416,15 @@ I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia d
 
       <div class="lg:col-span-7 space-y-4">
         <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
-          <h2 class="font-bold text-white text-sm">Anteprima HTML Responsive (Blogger Ready)</h2>
-          <span class="text-xs bg-emerald-600 text-white px-2.5 py-1 rounded-full font-bold">Ordinati per Voti • Dinamico</span>
+          <h2 class="font-bold text-white text-sm">Anteprima HTML Responsive (Mobile-Proof)</h2>
+          <span class="text-xs bg-emerald-600 text-white px-2.5 py-1 rounded-full font-bold">Griglia Fissa • Mobile OK</span>
         </div>
 
         <div id="captureArea" class="corriere-card">
 
-          <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #111827; padding-bottom: 6px;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #111827; padding-bottom: 6px; gap: 8px;">
             <div class="corriere-header-title">Stabilicum</div>
-            <div class="corriere-header-sub">Simulazione Camera dei Deputati • <span id="preview-date-label">09 Novembre 2026</span></div>
+            <div class="corriere-header-sub" style="text-align: right;">Camera dei Deputati • <span id="preview-date-label">09 Novembre 2026</span></div>
           </div>
 
           <div class="cover-img-box">
@@ -529,7 +578,6 @@ I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia d
       const cleanP = cleanName(partyName);
       const colorPick = PARTY_DEFAULT_COLORS[cleanP] || EXTRA_PALETTE[SCENARI_CONFIG[sIdx].coalizioni.length % EXTRA_PALETTE.length];
 
-      // Rimuove eventualmente il partito dalle altre coalizioni dello stesso scenario per evitare doppioni
       SCENARI_CONFIG[sIdx].coalizioni.forEach(c => {
         c.partiti = c.partiti.filter(p => cleanName(p) !== cleanP);
       });
@@ -731,7 +779,6 @@ I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia d
         };
       });
 
-      // ORDINAMENTO DECRESCENTE PER VOTI (chi ha più voti compare per primo)
       evaluatedCoalitions.sort((a, b) => b.votoSum - a.votoSum);
 
       let winner = evaluatedCoalitions.length > 0 ? evaluatedCoalitions[0] : { votoSum: 0 };
@@ -797,12 +844,12 @@ I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia d
                 </div>
                 ${subtitleHtml}
               </td>
-              <td>
+              <td class="td-voti">
                 <span class="vote-pill">${c.votoSum.toFixed(1).replace('.', ',')}%</span>
               </td>
-              <td>
-                <div class="seats-cell">${c.seggi} <span style="font-size:11px;font-weight:700;color:#475569;">seggi</span></div>
-                <span class="seats-pct-sub">${c.pctSeggi.toFixed(1).replace('.', ',')}% dell'Aula</span>
+              <td class="td-seggi">
+                <div class="seats-cell">${c.seggi} <span class="seats-unit">seggi</span></div>
+                <span class="seats-pct-sub">${c.pctSeggi.toFixed(1).replace('.', ',')}% Aula</span>
                 <div class="seat-bar-bg">
                   <div class="seat-bar-fill" style="width:${barWidth}%; background:${c.colore};"></div>
                   <div class="seat-bar-threshold"></div>
@@ -822,9 +869,9 @@ I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia d
               <table class="coalition-table">
                 <thead>
                   <tr>
-                    <th>Coalizione / Lista</th>
-                    <th>Voti</th>
-                    <th>Seggi Camera (Soglia 201)</th>
+                    <th class="col-coal">Coalizione / Lista</th>
+                    <th class="col-voti">Voti</th>
+                    <th class="col-seggi">Seggi (201)</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -944,14 +991,15 @@ I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia d
       const code = `<!-- INCLUSIONE LIBRERIA CHART.JS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"><\/script>
 
-<!-- STILI CSS DEDICATI PER BLOGGER -->
+<!-- STILI CSS DEDICATI PER BLOGGER (MOBILE-PROOF) -->
 <style>
+  .corriere-card, .corriere-card * { box-sizing: border-box; }
   .corriere-card {
     background: #ffffff;
     color: #111827;
     border: 1px solid #d1d5db;
     border-radius: 8px;
-    padding: 22px;
+    padding: 20px;
     max-width: 800px;
     margin: 0 auto;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -964,39 +1012,62 @@ I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia d
   .intro-editorial-text p { margin: 0 0 10px 0; }
   .intro-editorial-text p:last-child { margin-bottom: 0; }
   .scenario-section { border-top: 2px solid #111827; padding-top: 18px; margin-top: 26px; }
-  .scenario-heading { font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.4px; color: #111827; margin: 0 0 14px 0; line-height: 1.3; }
-  .coalition-table-wrap { width: 100%; overflow-x: auto; margin-bottom: 16px; border: 1px solid #e5e7eb; border-radius: 6px; }
-  .coalition-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
-  .coalition-table thead { background: #f8fafc; border-bottom: 2px solid #cbd5e1; }
-  .coalition-table th { padding: 10px 12px; font-size: 11px; font-weight: 800; text-transform: uppercase; color: #475569; letter-spacing: 0.4px; }
-  .coalition-table td { padding: 11px 12px; border-bottom: 1px solid #e5e7eb; vertical-align: middle; }
+  .scenario-heading { font-size: 14.5px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.3px; color: #111827; margin: 0 0 14px 0; line-height: 1.35; }
+  .coalition-table-wrap { width: 100%; margin-bottom: 16px; border: 1px solid #cbd5e1; border-radius: 6px; overflow: hidden; background: #ffffff; }
+  .coalition-table { width: 100%; table-layout: fixed; border-collapse: collapse; text-align: left; font-size: 13px; }
+  .coalition-table thead { background: #0f172a; color: #ffffff; }
+  .coalition-table th { padding: 10px 10px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.3px; border-right: 1px solid #334155; }
+  .coalition-table th:last-child { border-right: none; }
+  .coalition-table th.col-coal { width: 54%; }
+  .coalition-table th.col-voti { width: 18%; text-align: center; }
+  .coalition-table th.col-seggi { width: 28%; text-align: right; }
+  .coalition-table td { padding: 11px 10px; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0; vertical-align: middle; word-wrap: break-word; overflow-wrap: break-word; }
+  .coalition-table td:last-child { border-right: none; }
   .coalition-table tbody tr:last-child td { border-bottom: none; }
-  .coalition-table tbody tr.row-majority { background: #f0fdf4; }
-  .coal-title-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-weight: 800; font-size: 13px; }
-  .coal-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .coal-parties-list { font-size: 11.5px; color: #4b5563; margin-top: 3px; line-height: 1.35; }
-  .solo-tag { display: inline-block; background: #e2e8f0; color: #334155; font-size: 9.5px; font-weight: 700; padding: 1px 6px; border-radius: 4px; text-transform: uppercase; }
-  .verified-majority-badge { display: inline-flex; align-items: center; gap: 4px; background: #16a34a; color: #ffffff; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px; letter-spacing: 0.3px; text-transform: uppercase; white-space: nowrap; }
-  .verified-majority-badge svg { width: 11px; height: 11px; fill: currentColor; }
-  .vote-pill { display: inline-block; background: #111827; color: #ffffff; font-weight: 800; font-size: 12px; padding: 2px 7px; border-radius: 4px; white-space: nowrap; }
-  .seats-cell { font-weight: 900; font-size: 16px; color: #0f172a; white-space: nowrap; }
-  .seats-pct-sub { display: block; font-size: 11px; font-weight: 600; color: #64748b; }
-  .seat-bar-bg { position: relative; width: 100%; min-width: 75px; height: 8px; background: #e2e8f0; border-radius: 4px; margin-top: 5px; overflow: visible; }
+  .coalition-table tbody tr:nth-child(even) { background: #f8fafc; }
+  .coalition-table tbody tr.row-majority { background: #ecfdf5; }
+  .coal-title-line { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; font-weight: 800; font-size: 12.5px; line-height: 1.25; }
+  .coal-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+  .coal-parties-list { font-size: 11px; color: #475569; margin-top: 4px; line-height: 1.35; }
+  .solo-tag { display: inline-block; background: #e2e8f0; color: #334155; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 3px; text-transform: uppercase; }
+  .verified-majority-badge { display: inline-flex; align-items: center; gap: 3px; background: #16a34a; color: #ffffff; font-size: 9.5px; font-weight: 800; padding: 2px 6px; border-radius: 999px; letter-spacing: 0.2px; text-transform: uppercase; white-space: nowrap; }
+  .verified-majority-badge svg { width: 10px; height: 10px; fill: currentColor; }
+  .td-voti { text-align: center; }
+  .vote-pill { display: inline-block; background: #111827; color: #ffffff; font-weight: 800; font-size: 12px; padding: 3px 6px; border-radius: 4px; white-space: nowrap; }
+  .td-seggi { text-align: right; }
+  .seats-cell { font-weight: 900; font-size: 16px; color: #0f172a; line-height: 1.1; white-space: nowrap; }
+  .seats-unit { font-size: 10.5px; font-weight: 700; color: #475569; }
+  .seats-pct-sub { display: block; font-size: 10.5px; font-weight: 600; color: #64748b; margin-top: 1px; }
+  .seat-bar-bg { position: relative; width: 100%; height: 7px; background: #e2e8f0; border-radius: 4px; margin-top: 5px; overflow: visible; }
   .seat-bar-fill { height: 100%; border-radius: 4px; }
-  .seat-bar-threshold { position: absolute; left: 50.25%; top: -3px; bottom: -3px; width: 2px; background: #dc2626; }
+  .seat-bar-threshold { position: absolute; left: 50.25%; top: -2px; bottom: -2px; width: 2px; background: #dc2626; }
   .chart-wrapper { position: relative; width: 100%; max-width: 460px; height: 235px; margin: 12px auto 4px auto; }
   .center-seats-label { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); text-align: center; pointer-events: none; }
   .center-seats-label .num { font-size: 32px; font-weight: 900; color: #000000; line-height: 1; }
   .center-seats-label .sub { font-size: 11px; font-weight: 700; color: #6b7280; }
   .center-seats-label .maj { font-size: 10px; font-weight: 700; color: #16a34a; margin-top: 2px; }
-  .editor-comment-box { background: #f8fafc; border-left: 4px solid #0284c7; padding: 14px 18px; margin: 22px 0; font-size: 13.5px; color: #334155; line-height: 1.55; border-radius: 0 6px 6px 0; }
+  .editor-comment-box { background: #f8fafc; border-left: 4px solid #0284c7; padding: 14px 16px; margin: 22px 0; font-size: 13.5px; color: #334155; line-height: 1.55; border-radius: 0 6px 6px 0; }
   .editor-comment-box b { color: #0f172a; }
   .methodology-footer-box { margin-top: 26px; padding: 14px 16px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 12px; color: #475569; line-height: 1.5; }
   .methodology-footer-box a { color: #0284c7; font-weight: 700; text-decoration: underline; }
   @media (max-width: 600px) {
-    .corriere-card { padding: 15px; }
-    .coalition-table th, .coalition-table td { padding: 8px 8px; font-size: 12px; }
-    .seats-cell { font-size: 14px; }
+    .corriere-card { padding: 12px; border-radius: 6px; }
+    .corriere-header-title { font-size: 22px; }
+    .corriere-header-sub { font-size: 11px; }
+    .scenario-heading { font-size: 13px; }
+    .coalition-table th { padding: 8px 6px; font-size: 9.5px; letter-spacing: 0; }
+    .coalition-table th.col-coal { width: 51%; }
+    .coalition-table th.col-voti { width: 21%; }
+    .coalition-table th.col-seggi { width: 28%; }
+    .coalition-table td { padding: 9px 6px; }
+    .coal-title-line { font-size: 11.5px; gap: 4px; }
+    .coal-parties-list { font-size: 10px; line-height: 1.3; }
+    .verified-majority-badge { font-size: 8.5px; padding: 1.5px 5px; }
+    .vote-pill { font-size: 11px; padding: 2px 5px; }
+    .seats-cell { font-size: 14.5px; }
+    .seats-unit { display: none; }
+    .seats-pct-sub { font-size: 9.5px; }
+    .chart-wrapper { height: 205px; }
   }
 </style>
 
