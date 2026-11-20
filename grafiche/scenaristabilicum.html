@@ -137,6 +137,16 @@
       height: 11px;
       fill: currentColor;
     }
+    .solo-tag {
+      display: inline-block;
+      background: #e2e8f0;
+      color: #334155;
+      font-size: 9.5px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
     .vote-pill {
       display: inline-block;
       background: #111827;
@@ -182,7 +192,6 @@
       bottom: -3px;
       width: 2px;
       background: #dc2626;
-      title: "Maggioranza assoluta: 201 seggi";
     }
 
     /* GRAFICO AD ARCO */
@@ -258,7 +267,7 @@
       </div>
       <div class="flex bg-slate-900 p-1 rounded-lg text-sm">
         <button id="tab-btn-editor" onclick="switchTab('editor')" class="px-4 py-1.5 rounded-md font-medium text-white bg-blue-600 shadow">
-          <i class="fa-solid fa-sliders mr-1.5"></i> Configura Coalizioni
+          <i class="fa-solid fa-sliders mr-1.5"></i> Configura Scenari &amp; Coalizioni
         </button>
         <button id="tab-btn-preview" onclick="switchTab('preview')" class="px-4 py-1.5 rounded-md font-medium text-slate-400 hover:text-white">
           <i class="fa-solid fa-eye mr-1.5"></i> Anteprima &amp; Codice Blogger
@@ -298,17 +307,17 @@ NOI MODERATI	6,43</textarea>
           <h2 class="text-base font-bold text-blue-400 border-b border-slate-700 pb-2 flex items-center gap-2">
             <i class="fa-solid fa-align-left"></i> 2. Testo Introduttivo (Sotto Copertina)
           </h2>
-          <p class="text-[11px] text-slate-400">Spiega lo Stabilicum e cita la Supermedia di sabato scorso. Puoi modificare il testo direttamente qui sotto:</p>
+          <p class="text-[11px] text-slate-400">Spiega lo Stabilicum e cita la Supermedia di sabato scorso:</p>
           <div>
             <textarea id="intro-text-input" rows="5" oninput="updateAll()" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white leading-relaxed">La proposta di legge elettorale nota come Stabilicum ridisegna la ripartizione dei 400 seggi della Camera dei Deputati (di cui 319 assegnati con metodo proporzionale, 11 tra circoscrizione Estero e minoranze linguistiche e 70 destinati al premio di maggioranza). Il meccanismo prevede che la coalizione o la lista più votata ottenga un premio che la porta a 220 seggi (con un tetto massimo fissato a 230) qualora superi la soglia del 42% dei consensi validi; sotto tale asticella, l'intera ripartizione resta puramente proporzionale, rendendo molto più complesso raggiungere la maggioranza assoluta di 201 deputati.
 
-I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia dei sondaggi pubblicata sabato scorso su brunorachiele.it, mettendo a confronto tre possibili assetti di coalizione.</textarea>
+I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia dei sondaggi pubblicata sabato scorso su brunorachiele.it, mettendo a confronto i diversi assetti di coalizione e liste autonome.</textarea>
           </div>
         </div>
 
         <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-3">
           <h2 class="text-base font-bold text-blue-400 border-b border-slate-700 pb-2 flex items-center gap-2">
-            <i class="fa-solid fa-comment-dots"></i> 3. Commento Editoriale (Tra Scenario 1 e 2)
+            <i class="fa-solid fa-comment-dots"></i> 3. Commento Editoriale (Dopo Scenario 1)
           </h2>
           <div>
             <textarea id="editor-comment-input" rows="4" oninput="updateAll()" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white">L'elemento chiave di questa simulazione è il superamento della soglia del 42%: negli Scenari 2 e 3 l'ingresso di Futuro Nazionale nella coalizione di Centrodestra permette di far scattare il premio di maggioranza portandola a 220 seggi e garantendo così la maggioranza assoluta alla Camera.</textarea>
@@ -322,23 +331,33 @@ I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia d
             <input type="text" id="input-date" value="09 Novembre 2026" oninput="updateAll()" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-white">
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Link Articolo Supermedia (opzionale)</label>
+            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Link Articolo Supermedia</label>
             <input type="text" id="input-supermedia-url" value="https://www.brunorachiele.it/search/label/Sondaggi%20Politici" oninput="updateAll()" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-white">
           </div>
         </div>
       </div>
 
       <div class="lg:col-span-7 bg-slate-800 p-5 rounded-xl border border-slate-700 space-y-4">
-        <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+        <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-700 pb-3">
           <h2 class="text-base font-bold text-blue-400">
-            <i class="fa-solid fa-diagram-project"></i> 4. I 3 Scenari Preimpostati
+            <i class="fa-solid fa-diagram-project"></i> 4. Configura Scenari, Coalizioni e Liste Autonome
           </h2>
-          <button onclick="resetDefaultScenarios()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold px-3 py-1.5 rounded-lg">
-            <i class="fa-solid fa-rotate-left"></i> Ripristina 3 Scenari
-          </button>
+          <div class="flex items-center gap-2">
+            <button onclick="addScenario()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow transition">
+              <i class="fa-solid fa-plus mr-1"></i> Aggiungi Scenario
+            </button>
+            <button onclick="resetDefaultScenarios()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold px-3 py-1.5 rounded-lg transition">
+              <i class="fa-solid fa-rotate-left"></i> Ripristina Base
+            </button>
+          </div>
         </div>
 
-        <div id="scenarios-config-list" class="space-y-4"></div>
+        <p class="text-[11px] text-slate-400">
+          <i class="fa-solid fa-arrow-down-wide-short text-blue-400 mr-1"></i>
+          Nella tabella e nei grafici di anteprima, le coalizioni e i partiti che corrono da soli vengono <strong>ordinati automaticamente dal più votato al meno votato</strong>.
+        </p>
+
+        <div id="scenarios-config-list" class="space-y-5"></div>
       </div>
 
     </div>
@@ -349,7 +368,7 @@ I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia d
       <div class="lg:col-span-7 space-y-4">
         <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
           <h2 class="font-bold text-white text-sm">Anteprima HTML Responsive (Blogger Ready)</h2>
-          <span class="text-xs bg-emerald-600 text-white px-2.5 py-1 rounded-full font-bold">No Schema.org • SEO HTML</span>
+          <span class="text-xs bg-emerald-600 text-white px-2.5 py-1 rounded-full font-bold">Ordinati per Voti • Dinamico</span>
         </div>
 
         <div id="captureArea" class="corriere-card">
@@ -402,6 +421,22 @@ I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia d
       "09": "Settembre", "10": "Ottobre", "11": "Novembre", "12": "Dicembre"
     };
 
+    const PARTY_DEFAULT_COLORS = {
+      "FRATELLI D'ITALIA": "#0b3c5d",
+      "PARTITO DEMOCRATICO": "#e63946",
+      "MOVIMENTO 5 STELLE": "#f59e0b",
+      "FUTURO NAZIONALE": "#1e293b",
+      "FORZA ITALIA": "#0284c7",
+      "ALLEANZA VERDI-SINISTRA": "#15803d",
+      "LEGA": "#0f766e",
+      "AZIONE": "#2563eb",
+      "ITALIA VIVA": "#c026d3",
+      "EUROPA": "#eab308",
+      "NOI MODERATI": "#3b82f6"
+    };
+
+    const EXTRA_PALETTE = ["#7c3aed", "#db2777", "#ea580c", "#059669", "#4f46e5", "#64748b", "#b91c1c"];
+
     let PARTITI_DATI = [
       { nome: "FRATELLI D'ITALIA", voto: 28.33 },
       { nome: "PARTITO DEMOCRATICO", voto: 20.23 },
@@ -420,10 +455,10 @@ I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia d
       {
         titolo: "SCENARIO 1: CENTRODESTRA VS CAMPO LARGO, FUTURO NAZIONALE E TERZO POLO SEPARATI",
         coalizioni: [
-          { nome: "CAMPO LARGO", colore: "#e63946", partiti: ["PARTITO DEMOCRATICO", "MOVIMENTO 5 STELLE", "ALLEANZA VERDI-SINISTRA", "+EUROPA"] },
           { nome: "CENTRODESTRA", colore: "#0b3c5d", partiti: ["FRATELLI D'ITALIA", "FORZA ITALIA", "LEGA", "NOI MODERATI"] },
-          { nome: "FUTURO NAZIONALE", colore: "#202125", partiti: ["FUTURO NAZIONALE"] },
-          { nome: "TERZO POLO", colore: "#9d4edd", partiti: ["AZIONE", "ITALIA VIVA"] }
+          { nome: "CAMPO LARGO", colore: "#e63946", partiti: ["PARTITO DEMOCRATICO", "MOVIMENTO 5 STELLE", "ALLEANZA VERDI-SINISTRA", "+EUROPA"] },
+          { nome: "TERZO POLO", colore: "#9d4edd", partiti: ["AZIONE", "ITALIA VIVA"] },
+          { nome: "FUTURO NAZIONALE", colore: "#202125", partiti: ["FUTURO NAZIONALE"] }
         ]
       },
       {
@@ -452,6 +487,73 @@ I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia d
       updateAll();
     }
 
+    function addScenario() {
+      const nextNum = SCENARI_CONFIG.length + 1;
+      SCENARI_CONFIG.push({
+        titolo: `SCENARIO ${nextNum}: NUOVA CONFIGURAZIONE ELETTORALE`,
+        coalizioni: [
+          { nome: "CENTRODESTRA", colore: "#0b3c5d", partiti: ["FRATELLI D'ITALIA", "FORZA ITALIA", "LEGA", "NOI MODERATI"] },
+          { nome: "CENTROSINISTRA", colore: "#e63946", partiti: ["PARTITO DEMOCRATICO", "ALLEANZA VERDI-SINISTRA", "+EUROPA"] },
+          { nome: "MOVIMENTO 5 STELLE", colore: "#f59e0b", partiti: ["MOVIMENTO 5 STELLE"] }
+        ]
+      });
+      renderScenariosEditor();
+      updateAll();
+    }
+
+    function removeScenario(sIdx) {
+      if (SCENARI_CONFIG.length <= 1) {
+        alert("Deve esserci almeno uno scenario.");
+        return;
+      }
+      SCENARI_CONFIG.splice(sIdx, 1);
+      renderScenariosEditor();
+      updateAll();
+    }
+
+    function addCoalitionToScenario(sIdx) {
+      const colorPick = EXTRA_PALETTE[SCENARI_CONFIG[sIdx].coalizioni.length % EXTRA_PALETTE.length];
+      SCENARI_CONFIG[sIdx].coalizioni.push({
+        nome: "NUOVA COALIZIONE",
+        colore: colorPick,
+        partiti: []
+      });
+      renderScenariosEditor();
+      updateAll();
+    }
+
+    function addSoloPartyToScenario(sIdx) {
+      const selectEl = document.getElementById(`solo-party-select-${sIdx}`);
+      if (!selectEl || !selectEl.value) return;
+      const partyName = selectEl.value;
+      const cleanP = cleanName(partyName);
+      const colorPick = PARTY_DEFAULT_COLORS[cleanP] || EXTRA_PALETTE[SCENARI_CONFIG[sIdx].coalizioni.length % EXTRA_PALETTE.length];
+
+      // Rimuove eventualmente il partito dalle altre coalizioni dello stesso scenario per evitare doppioni
+      SCENARI_CONFIG[sIdx].coalizioni.forEach(c => {
+        c.partiti = c.partiti.filter(p => cleanName(p) !== cleanP);
+      });
+
+      SCENARI_CONFIG[sIdx].coalizioni.push({
+        nome: partyName,
+        colore: colorPick,
+        partiti: [partyName]
+      });
+
+      renderScenariosEditor();
+      updateAll();
+    }
+
+    function removeCoalition(sIdx, cIdx) {
+      if (SCENARI_CONFIG[sIdx].coalizioni.length <= 1) {
+        alert("Ogni scenario deve avere almeno una coalizione o lista.");
+        return;
+      }
+      SCENARI_CONFIG[sIdx].coalizioni.splice(cIdx, 1);
+      renderScenariosEditor();
+      updateAll();
+    }
+
     function switchTab(tab) {
       const btnEditor = document.getElementById('tab-btn-editor');
       const btnPreview = document.getElementById('tab-btn-preview');
@@ -476,24 +578,37 @@ I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia d
       const container = document.getElementById('scenarios-config-list');
       container.innerHTML = '';
 
+      const partyOptionsHtml = PARTITI_DATI.map(p =>
+        `<option value="${p.nome}">${p.nome} (${p.voto.toFixed(2).replace('.', ',')}%)</option>`
+      ).join('');
+
       SCENARI_CONFIG.forEach((sc, sIdx) => {
         let coalHtml = '';
         sc.coalizioni.forEach((c, cIdx) => {
           let partitiCheckboxes = PARTITI_DATI.map(p => {
             let isChecked = c.partiti.some(cp => cleanName(cp) === cleanName(p.nome)) ? 'checked' : '';
             return `
-              <label class="inline-flex items-center gap-1 bg-slate-900 px-2 py-1 rounded text-[11px] text-slate-300">
+              <label class="inline-flex items-center gap-1 bg-slate-900 px-2 py-1 rounded text-[11px] text-slate-300 cursor-pointer hover:bg-slate-800">
                 <input type="checkbox" ${isChecked} onchange="togglePartyInCoalition(${sIdx}, ${cIdx}, '${p.nome.replace(/'/g, "\\'")}')" class="rounded border-slate-700 text-blue-600 focus:ring-0">
                 ${p.nome}
               </label>
             `;
           }).join('');
 
+          const isSolo = c.partiti.length === 1;
+          const badgeType = isSolo
+            ? `<span class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 rounded font-bold">Lista singola</span>`
+            : `<span class="text-[10px] bg-blue-500/20 text-blue-300 border border-blue-500/30 px-1.5 py-0.5 rounded font-bold">Coalizione (${c.partiti.length})</span>`;
+
           coalHtml += `
             <div class="bg-slate-950 p-3 rounded border border-slate-800 space-y-2">
-              <div class="flex gap-2">
-                <input type="text" value="${c.nome}" oninput="SCENARI_CONFIG[${sIdx}].coalizioni[${cIdx}].nome=this.value" class="flex-1 bg-slate-900 text-white text-xs px-2 py-1 rounded border border-slate-700 font-bold">
-                <input type="color" value="${c.colore}" onchange="SCENARI_CONFIG[${sIdx}].coalizioni[${cIdx}].colore=this.value" class="w-8 h-7 bg-slate-900 border border-slate-700 rounded cursor-pointer">
+              <div class="flex items-center gap-2">
+                <input type="text" value="${c.nome}" oninput="SCENARI_CONFIG[${sIdx}].coalizioni[${cIdx}].nome=this.value" class="flex-1 bg-slate-900 text-white text-xs px-2.5 py-1.5 rounded border border-slate-700 font-bold">
+                ${badgeType}
+                <input type="color" value="${c.colore}" onchange="SCENARI_CONFIG[${sIdx}].coalizioni[${cIdx}].colore=this.value" class="w-8 h-7 bg-slate-900 border border-slate-700 rounded cursor-pointer" title="Colore grafico e tabella">
+                <button onclick="removeCoalition(${sIdx}, ${cIdx})" class="text-slate-400 hover:text-red-400 px-2 py-1 rounded bg-slate-900 border border-slate-800 text-xs" title="Elimina coalizione/partito">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
               </div>
               <div class="flex flex-wrap gap-1.5 pt-1">${partitiCheckboxes}</div>
             </div>
@@ -502,10 +617,31 @@ I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia d
 
         container.innerHTML += `
           <div class="bg-slate-900 p-4 rounded-lg border border-slate-700 space-y-3">
-            <div class="flex justify-between items-center">
-              <input type="text" value="${sc.titolo}" oninput="SCENARI_CONFIG[${sIdx}].titolo=this.value" class="w-full bg-slate-800 text-blue-400 font-bold text-xs px-3 py-1.5 rounded border border-slate-600">
+            <div class="flex items-center gap-2">
+              <span class="bg-blue-600 text-white text-[11px] font-black px-2 py-1 rounded">#${sIdx + 1}</span>
+              <input type="text" value="${sc.titolo}" oninput="SCENARI_CONFIG[${sIdx}].titolo=this.value" class="flex-1 bg-slate-800 text-blue-400 font-bold text-xs px-3 py-1.5 rounded border border-slate-600">
+              <button onclick="removeScenario(${sIdx})" class="bg-red-950/60 hover:bg-red-900 text-red-300 text-xs font-bold px-2.5 py-1.5 rounded border border-red-800/60" title="Elimina questo scenario">
+                <i class="fa-solid fa-trash"></i>
+              </button>
             </div>
+
             <div class="space-y-2">${coalHtml}</div>
+
+            <!-- BARRA AGGIUNGI COALIZIONE O PARTITO SINGOLO -->
+            <div class="pt-2 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2">
+              <button onclick="addCoalitionToScenario(${sIdx})" class="bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 border border-blue-500/40 text-xs font-bold px-3 py-1.5 rounded-lg transition">
+                <i class="fa-solid fa-users-rectangle mr-1"></i> + Aggiungi Coalizione
+              </button>
+
+              <div class="flex items-center gap-1.5">
+                <select id="solo-party-select-${sIdx}" class="bg-slate-950 border border-slate-700 text-slate-200 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none">
+                  ${partyOptionsHtml}
+                </select>
+                <button onclick="addSoloPartyToScenario(${sIdx})" class="bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/40 text-xs font-bold px-3 py-1.5 rounded-lg transition whitespace-nowrap">
+                  <i class="fa-solid fa-user-plus mr-1"></i> + Partito da solo
+                </button>
+              </div>
+            </div>
           </div>
         `;
       });
@@ -521,6 +657,7 @@ I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia d
       } else {
         coal.partiti.push(partyName);
       }
+      renderScenariosEditor();
     }
 
     function importFromSpreadsheet() {
@@ -569,6 +706,52 @@ I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia d
         .join('');
     }
 
+    function evaluateScenarioSorted(sc) {
+      let evaluatedCoalitions = sc.coalizioni.map(c => {
+        let sumVoto = 0;
+        let uniquePartiesInCoal = [];
+
+        c.partiti.forEach(pName => {
+          let cleanP = cleanName(pName);
+          let found = PARTITI_DATI.find(x => cleanName(x.nome) === cleanP);
+          if (found) {
+            sumVoto += found.voto;
+            if (!uniquePartiesInCoal.includes(found.nome)) {
+              uniquePartiesInCoal.push(found.nome);
+            }
+          }
+        });
+        return {
+          ...c,
+          partitiPuliti: uniquePartiesInCoal,
+          votoSum: sumVoto,
+          seggi: 0,
+          pctSeggi: 0,
+          hasMajority: false
+        };
+      });
+
+      // ORDINAMENTO DECRESCENTE PER VOTI (chi ha più voti compare per primo)
+      evaluatedCoalitions.sort((a, b) => b.votoSum - a.votoSum);
+
+      let winner = evaluatedCoalitions.length > 0 ? evaluatedCoalitions[0] : { votoSum: 0 };
+      let isWinnerBonus = winner.votoSum >= 42.0;
+
+      evaluatedCoalitions.forEach((c, idx) => {
+        if (isWinnerBonus && idx === 0) {
+          c.seggi = 220;
+          c.pctSeggi = 55.0;
+        } else {
+          let poolSeggi = isWinnerBonus ? 319 : 389;
+          c.seggi = Math.round((c.votoSum / 100) * poolSeggi);
+          c.pctSeggi = parseFloat(((c.seggi / 400) * 100).toFixed(1));
+        }
+        c.hasMajority = c.seggi >= 201;
+      });
+
+      return evaluatedCoalitions;
+    }
+
     function updateAll() {
       const container = document.getElementById('preview-scenarios-container');
       container.innerHTML = '';
@@ -591,43 +774,18 @@ I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia d
       const verifiedIconSvg = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`;
 
       SCENARI_CONFIG.forEach((sc, sIdx) => {
-        let evaluatedCoalitions = sc.coalizioni.map(c => {
-          let sumVoto = 0;
-          let uniquePartiesInCoal = [];
-
-          c.partiti.forEach(pName => {
-            let cleanP = cleanName(pName);
-            let found = PARTITI_DATI.find(x => cleanName(x.nome) === cleanP);
-            if (found) {
-              sumVoto += found.voto;
-              if (!uniquePartiesInCoal.includes(found.nome)) {
-                uniquePartiesInCoal.push(found.nome);
-              }
-            }
-          });
-          return { ...c, partitiPuliti: uniquePartiesInCoal, votoSum: sumVoto, seggi: 0, pctSeggi: 0, hasMajority: false };
-        });
-
-        let winner = evaluatedCoalitions.reduce((prev, current) => (prev.votoSum > current.votoSum) ? prev : current, { votoSum: 0 });
-        let isWinnerBonus = winner.votoSum >= 42.0;
-
-        evaluatedCoalitions.forEach(c => {
-          if (isWinnerBonus && c.nome === winner.nome) {
-            c.seggi = 220;
-            c.pctSeggi = 55.0;
-          } else {
-            let poolSeggi = isWinnerBonus ? 319 : 389;
-            c.seggi = Math.round((c.votoSum / 100) * poolSeggi);
-            c.pctSeggi = parseFloat(((c.seggi / 400) * 100).toFixed(1));
-          }
-          c.hasMajority = c.seggi >= 201;
-        });
+        let evaluatedCoalitions = evaluateScenarioSorted(sc);
 
         let tableRowsHtml = evaluatedCoalitions.map(c => {
           let barWidth = Math.min(100, (c.seggi / 400) * 100).toFixed(1);
           let badgeHtml = c.hasMajority
             ? `<span class="verified-majority-badge" title="Maggioranza assoluta raggiunta (almeno 201 seggi)">${verifiedIconSvg} Maggioranza</span>`
             : '';
+
+          let isSolo = c.partitiPuliti.length === 1;
+          let subtitleHtml = isSolo
+            ? `<div class="coal-parties-list"><span class="solo-tag">Lista autonoma</span></div>`
+            : `<div class="coal-parties-list">${c.partitiPuliti.join(' • ') || 'Nessun partito selezionato'}</div>`;
 
           return `
             <tr class="${c.hasMajority ? 'row-majority' : ''}">
@@ -637,7 +795,7 @@ I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia d
                   <span style="color:${c.colore};">${c.nome}</span>
                   ${badgeHtml}
                 </div>
-                <div class="coal-parties-list">${c.partitiPuliti.join(' • ') || 'Liste minori'}</div>
+                ${subtitleHtml}
               </td>
               <td>
                 <span class="vote-pill">${c.votoSum.toFixed(1).replace('.', ',')}%</span>
@@ -664,7 +822,7 @@ I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia d
               <table class="coalition-table">
                 <thead>
                   <tr>
-                    <th>Coalizione e Partiti</th>
+                    <th>Coalizione / Lista</th>
                     <th>Voti</th>
                     <th>Seggi Camera (Soglia 201)</th>
                   </tr>
@@ -701,17 +859,10 @@ I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia d
           let ctx = document.getElementById(canvasId);
           if (!ctx) return;
 
-          let labels = sc.coalizioni.map(c => c.nome);
-          let colors = sc.coalizioni.map(c => c.colore);
-          let dataValues = sc.coalizioni.map(c => {
-            let sumVoto = 0;
-            c.partiti.forEach(pName => {
-              let cleanP = cleanName(pName);
-              let found = PARTITI_DATI.find(x => cleanName(x.nome) === cleanP);
-              if (found) sumVoto += found.voto;
-            });
-            return sumVoto;
-          });
+          let sortedCoals = evaluateScenarioSorted(sc);
+          let labels = sortedCoals.map(c => c.nome);
+          let colors = sortedCoals.map(c => c.colore);
+          let dataValues = sortedCoals.map(c => c.votoSum);
 
           chartInstances[sIdx] = new Chart(ctx, {
             type: 'doughnut',
@@ -751,17 +902,10 @@ I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia d
     function generateFinalHtmlCode() {
       let scriptGeneratorPart = '';
       SCENARI_CONFIG.forEach((sc, sIdx) => {
-        let labels = JSON.stringify(sc.coalizioni.map(c => c.nome));
-        let colors = JSON.stringify(sc.coalizioni.map(c => c.colore));
-        let dataValues = JSON.stringify(sc.coalizioni.map(c => {
-          let sumVoto = 0;
-          c.partiti.forEach(pName => {
-            let cleanP = cleanName(pName);
-            let found = PARTITI_DATI.find(x => cleanName(x.nome) === cleanP);
-            if (found) sumVoto += found.voto;
-          });
-          return sumVoto;
-        }));
+        let sortedCoals = evaluateScenarioSorted(sc);
+        let labels = JSON.stringify(sortedCoals.map(c => c.nome));
+        let colors = JSON.stringify(sortedCoals.map(c => c.colore));
+        let dataValues = JSON.stringify(sortedCoals.map(c => c.votoSum));
 
         scriptGeneratorPart += `
         new Chart(document.getElementById('chart-canvas-export-${sIdx}'), {
@@ -831,6 +975,7 @@ I grafici e le tabelle seguenti sono elaborati sui dati dell'ultima Supermedia d
   .coal-title-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-weight: 800; font-size: 13px; }
   .coal-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
   .coal-parties-list { font-size: 11.5px; color: #4b5563; margin-top: 3px; line-height: 1.35; }
+  .solo-tag { display: inline-block; background: #e2e8f0; color: #334155; font-size: 9.5px; font-weight: 700; padding: 1px 6px; border-radius: 4px; text-transform: uppercase; }
   .verified-majority-badge { display: inline-flex; align-items: center; gap: 4px; background: #16a34a; color: #ffffff; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 999px; letter-spacing: 0.3px; text-transform: uppercase; white-space: nowrap; }
   .verified-majority-badge svg { width: 11px; height: 11px; fill: currentColor; }
   .vote-pill { display: inline-block; background: #111827; color: #ffffff; font-weight: 800; font-size: 12px; padding: 2px 7px; border-radius: 4px; white-space: nowrap; }
