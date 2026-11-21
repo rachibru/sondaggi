@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grafico - BrunoRachiele.it</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 10px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: transparent;
+      color: #0f172a;
+    }
+    .br-card {
+      max-width: 820px;
+      margin: 0 auto;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 18px 20px;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+    }
+    .br-head {
+      border-left: 4px solid #0b4a9f;
+      padding-left: 12px;
+      margin-bottom: 16px;
+    }
+    .br-kicker {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #0b4a9f;
+      margin-bottom: 3px;
+    }
+    .br-title {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1.25;
+      color: #0f172a;
+    }
+    .br-sub {
+      margin: 5px 0 0;
+      font-size: 13px;
+      color: #475569;
+    }
+    .br-body { margin: 14px 0; }
+    .br-bar-list { display: flex; flex-direction: column; gap: 10px; }
+    .br-bar-row { display: flex; flex-direction: column; gap: 4px; }
+    .br-bar-meta { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 700; }
+    .br-bar-left { display: flex; align-items: center; gap: 8px; }
+    .br-bar-icon { width: 24px; height: 24px; border-radius: 50%; object-fit: contain; border: 1px solid #e2e8f0; background: #fff; }
+    .br-bar-track { width: 100%; height: 12px; background: #f1f5f9; border-radius: 999px; overflow: hidden; }
+    .br-bar-fill { height: 100%; border-radius: 999px; transition: width 0.4s ease; }
+    .br-delta { font-size: 11px; font-weight: 800; padding: 2px 6px; border-radius: 6px; margin-left: 6px; }
+    .br-up { background: #dcfce7; color: #166534; }
+    .br-down { background: #fee2e2; color: #991b1b; }
+    .br-eq { background: #f1f5f9; color: #475569; }
+    .br-leader-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; }
+    .br-leader-item {
+      display: flex; align-items: center; gap: 12px; padding: 12px;
+      border: 1px solid #e2e8f0; border-left: 5px solid #0b4a9f; border-radius: 10px; background: #fff;
+    }
+    .br-leader-img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid #e2e8f0; }
+    .br-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .br-table th { text-align: left; padding: 9px 10px; background: #f8fafc; border-bottom: 2px solid #e2e8f0; font-size: 11px; text-transform: uppercase; color: #475569; }
+    .br-table td { padding: 9px 10px; border-bottom: 1px solid #f1f5f9; font-weight: 600; }
+    .br-foot {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .br-source { font-size: 11px; color: #64748b; font-weight: 600; }
+    .br-brand-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      text-decoration: none;
+      color: #0f172a;
+      font-weight: 800;
+      font-size: 12px;
+    }
+    .br-brand-link img { width: 22px; height: 22px; border-radius: 5px; object-fit: contain; }
+    .br-tools {
+      max-width: 820px;
+      margin: 8px auto 0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+    }
+    .br-tool-btn {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 7px;
+      padding: 5px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+    }
+    .br-tool-btn:hover { background: #eff6ff; border-color: #93c5fd; color: #0b4a9f; }
+  </style>
+</head>
+<body>
+  <div id="br-capture-box" class="br-card">
+    <div class="br-head">
+      <div id="v-kicker" class="br-kicker">DATA JOURNALISM • BRUNORACHIELE.IT</div>
+      <h1 id="v-title" class="br-title">Caricamento grafico...</h1>
+      <p id="v-sub" class="br-sub"></p>
+    </div>
+    <div id="v-body" class="br-body"></div>
+    <div class="br-foot">
+      <span id="v-source" class="br-source">Fonte: Elaborazione BrunoRachiele.it</span>
+      <a href="https://www.brunorachiele.it" target="_blank" rel="noopener" class="br-brand-link">
+        <img src="https://grafici.brunorachiele.it/img/logo.png" crossorigin="anonymous" alt="BrunoRachiele.it" onerror="this.style.display='none'">
+        <span>brunorachiele.it</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="br-tools" id="v-tools">
+    <button class="br-tool-btn" onclick="downloadPng()">📸 Scarica Foto PNG</button>
+    <button class="br-tool-btn" onclick="copyEmbed()">&lt;/&gt; Incorpora</button>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const chartId = params.get("id");
+    if (params.get("clean") === "1") document.getElementById("v-tools").style.display = "none";
+
+    async function loadChart() {
+      if (!chartId) {
+        document.getElementById("v-title").textContent = "Nessun grafico selezionato";
+        return;
+      }
+      try {
+        const res = await fetch("data/" + encodeURIComponent(chartId) + ".json?t=" + Date.now());
+        if (!res.ok) throw new Error("Grafico non trovato");
+        const cfg = await res.json();
+        renderChart(cfg);
+      } catch (e) {
+        document.getElementById("v-title").textContent = "Grafico non disponibile";
+        document.getElementById("v-sub").textContent = e.message;
+      }
+    }
+
+    function renderChart(cfg) {
+      document.title = (cfg.title || "Grafico") + " - BrunoRachiele.it";
+      document.getElementById("v-kicker").textContent = cfg.kicker || "SUPERMEDIA & DATI • BRUNORACHIELE.IT";
+      document.getElementById("v-title").textContent = cfg.title || "";
+      document.getElementById("v-sub").textContent = cfg.subtitle || "";
+      document.getElementById("v-source").textContent = cfg.source ? "Fonte: " + cfg.source : "Elaborazione BrunoRachiele.it";
+
+      const body = document.getElementById("v-body");
+      const rows = cfg.rows || [];
+      const maxVal = Math.max(...rows.map(r => parseFloat(r.value) || 0), 1);
+
+      if (cfg.type === "bars") {
+        body.innerHTML = `<div class="br-bar-list">` + rows.map(r => {
+          const val = parseFloat(r.value) || 0;
+          const pctW = Math.min(100, Math.round((val / maxVal) * 100));
+          const delta = parseFloat(r.delta);
+          let deltaHtml = "";
+          if (!isNaN(delta)) {
+            const cls = delta > 0 ? "br-up" : (delta < 0 ? "br-down" : "br-eq");
+            const sym = delta > 0 ? "▲ +" + delta.toFixed(2).replace(".", ",") : (delta < 0 ? "▼ " + delta.toFixed(2).replace(".", ",") : "= 0,00");
+            deltaHtml = `<span class="br-delta ${cls}">${sym}</span>`;
+          }
+          const iconHtml = r.img ? `<img src="${r.img}" crossorigin="anonymous" class="br-bar-icon" onerror="this.style.display='none'">` : "";
+          return `
+            <div class="br-bar-row">
+              <div class="br-bar-meta">
+                <span class="br-bar-left">${iconHtml}<span>${r.label}</span></span>
+                <span>${val.toFixed(2).replace(".", ",")}\% ${deltaHtml}</span>
+              </div>
+              <div class="br-bar-track">
+                <div class="br-bar-fill" style="width:${pctW}\%; background:${r.color || '#0b4a9f'};"></div>
+              </div>
+            </div>`;
+        }).join("") + `</div>`;
+      } else if (cfg.type === "leaders") {
+        body.innerHTML = `<div class="br-leader-grid">` + rows.map(r => {
+          const val = parseFloat(r.value) || 0;
+          const delta = parseFloat(r.delta) || 0;
+          const cls = delta > 0 ? "br-up" : (delta < 0 ? "br-down" : "br-eq");
+          const sym = delta > 0 ? "▲ +" + delta.toFixed(2).replace(".", ",") : (delta < 0 ? "▼ " + delta.toFixed(2).replace(".", ",") : "= 0,00");
+          return `
+            <div class="br-leader-item" style="border-left-color:${r.color || '#0b4a9f'};">
+              <img src="${r.img || 'https://grafici.brunorachiele.it/img/logo.png'}" crossorigin="anonymous" class="br-leader-img" onerror="this.src='https://grafici.brunorachiele.it/img/logo.png'">
+              <div style="flex:1;min-width:0;">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:4px;">
+                  <strong style="font-size:14px;text-transform:uppercase;">${r.label}</strong>
+                  <span class="br-delta ${cls}">${sym}</span>
+                </div>
+                <div style="font-size:11px;color:#64748b;">${r.sub || ''}</div>
+                <div style="font-size:21px;font-weight:900;margin-top:2px;">${val.toFixed(1).replace(".", ",")}%</div>
+              </div>
+            </div>`;
+        }).join("") + `</div>`;
+      } else if (cfg.type === "table") {
+        body.innerHTML = `<table class="br-table"><thead><tr><th>Voce</th><th>Dato</th><th>Variazione</th></tr></thead><tbody>` +
+          rows.map(r => {
+            const val = parseFloat(r.value) || 0;
+            const delta = parseFloat(r.delta);
+            const dStr = !isNaN(delta) ? (delta > 0 ? "+" + delta.toFixed(2).replace(".", ",") : delta.toFixed(2).replace(".", ",")) : "-";
+            return `<tr><td>${r.label}</td><td>${val.toFixed(2).replace(".", ",")}\%</td><td>${dStr}</td></tr>`;
+          }).join("") + `</tbody></table>`;
+      } else {
+        body.innerHTML = `<canvas id="v-canvas" height="160"></canvas>`;
+        const ctx = document.getElementById("v-canvas").getContext("2d");
+        const chartType = cfg.type === "pie" ? "doughnut" : (cfg.type === "line" ? "line" : "bar");
+        new Chart(ctx, {
+          type: chartType,
+          data: {
+            labels: rows.map(r => r.label),
+            datasets: [{
+              label: cfg.title || "Valore",
+              data: rows.map(r => parseFloat(r.value) || 0),
+              backgroundColor: rows.map(r => r.color || "#0b4a9f"),
+              borderColor: chartType === "line" ? "#0b4a9f" : "#ffffff",
+              borderWidth: 2,
+              tension: 0.3,
+              fill: chartType === "line"
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: chartType === "doughnut" } }
+          }
+        });
+      }
+    }
+
+    function downloadPng() {
+      html2canvas(document.getElementById("br-capture-box"), { scale: 2, useCORS: true }).then(canvas => {
+        const a = document.createElement("a");
+        a.href = canvas.toDataURL("image/png");
+        a.download = (chartId || "grafico") + "-brunorachiele.png";
+        a.click();
+      });
+    }
+
+    function copyEmbed() {
+      const url = window.location.href;
+      const code = `<iframe src="${url}" width="100%" height="520" frameborder="0" style="border:0;max-width:820px;" loading="lazy"></iframe>`;
+      navigator.clipboard.writeText(code);
+      alert("Codice iframe copiato negli appunti!");
+    }
+
+    loadChart();
+  </script>
+</body>
+</html>
