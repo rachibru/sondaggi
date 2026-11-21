@@ -1,15 +1,17 @@
-<!DOCTYPE html>
 <html lang="it">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Generatore Supermedia Gradimento Leader - Bruno Rachiele</title>
+  <!-- Tailwind CSS per l'interfaccia dell'editor -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icone -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
     body { font-family: 'Inter', sans-serif; }
 
+    /* LAYOUT MOBILE-FIRST AD ALTO IMPATTO VISIVO */
     .leader-grid-container {
       display: grid;
       grid-template-columns: 1fr;
@@ -47,8 +49,17 @@
       flex-shrink: 0;
     }
 
-    .leader-info { flex: 1; min-width: 0; }
-    .leader-header-row { display: flex; justify-content: space-between; align-items: center; }
+    .leader-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .leader-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
     .leader-name {
       font-size: 15px;
       font-weight: 800;
@@ -60,6 +71,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
     .leader-role {
       font-size: 11px;
       color: #64748b;
@@ -69,13 +81,19 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
     .leader-metrics {
       display: flex;
       align-items: baseline;
       justify-content: space-between;
       margin-top: 4px;
     }
-    .leader-pct { font-size: 24px; font-weight: 900; color: #0f172a; }
+
+    .leader-pct {
+      font-size: 24px;
+      font-weight: 900;
+      color: #0f172a;
+    }
 
     .trend-badge {
       font-size: 11px;
@@ -86,6 +104,7 @@
       align-items: center;
       gap: 3px;
     }
+
     .trend-up { background-color: #dcfce7; color: #15803d; }
     .trend-down { background-color: #fee2e2; color: #b91c1c; }
     .trend-eq { background-color: #f1f5f9; color: #475569; }
@@ -98,7 +117,11 @@
       margin-top: 6px;
       overflow: hidden;
     }
-    .progress-bar-fill { height: 100%; border-radius: 3px; }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+    }
 
     .cover-card img {
       width: 100%;
@@ -120,9 +143,10 @@
         </div>
         <div>
           <h1 class="font-bold text-lg leading-tight">Supermedia Gradimento Leader</h1>
-          <p class="text-xs text-slate-400">Card + Condivisione Foto + Embed per brunorachiele.it</p>
+          <p class="text-xs text-slate-400">Card ad alto impatto per brunorachiele.it</p>
         </div>
       </div>
+      <!-- TAB SWITCHER -->
       <div class="flex bg-slate-900 p-1 rounded-lg text-sm">
         <button id="tab-btn-editor" onclick="switchTab('editor')" class="px-4 py-1.5 rounded-md font-medium text-white bg-blue-600 shadow">
           <i class="fa-solid fa-pen-to-square mr-1.5"></i> Editor Dati
@@ -138,7 +162,11 @@
 
     <!-- SEZIONE EDITOR -->
     <div id="view-editor" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- COLONNA SINISTRA -->
       <div class="lg:col-span-5 space-y-6">
+
+        <!-- PASTE BOX GOOGLE SHEETS -->
         <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg">
           <h2 class="text-base font-bold text-blue-400 mb-3 flex items-center gap-2">
             <i class="fa-solid fa-file-csv"></i> 1. Incolla da Google Sheets
@@ -152,6 +180,7 @@
           </button>
         </div>
 
+        <!-- INFORMAZIONI POST BLOGGER -->
         <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg space-y-4">
           <h2 class="text-base font-bold text-blue-400 border-b border-slate-700 pb-3 flex items-center gap-2">
             <i class="fa-solid fa-sliders"></i> 2. Dati Articolo (SEO & Schema)
@@ -172,8 +201,10 @@
             <input type="text" id="input-post-url" value="https://www.brunorachiele.it/2026/11/gradimento-leader-politici-09-novembre-2026.html" oninput="updateAll()" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs font-mono text-white focus:outline-none focus:border-blue-500">
           </div>
         </div>
+
       </div>
 
+      <!-- COLONNA DESTRA -->
       <div class="lg:col-span-7 bg-slate-800 p-5 rounded-xl border border-slate-700 shadow-lg">
         <div class="flex justify-between items-center border-b border-slate-700 pb-3 mb-4">
           <h2 class="text-base font-bold text-blue-400 flex items-center gap-2">
@@ -189,21 +220,27 @@
           </div>
         </div>
 
-        <div id="leaders-list" class="space-y-3 max-h-[600px] overflow-y-auto pr-2"></div>
+        <div id="leaders-list" class="space-y-3 max-h-[600px] overflow-y-auto pr-2">
+          <!-- Popolato via JS -->
+        </div>
       </div>
+
     </div>
 
     <!-- SEZIONE ANTEPRIMA & CODICE HTML -->
     <div id="view-preview" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- VISUAL ANTEPRIMA POST -->
       <div class="lg:col-span-7 space-y-4">
         <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
           <h2 class="font-bold text-white text-sm flex items-center gap-2">
             <i class="fa-solid fa-eye text-blue-400"></i> Anteprima Articolo Blogger
           </h2>
-          <span class="text-xs bg-emerald-600 text-white px-2.5 py-1 rounded-full font-bold">+ Foto Social & Embed</span>
+          <span class="text-xs bg-emerald-600 text-white px-2.5 py-1 rounded-full font-bold">1 Box/Riga su Mobile</span>
         </div>
 
         <div class="bg-white text-slate-800 p-6 rounded-xl shadow-2xl max-w-[800px] mx-auto">
+          
           <div style="background-color: #f8f9fa; border-left: 5px solid #0056b3; padding: 15px 20px; margin-bottom: 20px; border-radius: 0 8px 8px 0;">
             <p style="margin: 0 0 10px 0; font-size: 1.05rem; font-family: sans-serif;">
               Di seguito l'indice di gradimento dei principali leader politici italiani aggiornato al <strong id="pv-date">09 Novembre 2026</strong>, con le percentuali attive ed il trend di variazione.
@@ -211,25 +248,20 @@
             <div style="font-size: 0.9rem; color: #6c757d; font-weight: bold; text-transform: uppercase;">Supermedia a cura di Bruno Rachiele</div>
           </div>
 
+          <!-- FOTO COPERTINA ARTICOLO -->
           <div class="cover-card">
             <img id="pv-cover-img" src="https://static.brunorachiele.it/leader.png" alt="Supermedia Gradimento Leader Politici Bruno Rachiele">
           </div>
 
-          <div id="pv-leader-cards" class="leader-grid-container"></div>
-
-          <!-- Anteprima barra condivisione & embed -->
-          <div class="mt-4 p-3.5 bg-slate-50 border border-slate-200 rounded-xl flex flex-wrap items-center justify-between gap-2">
-            <span class="text-xs font-extrabold uppercase text-slate-700">Condividi o incorpora questo sondaggio</span>
-            <div class="flex flex-wrap gap-1.5 text-xs font-bold">
-              <span class="px-2.5 py-1.5 rounded-lg bg-blue-700 text-white">📸 Condividi foto</span>
-              <span class="px-2.5 py-1.5 rounded-lg bg-emerald-600 text-white">WhatsApp</span>
-              <span class="px-2.5 py-1.5 rounded-lg bg-slate-900 text-white">X</span>
-              <span class="px-2.5 py-1.5 rounded-lg bg-white border border-slate-300 text-slate-800">&lt;/&gt; Incorpora</span>
-            </div>
+          <!-- GRID CARD LEADER -->
+          <div id="pv-leader-cards" class="leader-grid-container">
+            <!-- Popolato via JS -->
           </div>
+
         </div>
       </div>
 
+      <!-- CODICE EXPORT BLOGGER -->
       <div class="lg:col-span-5 space-y-4">
         <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
           <h2 class="font-bold text-white text-sm flex items-center gap-2">
@@ -244,10 +276,12 @@
           <textarea id="output-code" readonly rows="26" class="w-full bg-transparent text-emerald-400 font-mono text-xs leading-relaxed focus:outline-none resize-none"></textarea>
         </div>
       </div>
+
     </div>
 
   </main>
 
+  <!-- SCRIPT DI LOGICA -->
   <script>
     const LEADER_COLOR_MAP = {
       "Giorgia Meloni": "#0b3c5d",
@@ -270,22 +304,14 @@
     };
 
     let leaderData = [
-      { foto: "https://grafici.brunorachiele.it/img/meloni.png", nome: "Giorgia Meloni", ruolo: "Presidente del Consiglio", val: "44.5", trend: 0.20 },
-      { foto: "https://grafici.brunorachiele.it/img/schlein.png", nome: "Elly Schlein", ruolo: "Leader PD", val: "31.2", trend: -0.10 },
-      { foto: "https://grafici.brunorachiele.it/img/tajani.png", nome: "Antonio Tajani", ruolo: "Ministro degli Esteri", val: "30.5", trend: 0.05 },
-      { foto: "https://grafici.brunorachiele.it/img/conte.png", nome: "Giuseppe Conte", ruolo: "Leader M5S", val: "29.8", trend: -0.30 },
-      { foto: "https://grafici.brunorachiele.it/img/salvini.png", nome: "Matteo Salvini", ruolo: "Ministro dei Trasporti", val: "26.0", trend: 0.15 },
-      { foto: "https://grafici.brunorachiele.it/img/calenda.png", nome: "Carlo Calenda", ruolo: "Leader Azione", val: "18.4", trend: 0.00 },
-      { foto: "https://grafici.brunorachiele.it/img/renzi.png", nome: "Matteo Renzi", ruolo: "Leader Italia Viva", val: "14.2", trend: -0.05 }
+      { foto: "../img/meloni.png", nome: "Giorgia Meloni", ruolo: "Presidente del Consiglio", val: "44.5", trend: 0.20 },
+      { foto: "../img/schlein.png", nome: "Elly Schlein", ruolo: "Leader PD", val: "31.2", trend: -0.10 },
+      { foto: "../img/tajani.png", nome: "Antonio Tajani", ruolo: "Ministro degli Esteri", val: "30.5", trend: 0.05 },
+      { foto: "../img/conte.png", nome: "Giuseppe Conte", ruolo: "Leader M5S", val: "29.8", trend: -0.30 },
+      { foto: "../img/salvini.png", nome: "Matteo Salvini", ruolo: "Ministro dei Trasporti", val: "26.0", trend: 0.15 },
+      { foto: "../img/calenda.png", nome: "Carlo Calenda", ruolo: "Leader Azione", val: "18.4", trend: 0.00 },
+      { foto: "../img/renzi.png", nome: "Matteo Renzi", ruolo: "Leader Italia Viva", val: "14.2", trend: -0.05 }
     ];
-
-    function normalizeFotoUrl(url) {
-      if (!url) return "https://grafici.brunorachiele.it/img/leader.png";
-      if (url.startsWith("../img/")) {
-        return "https://grafici.brunorachiele.it/img/" + url.slice(7);
-      }
-      return url;
-    }
 
     function sortLeaders() {
       leaderData.sort((a, b) => {
@@ -348,7 +374,7 @@
     }
 
     function addLeaderRow() {
-      leaderData.push({ foto: "https://grafici.brunorachiele.it/img/leader.png", nome: "NUOVO LEADER", ruolo: "Ruolo Politico", val: "20.0", trend: 0.00 });
+      leaderData.push({ foto: "../img/leader.png", nome: "NUOVO LEADER", ruolo: "Ruolo Politico", val: "20.0", trend: 0.00 });
       sortLeaders();
       renderLeaderEditorList();
       updateAll();
@@ -364,6 +390,7 @@
       const rawText = document.getElementById('pasteInput').value.trim();
       if (!rawText) return;
 
+      // Estrazione automatica della data
       const dateMatch = rawText.match(/(\d{2})[\/\-](\d{2})[\/\-](\d{4})/);
       if (dateMatch) {
         const dd = dateMatch[1];
@@ -387,9 +414,7 @@
           let rawName = cols[0];
           if (rawName.toUpperCase().includes("LEADER") || rawName.toUpperCase().includes("NOME") || rawName.toUpperCase().includes("SUPERMEDIA")) return;
 
-          let rawLinkFoto = cols[1] && (cols[1].startsWith("http") || cols[1].startsWith("../"))
-            ? normalizeFotoUrl(cols[1])
-            : "https://grafici.brunorachiele.it/img/" + rawName.toLowerCase().replace(/[^a-z0-9]/g, '') + ".png";
+          let rawLinkFoto = cols[1] && (cols[1].startsWith("http") || cols[1].startsWith("../")) ? cols[1] : "../img/" + rawName.toLowerCase().replace(/[^a-z0-9]/g, '') + ".png";
           let rawRuolo = cols[2] || "Leader Politico";
           let rawVal = cols[3] ? cols[3].replace(',', '.') : (cols[1] && !cols[1].startsWith("http") ? cols[1].replace(',', '.') : "0.0");
           let rawTrend = cols[cols.length - 1] ? parseFloat(cols[cols.length - 1].replace(',', '.')) : 0;
@@ -441,13 +466,12 @@
           symbol = '▼ ' + trendFormatted;
         }
 
-        let pctVal = parseFloat(String(item.val).replace(',', '.')) || 0;
+        let pctVal = parseFloat(item.val.replace(',', '.')) || 0;
         let brandColor = LEADER_COLOR_MAP[item.nome] || "#0056b3";
-        let cleanFoto = normalizeFotoUrl(item.foto);
 
         const cardSnippet = `
           <div class="leader-card" style="border-left-color: ${brandColor};">
-            <img src="${cleanFoto}" crossorigin="anonymous" class="leader-avatar" style="border-color: ${brandColor};" alt="${item.nome}" onerror="this.src='https://placehold.co/100x100/0056b3/ffffff?text=Leader'">
+            <img src="${item.foto}" class="leader-avatar" style="border-color: ${brandColor};" alt="${item.nome}" onerror="this.src='https://placehold.co/100x100/0056b3/ffffff?text=Leader'">
             <div class="leader-info">
               <div class="leader-header-row">
                 <h3 class="leader-name">${item.nome}</h3>
@@ -473,9 +497,6 @@
 
     function generateFinalHtmlCode(dateVal, postUrl, coverUrl, cardsHtml) {
       const now = new Date().toISOString();
-      const embedUrl = postUrl + (postUrl.indexOf("?") === -1 ? "?embed=1" : "&embed=1");
-      const iframeSnippet = `<iframe src="${embedUrl}" width="100%" height="580" frameborder="0" style="border:1px solid #e2e8f0;border-radius:12px;max-width:800px;" loading="lazy"></iframe><p style="font-size:12px;color:#64748b;margin-top:4px;">Fonte: <a href="${postUrl}" target="_blank" rel="noopener">Supermedia Gradimento Leader - brunorachiele.it</a></p>`;
-
       const code = `<!-- METADATI E DATI STRUTTURATI (SCHEMA.ORG) -->
 <script type="application/ld+json">
 {
@@ -542,43 +563,11 @@
     margin-bottom: 20px;
   }
 
-  /* Area catturabile come foto social */
-  .br-capture-zone {
-    background: #ffffff;
-    border-radius: 14px;
-    padding: 14px;
-    border: 1px solid #e2e8f0;
-  }
-  .br-capture-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    padding-bottom: 10px;
-    margin-bottom: 12px;
-    border-bottom: 1px solid #e2e8f0;
-  }
-  .br-capture-title {
-    font-size: 0.88rem;
-    font-weight: 800;
-    color: #0b4a9f;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-  }
-  .br-capture-brand {
-    font-size: 0.78rem;
-    font-weight: 800;
-    color: #0f172a;
-    background: #eff6ff;
-    padding: 3px 9px;
-    border-radius: 999px;
-  }
-
   .leader-grid-container {
     display: grid;
     grid-template-columns: 1fr;
     gap: 12px;
-    margin: 8px 0;
+    margin: 20px 0;
   }
   @media (min-width: 640px) {
     .leader-grid-container { grid-template-columns: repeat(2, 1fr); }
@@ -628,99 +617,9 @@
   .trend-up { background-color: #dcfce7; color: #15803d; }
   .trend-down { background-color: #fee2e2; color: #b91c1c; }
   .trend-eq { background-color: #f1f5f9; color: #475569; }
-
-  .br-capture-foot {
-    margin-top: 10px;
-    padding-top: 8px;
-    border-top: 1px solid #f1f5f9;
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.72rem;
-    color: #64748b;
-    font-weight: 600;
-  }
-
-  /* Barra Condivisione Foto + Embed */
-  .br-share-embed-bar {
-    margin-top: 16px;
-    padding: 14px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .br-share-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  .br-share-label {
-    font-size: 0.82rem;
-    font-weight: 800;
-    color: #0f172a;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-  }
-  .br-share-btns {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    flex-wrap: wrap;
-  }
-  .br-btn-act {
-    border: 0;
-    border-radius: 8px;
-    padding: 8px 12px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    cursor: pointer;
-    text-decoration: none !important;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    line-height: 1.2;
-  }
-  .br-btn-photo { background: #0b4a9f; color: #ffffff !important; }
-  .br-btn-wa { background: #16a34a; color: #ffffff !important; }
-  .br-btn-x { background: #0f172a; color: #ffffff !important; }
-  .br-btn-embed { background: #ffffff; color: #0f172a !important; border: 1px solid #cbd5e1; }
-  .br-embed-box {
-    display: none;
-    background: #ffffff;
-    border: 1px solid #cbd5e1;
-    border-radius: 9px;
-    padding: 10px;
-  }
-  .br-embed-box textarea {
-    width: 100%;
-    height: 68px;
-    font-family: monospace;
-    font-size: 11px;
-    color: #1e293b;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    padding: 6px;
-    box-sizing: border-box;
-    resize: none;
-  }
-  .br-embed-copy {
-    margin-top: 6px;
-    background: #0b4a9f;
-    color: #ffffff;
-    border: 0;
-    border-radius: 6px;
-    padding: 6px 12px;
-    font-size: 0.76rem;
-    font-weight: 700;
-    cursor: pointer;
-  }
 </style>
 
-<div class="sondaggi-container" id="br-leader-article">
+<div class="sondaggi-container">
 
   <!-- INTRODUZIONE E CREDIT -->
   <div class="sondaggi-header">
@@ -733,135 +632,12 @@
     <img src="${coverUrl}" alt="Supermedia Gradimento Leader Politici ${dateVal}" width="1200" height="675">
   </div>
 
-  <!-- SCHEDA LEADER (CATTURABILE COME FOTO SOCIAL & EMBED) -->
-  <div id="br-leader-capture" class="br-capture-zone">
-    <div class="br-capture-head">
-      <span class="br-capture-title">Gradimento Leader • ${dateVal}</span>
-      <span class="br-capture-brand">brunorachiele.it</span>
-    </div>
-
-    <div class="leader-grid-container">
-      ${cardsHtml}
-    </div>
-
-    <div class="br-capture-foot">
-      <span>Elaborazione Supermedia Bruno Rachiele</span>
-      <span>www.brunorachiele.it</span>
-    </div>
+  <!-- GRID BANNER LEADER POLITICI -->
+  <div class="leader-grid-container">
+    ${cardsHtml}
   </div>
 
-  <!-- BARRA CONDIVISIONE SOCIAL COME FOTO + INCORPORA -->
-  <div class="br-share-embed-bar" id="br-share-embed-bar">
-    <div class="br-share-row">
-      <span class="br-share-label">Condividi o incorpora</span>
-      <div class="br-share-btns">
-        <button type="button" id="br-btn-share-photo" class="br-btn-act br-btn-photo">📸 Condividi foto</button>
-        <a id="br-btn-share-wa" href="#" target="_blank" rel="noopener" class="br-btn-act br-btn-wa">WhatsApp</a>
-        <a id="br-btn-share-x" href="#" target="_blank" rel="noopener" class="br-btn-act br-btn-x">X</a>
-        <button type="button" id="br-btn-toggle-embed" class="br-btn-act br-btn-embed">&lt;/&gt; Incorpora</button>
-      </div>
-    </div>
-
-    <div id="br-embed-panel" class="br-embed-box">
-      <div style="font-size:12px;font-weight:700;color:#334155;margin-bottom:5px;">Copia e incolla questo codice HTML sul tuo sito:</div>
-      <textarea id="br-embed-code" readonly>${iframeSnippet.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</textarea>
-      <button type="button" id="br-btn-copy-embed" class="br-embed-copy">Copia codice embed</button>
-    </div>
-  </div>
-
-</div>
-
-<script>
-(function() {
-  var pageUrl = window.location.href.split("?")[0] || "${postUrl}";
-  var shareText = "Supermedia Gradimento Leader Politici (${dateVal}) su brunorachiele.it: ";
-
-  // Modalità ?embed=1 per chi incorpora l'iframe su altri siti
-  if (window.location.search.indexOf("embed=1") !== -1) {
-    var capture = document.getElementById("br-leader-capture");
-    if (capture) {
-      document.body.innerHTML = "";
-      document.body.style.margin = "0";
-      document.body.style.padding = "8px";
-      document.body.style.background = "#ffffff";
-      document.body.appendChild(capture);
-    }
-    return;
-  }
-
-  var waBtn = document.getElementById("br-btn-share-wa");
-  var xBtn = document.getElementById("br-btn-share-x");
-  if (waBtn) waBtn.href = "https://api.whatsapp.com/send?text=" + encodeURIComponent(shareText + pageUrl);
-  if (xBtn) xBtn.href = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(shareText) + "&url=" + encodeURIComponent(pageUrl);
-
-  var toggleBtn = document.getElementById("br-btn-toggle-embed");
-  var embedPanel = document.getElementById("br-embed-panel");
-  var copyBtn = document.getElementById("br-btn-copy-embed");
-  var embedCode = document.getElementById("br-embed-code");
-
-  if (toggleBtn && embedPanel) {
-    toggleBtn.addEventListener("click", function() {
-      embedPanel.style.display = embedPanel.style.display === "block" ? "none" : "block";
-    });
-  }
-
-  if (copyBtn && embedCode) {
-    copyBtn.addEventListener("click", function() {
-      embedCode.select();
-      navigator.clipboard ? navigator.clipboard.writeText(embedCode.value) : document.execCommand("copy");
-      copyBtn.textContent = "Copiato!";
-      setTimeout(function() { copyBtn.textContent = "Copia codice embed"; }, 2000);
-    });
-  }
-
-  // Generazione e condivisione della scheda come foto PNG con link
-  var photoBtn = document.getElementById("br-btn-share-photo");
-  if (photoBtn) {
-    photoBtn.addEventListener("click", function() {
-      var origText = photoBtn.textContent;
-      photoBtn.textContent = "Creazione foto...";
-      photoBtn.disabled = true;
-
-      function runCapture() {
-        var el = document.getElementById("br-leader-capture");
-        window.html2canvas(el, { scale: 2, useCORS: true, backgroundColor: "#ffffff" }).then(function(canvas) {
-          canvas.toBlob(function(blob) {
-            photoBtn.textContent = origText;
-            photoBtn.disabled = false;
-            if (!blob) return;
-
-            var file = new File([blob], "gradimento-leader-brunorachiele.png", { type: "image/png" });
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-              navigator.share({
-                files: [file],
-                title: "Supermedia Gradimento Leader - brunorachiele.it",
-                text: shareText + pageUrl
-              }).catch(function() {});
-            } else {
-              var a = document.createElement("a");
-              a.href = URL.createObjectURL(blob);
-              a.download = "gradimento-leader-brunorachiele.png";
-              a.click();
-            }
-          }, "image/png");
-        }).catch(function() {
-          photoBtn.textContent = origText;
-          photoBtn.disabled = false;
-        });
-      }
-
-      if (window.html2canvas) {
-        runCapture();
-      } else {
-        var s = document.createElement("script");
-        s.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
-        s.onload = runCapture;
-        document.head.appendChild(s);
-      }
-    });
-  }
-})();
-<\/script>`;
+</div>`;
 
       document.getElementById('output-code').value = code;
     }
